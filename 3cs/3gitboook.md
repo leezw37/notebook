@@ -15,7 +15,7 @@
 
 [打造完美写作系统：Gitbook+Github Pages+Github Actions](https://blog.51cto.com/phyger/5276526#Gitbook_28)
 
-[GitBook 简介安装配置](https://gitbook.curiouser.top//origin/gitbook-简介安装配置.html)-----------[gitbooks-devops-roadmap](https://github.com/Curiouserw/gitbonvm
+[GitBook 简介安装配置](https://gitbook.curiouser.top//origin/gitbook-简介安装配置.html)
 
 [GitHub Pages 搭建教程](https://sspai.com/post/54608)
 
@@ -229,13 +229,14 @@ gh-pages分支生成gitbook，删除其他所有不必要的内容，上传到�
 
 * vscode左下切换到发布分支gh-pages。
 
-```
+```bash
 git checkout gh-pages
 
 ```
 * 创建gitbook，生成_book文件夹
 
 ```bash
+cd _book
 gitbook init
 gitbook build
 
