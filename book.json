@@ -1,0 +1,37 @@
+{
+    "title": "lzw笔记",
+    "outputfile": "SUMMARY.md",
+    "catalog": "all",
+    "ignores": [],
+    "unchanged": [],
+    "sortedBy": "-",
+    "disableTitleFormatting": true,
+    "plugins": [
+        "favicon-absolute",
+        "katex",
+        "-lunr",
+        "-search",
+        "search-pro",
+        "splitter",
+        "page-treeview",
+        "edit-link",
+        "anchor-navigation-ex",
+        "expandable-chapters",
+        "copy-code-button"
+    ],
+    "pluginsConfig": {
+        "page-treeview": {
+            "copyright": "Copyright &#169; aleen42",
+            "minHeaderCount": "2",
+            "minHeaderDeep": "2"
+        },
+        "edit-link": {
+            "base": "//github.com/leezw37/notebook/edit/master",
+            "label": "编辑此页面"
+        },
+        "favicon-absolute": {
+            "favicon": "/favicon.ico",
+            "appleTouchIconPrecomposed152": "/favicon.ico"
+        }
+    }
+}
