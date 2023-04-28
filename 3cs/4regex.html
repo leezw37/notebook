@@ -1,0 +1,651 @@
+
+<!DOCTYPE HTML>
+<html lang="" >
+    <head>
+        <meta charset="UTF-8">
+        <meta content="text/html; charset=utf-8" http-equiv="Content-Type">
+        <title>4regex · lzw笔记</title>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="description" content="">
+        <meta name="generator" content="GitBook 3.2.3">
+        
+        
+        
+    
+    <link rel="stylesheet" href="../gitbook/style.css">
+
+    
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-katex/katex.min.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-search-pro/search.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-splitter/splitter.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-page-treeview/style.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-anchor-navigation-ex/style/plugin.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-expandable-chapters/expandable-chapters.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-highlight/website.css">
+                
+            
+                
+                <link rel="stylesheet" href="../gitbook/gitbook-plugin-fontsettings/website.css">
+                
+            
+        
+
+    
+
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+        
+    
+
+        
+    
+    
+    
+    <meta name="HandheldFriendly" content="true"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="apple-touch-icon-precomposed" sizes="152x152" href="../gitbook/images/apple-touch-icon-precomposed-152.png">
+    <link rel="shortcut icon" href="../gitbook/images/favicon.ico" type="image/x-icon">
+
+    
+    <link rel="next" href="5vim.html" />
+    
+    
+    <link rel="prev" href="4mysql.html" />
+    
+
+    
+        <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+    
+    
+    
+    
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="/favicon.ico">
+    
+    
+        
+    
+    
+        
+    
+
+    </head>
+    <body>
+        
+<div class="book">
+    <div class="book-summary">
+        
+            
+<div id="book-search-input" role="search">
+    <input type="text" placeholder="Type to search" />
+</div>
+
+            
+                <nav role="navigation">
+                
+
+
+<ul class="summary">
+    
+    
+
+    
+
+    
+        
+        
+    
+        <li class="chapter " data-level="1.1" data-path="../">
+            
+                <a href="../">
+            
+                    
+                    Introduction
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2" >
+            
+                <span>
+            
+                    
+                    1study
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.2.1" data-path="../1study/moose_analysis.html">
+            
+                <a href="../1study/moose_analysis.html">
+            
+                    
+                    moose_analysis
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.2.2" data-path="../1study/moose.html">
+            
+                <a href="../1study/moose.html">
+            
+                    
+                    moose
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3" >
+            
+                <span>
+            
+                    
+                    3cs
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.3.1" data-path="0cs.html">
+            
+                <a href="0cs.html">
+            
+                    
+                    0cs
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.2" data-path="1android.html">
+            
+                <a href="1android.html">
+            
+                    
+                    1android
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.3" data-path="1linux.html">
+            
+                <a href="1linux.html">
+            
+                    
+                    1linux
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.4" data-path="1web.html">
+            
+                <a href="1web.html">
+            
+                    
+                    1web
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.5" data-path="1windows.html">
+            
+                <a href="1windows.html">
+            
+                    
+                    1windows
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.6" data-path="2cpp.html">
+            
+                <a href="2cpp.html">
+            
+                    
+                    2cpp
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.7" data-path="2html.html">
+            
+                <a href="2html.html">
+            
+                    
+                    2html
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.8" data-path="2javascript.html">
+            
+                <a href="2javascript.html">
+            
+                    
+                    2javascript
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.9" data-path="2shellscript.html">
+            
+                <a href="2shellscript.html">
+            
+                    
+                    2shellscript
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.10" data-path="3gitboook.html">
+            
+                <a href="3gitboook.html">
+            
+                    
+                    3gitboook
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.11" data-path="3markdown.html">
+            
+                <a href="3markdown.html">
+            
+                    
+                    3markdown
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.12" data-path="4gdb.html">
+            
+                <a href="4gdb.html">
+            
+                    
+                    4gdb
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.13" data-path="4git.html">
+            
+                <a href="4git.html">
+            
+                    
+                    4git
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.14" data-path="4mysql.html">
+            
+                <a href="4mysql.html">
+            
+                    
+                    4mysql
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter active" data-level="1.3.15" data-path="4regex.html">
+            
+                <a href="4regex.html">
+            
+                    
+                    4regex
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.16" data-path="5vim.html">
+            
+                <a href="5vim.html">
+            
+                    
+                    5vim
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.3.17" data-path="5vscode.html">
+            
+                <a href="5vscode.html">
+            
+                    
+                    5vscode
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4" >
+            
+                <span>
+            
+                    
+                    9me
+            
+                </span>
+            
+
+            
+            <ul class="articles">
+                
+    
+        <li class="chapter " data-level="1.4.1" data-path="../9me/0read.html">
+            
+                <a href="../9me/0read.html">
+            
+                    
+                    0read
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.2" data-path="../9me/9else.html">
+            
+                <a href="../9me/9else.html">
+            
+                    
+                    9else
+            
+                </a>
+            
+
+            
+        </li>
+    
+        <li class="chapter " data-level="1.4.3" data-path="../9me/test.html">
+            
+                <a href="../9me/test.html">
+            
+                    
+                    test
+            
+                </a>
+            
+
+            
+        </li>
+    
+
+            </ul>
+            
+        </li>
+    
+
+    
+
+    <li class="divider"></li>
+
+    <li>
+        <a href="https://www.gitbook.com" target="blank" class="gitbook-link">
+            Published with GitBook
+        </a>
+    </li>
+</ul>
+
+
+                </nav>
+            
+        
+    </div>
+
+    <div class="book-body">
+        
+            <div class="body-inner">
+                
+                    
+
+<div class="book-header" role="navigation">
+    
+
+    <!-- Title -->
+    <h1>
+        <i class="fa fa-circle-o-notch fa-spin"></i>
+        <a href=".." >4regex</a>
+    </h1>
+</div>
+
+
+
+
+                    <div class="page-wrapper" tabindex="-1" role="main">
+                        <div class="page-inner">
+                            
+<div id="book-search-results">
+    <div class="search-noresults">
+    
+                                <section class="normal markdown-section">
+                                
+                                <html><head></head><body><div id="anchor-navigation-ex-navbar"><i class="fa fa-navicon"></i><ul><li><span class="title-icon "></span><a href="#&#x76EE;&#x5F55;"><b>1. </b>&#x76EE;&#x5F55;</a></li><li><span class="title-icon "></span><a href="#&#x4F7F;&#x7528;"><b>2. </b>&#x4F7F;&#x7528;</a></li><ul><li><span class="title-icon "></span><a href="#vscode-&#x7ED9;&#x51FD;&#x6570;&#x540D;&#x52A0;&#x4E0A;&#x53CD;&#x5F15;&#x53F7;"><b>2.1. </b>vscode &#x7ED9;&#x51FD;&#x6570;&#x540D;&#x52A0;&#x4E0A;&#x53CD;&#x5F15;&#x53F7;</a></li></ul></ul></div><a href="#&#x76EE;&#x5F55;" id="anchorNavigationExGoTop"><i class="fa fa-arrow-up"></i></a><div class="treeview__container"><div class="treeview__container-title"><span class="treeview__main-title">Treeview</span><span class="treeview__copyright">Copyright &#xA9; aleen42 all right reserved, powered by <a href="https://github.com/aleen42" target="_blank">aleen42</a></span></div><ul>
+<li><div><a href="#&#x76EE;&#x5F55;">&#x76EE;&#x5F55;</a><i></i></div></li>
+<li><div><a href="#&#x83DC;&#x9E1F;&#x6559;&#x7A0B;">&#x83DC;&#x9E1F;&#x6559;&#x7A0B;</a><i></i></div></li>
+<li><div><a href="#&#x4F7F;&#x7528;">&#x4F7F;&#x7528;</a><i class="level__parent level__item level__parent--opened" state="opened" onclick="var curState = this.getAttribute(&apos;state&apos;);var nextState = curState === &apos;opened&apos; ? &apos;hidden&apos; : &apos;opened&apos;;this.setAttribute(&apos;state&apos;, nextState);this.className = this.className.split(curState).join(nextState);var list = this.parentNode.nextElementSibling;if (nextState === &apos;hidden&apos;) {    list.style.display = &apos;none&apos;;} else {    list.style.display = &apos;block&apos;;}"></i></div>
+<ul>
+<li><div><a href="#vscode-&#x7ED9;&#x51FD;&#x6570;&#x540D;&#x52A0;&#x4E0A;&#x53CD;&#x5F15;&#x53F7;">vscode &#x7ED9;&#x51FD;&#x6570;&#x540D;&#x52A0;&#x4E0A;&#x53CD;&#x5F15;&#x53F7;</a><i></i></div></li>
+</ul></li>
+</ul>
+</div>
+
+<h1 id="&#x76EE;&#x5F55;"><a name="&#x76EE;&#x5F55;" class="anchor-navigation-ex-anchor" href="#&#x76EE;&#x5F55;"><i class="fa fa-link" aria-hidden="true"></i></a>1. &#x76EE;&#x5F55;</h1>
+<p>[TOC]</p>
+<p>#
+<a href="https://www.runoob.com/regexp/regexp-flags.html" target="_blank">&#x83DC;&#x9E1F;&#x6559;&#x7A0B;</a></p>
+<h1 id="&#x4F7F;&#x7528;"><a name="&#x4F7F;&#x7528;" class="anchor-navigation-ex-anchor" href="#&#x4F7F;&#x7528;"><i class="fa fa-link" aria-hidden="true"></i></a>2. &#x4F7F;&#x7528;</h1>
+<h2 id="vscode-&#x7ED9;&#x51FD;&#x6570;&#x540D;&#x52A0;&#x4E0A;&#x53CD;&#x5F15;&#x53F7;"><a name="vscode-&#x7ED9;&#x51FD;&#x6570;&#x540D;&#x52A0;&#x4E0A;&#x53CD;&#x5F15;&#x53F7;" class="anchor-navigation-ex-anchor" href="#vscode-&#x7ED9;&#x51FD;&#x6570;&#x540D;&#x52A0;&#x4E0A;&#x53CD;&#x5F15;&#x53F7;"><i class="fa fa-link" aria-hidden="true"></i></a>2.1. vscode &#x7ED9;&#x51FD;&#x6570;&#x540D;&#x52A0;&#x4E0A;&#x53CD;&#x5F15;&#x53F7;</h2>
+<pre><code>
+&#x641C;&#x7D22;&#x6846;&#xFF1A;(\b\w+\b)(\s*&#x51FD;&#x6570;)
+&#x66FF;&#x6362;&#x6846;&#xFF1A;`$1`$2
+&#x5176;&#x4E2D;&#xFF0C;$1&#x4E24;&#x8FB9;&#x90FD;&#x6709;&#x53CD;&#x5F15;&#x53F7;`&#xFF0C;&#x7F51;&#x9875;&#x6E32;&#x67D3;&#x540E;&#x53EF;&#x80FD;&#x4F1A;&#x770B;&#x4E0D;&#x89C1;
+
+
+&#x5982;&#x679C;&#x9700;&#x8981;&#x5C06;&#x201C;xxx&#x51FD;&#x6570;&#x201D;&#x66FF;&#x6362;&#x4E3A;&#x201C;`xxx`&#x51FD;&#x6570;&#x201D;&#xFF0C;&#x53EF;&#x4EE5;&#x4F7F;&#x7528;&#x4EE5;&#x4E0B;&#x6B63;&#x5219;&#x8868;&#x8FBE;&#x5F0F;&#x67E5;&#x627E;:
+(\b\w+\b)(\s*&#x51FD;&#x6570;)
+&#x66FF;&#x6362;:`$1`$2
+&#x89E3;&#x91CA;:
+(\b\w+\b): &#x5339;&#x914D;&#x5355;&#x8BCD;&#xFF0C;&#x4F7F;&#x7528;&#x4E86; b&#x8868;&#x793A;&#x5355;&#x8BCD;&#x8FB9;&#x754C;&#xFF0C;w+&#x8868;&#x793A;&#x4E00;&#x4E2A;&#x6216;&#x591A;&#x4E2A;&#x5B57;&#x6BCD;&#x6570;&#x5B57;&#x5B57;&#x7B26;&#x3002;
+(\s*&#x51FD;&#x6570;):&#x5339;&#x914D;&#x53EF;&#x80FD;&#x5B58;&#x5728;&#x7684;&#x7A7A;&#x683C;&#x548C;&#x51FD;&#x6570;&#x4E24;&#x4E2A;&#x5B57;&#x3002;
+&#x66FF;&#x6362;&#x90E8;&#x5206;&#x4F7F;&#x7528;&#x4E86;&#x53CD;&#x5411;&#x5F15;&#x7528;&#xFF0C;$1&#x8868;&#x793A;&#x7B2C;&#x4E00;&#x4E2A;&#x62EC;&#x53F7;&#x5339;&#x914D;&#x5230;&#x7684;&#x5185;&#x5BB9;&#xFF0C;$2&#x8868;&#x793A;&#x7B2C;&#x4E8C;&#x4E2A;&#x62EC;&#x53F7;&#x5339;&#x914D;&#x5230;&#x7684;&#x5185;&#x5BB9;&#xFF0C;&#x5E76;&#x4E14;&#x4F7F;&#x7528;&#x4E86;&#x53CD;&#x659C;&#x7EBF; &#x8F6C;&#x4E49;&#x53CD;&#x5F15;&#x53F7;&#x3002;&#x4F7F;&#x7528;&#x65B9;&#x6CD5;:
+&#x6253;&#x5F00;&#x8981;&#x66FF;&#x6362;&#x7684;&#x6587;&#x4EF6;&#x3002;
+&#x6309;&#x4E0B; ctrl+H &#x6216;&#x5728;&#x83DC;&#x5355;&#x4E2D;&#x9009;&#x62E9;&#x201C;&#x66FF;&#x6362;&#x201D;&#x9009;&#x9879;&#x5728;&#x201C;&#x67E5;&#x627E;&#x201D;&#x6846;&#x4E2D;&#x8F93;&#x5165;&#x6B63;&#x5219;&#x8868;&#x8FBE;&#x5F0F;:(\b\w+\b)(\s*&#x51FD;&#x6570;)
+&#x5728;&#x201C;&#x66FF;&#x6362;&#x4E3A;&#x201D;&#x6846;&#x4E2D;&#x8F93;&#x5165;&#x66FF;&#x6362;&#x5B57;&#x7B26;&#x4E32;:`$1`$2, &#x70B9;&#x51FB;&#x201C;&#x5168;&#x90E8;&#x66FF;&#x6362;&#x201D;&#x6309;&#x94AE;&#xFF0C;&#x5B8C;&#x6210;&#x66FF;&#x6362;&#x3002;
+&#x6CE8;&#x610F;:
+&#x5982;&#x679C;&#x6709;&#x4E9B;&#x51FD;&#x6570;&#x540D;&#x5DF2;&#x7ECF;&#x52A0;&#x4E86;&#x5F15;&#x53F7;&#xFF0C;&#x90A3;&#x4E48;&#x8FD9;&#x4E9B;&#x51FD;&#x6570;&#x540D;&#x4E0D;&#x4F1A;&#x88AB;&#x66FF;&#x6362;&#x3002;
+&#x5982;&#x679C;&#x8981;&#x66FF;&#x6362;&#x7684;&#x5185;&#x5BB9;&#x4E2D;&#x5B58;&#x5728;&#x4E2D;&#x6587;&#x5B57;&#x7B26;&#xFF0C;&#x9700;&#x8981;&#x4F7F;&#x7528;UTF-8&#x7F16;&#x7801;&#x7684;&#x6587;&#x4EF6;&#x683C;&#x5F0F;&#x3002;
+</code></pre></body></html>
+                                
+                                </section>
+                            
+    </div>
+    <div class="search-results">
+        <div class="has-results">
+            
+            <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+            <ul class="search-results-list"></ul>
+            
+        </div>
+        <div class="no-results">
+            
+            <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+            
+        </div>
+    </div>
+</div>
+
+                        </div>
+                    </div>
+                
+            </div>
+
+            
+                
+                <a href="4mysql.html" class="navigation navigation-prev " aria-label="Previous page: 4mysql">
+                    <i class="fa fa-angle-left"></i>
+                </a>
+                
+                
+                <a href="5vim.html" class="navigation navigation-next " aria-label="Next page: 5vim">
+                    <i class="fa fa-angle-right"></i>
+                </a>
+                
+            
+        
+    </div>
+
+    <script>
+        var gitbook = gitbook || [];
+        gitbook.push(function() {
+            gitbook.page.hasChanged({"page":{"title":"4regex","level":"1.3.15","depth":2,"next":{"title":"5vim","level":"1.3.16","depth":2,"path":"3cs/5vim.md","ref":"3cs/5vim.md","articles":[]},"previous":{"title":"4mysql","level":"1.3.14","depth":2,"path":"3cs/4mysql.md","ref":"3cs/4mysql.md","articles":[]},"dir":"ltr"},"config":{"plugins":["favicon-absolute","katex","-lunr","-search","search-pro","splitter","page-treeview","edit-link","anchor-navigation-ex","expandable-chapters","copy-code-button"],"ignores":[],"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"pluginsConfig":{"page-treeview":{"copyright":"Copyright &#169; aleen42","minHeaderCount":"2","minHeaderDeep":"2","collapsed":false},"splitter":{},"search-pro":{},"favicon-absolute":{"favicon":"/favicon.ico","appleTouchIconPrecomposed152":"/favicon.ico","appleTouchIconMore":{},"appleTouchIconPrecomposedMore":{}},"katex":{},"fontsettings":{"theme":"white","family":"sans","size":2},"highlight":{},"anchor-navigation-ex":{"showLevel":true,"associatedWithSummary":true,"mode":"float","showGoTop":true,"printLog":false,"multipleH1":true,"float":{"floatIcon":"fa fa-navicon","showLevelIcon":false,"level1Icon":"","level2Icon":"","level3Icon":""},"pageTop":{"showLevelIcon":false,"level1Icon":"","level2Icon":"","level3Icon":""}},"copy-code-button":{},"sharing":{"facebook":true,"twitter":true,"google":false,"weibo":false,"instapaper":false,"vk":false,"all":["facebook","google","twitter","weibo","instapaper"]},"edit-link":{"label":"编辑此页面","base":"//github.com/leezw37/notebook/edit/master"},"theme-default":{"styles":{"website":"styles/website.css","pdf":"styles/pdf.css","epub":"styles/epub.css","mobi":"styles/mobi.css","ebook":"styles/ebook.css","print":"styles/print.css"},"showLevel":false},"expandable-chapters":{}},"theme":"default","pdf":{"pageNumbers":true,"fontSize":12,"fontFamily":"Arial","paperSize":"a4","chapterMark":"pagebreak","pageBreaksBefore":"/","margin":{"right":62,"left":62,"top":56,"bottom":56}},"structure":{"langs":"LANGS.md","readme":"README.md","glossary":"GLOSSARY.md","summary":"SUMMARY.md"},"sortedBy":"-","disableTitleFormatting":true,"variables":{},"title":"lzw笔记","catalog":"all","gitbook":"*","unchanged":[],"outputfile":"SUMMARY.md"},"file":{"path":"3cs/4regex.md","mtime":"2023-04-28T08:57:23.886Z","type":"markdown"},"gitbook":{"version":"3.2.3","time":"2023-04-28T09:05:42.297Z"},"basePath":"..","book":{"language":""}});
+        });
+    </script>
+</div>
+
+        
+    <script src="../gitbook/gitbook.js"></script>
+    <script src="../gitbook/theme.js"></script>
+    
+        
+        <script src="../gitbook/gitbook-plugin-search-pro/jquery.mark.min.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-search-pro/search.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-splitter/splitter.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-edit-link/plugin.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-expandable-chapters/expandable-chapters.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-copy-code-button/toggle.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-sharing/buttons.js"></script>
+        
+    
+        
+        <script src="../gitbook/gitbook-plugin-fontsettings/fontsettings.js"></script>
+        
+    
+
+    </body>
+</html>
+
