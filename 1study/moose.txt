@@ -1,5 +1,10 @@
+本文件全程复制了在终端调试MOOSE并编写moose_analysis的过程。比较杂乱，可能一点点参考价值。
+
+
+
  lee@ubuntu  10:36:52
  ~/projects/moose/examples/ex01_inputfile  ± (master ↑1 ↓2579 U:2 ✗)
+
 > gdb --args ./ex01-dbg -i ex01.i
 GNU gdb (Ubuntu 10.2-0ubuntu1~20.04~1) 10.2
 Copyright (C) 2021 Free Software Foundation, Inc.
@@ -2875,7 +2880,7 @@ ngth 1, capacity 1 = {std::map with 0 elements}},
 --Type <RET> for more, q to quit, c to continue without paging--
 
           _active_block_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
-
+    
           _all_boundary_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
           _active_boundary_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements}},
         _variable_objects = std::map with 0 elements}, [{static INVALID_ID = -2147483648,
@@ -2989,7 +2994,7 @@ ntMultiApp>> = {
 
           _all_objects = std::vector of length 1, capacity 1 = {std::vector of length 0, capacity 0},
           _active_objects = std::vector of length 1, capacity 1 = {std::vector of length 0, capacity 0},
-
+    
           _all_block_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
           _active_block_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
           _all_boundary_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
@@ -3137,7 +3142,7 @@ h 1, capacity 1 = {std::map with 0 elements},
 --Type <RET> for more, q to quit, c to continue without paging--
 
           _all_block_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
-
+    
           _active_block_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
           _all_boundary_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
           _active_boundary_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements}},
@@ -3275,7 +3280,7 @@ apacity 1 = {std::vector of length 0, capacity 0},
 --Type <RET> for more, q to quit, c to continue without paging--
 
         _raw_name = "PRE_DISPLACE",
-
+    
         _name = "PRE_DISPLACE",
         _id = 12}] = {<MooseObjectWarehouseBase<Transfer>> = {
           _vptr.MooseObjectWarehouseBase = 0x7ffff7d66108 <vtable for MooseObjectWarehouse<Transfer>+16>,
@@ -3417,7 +3422,7 @@ h 1, capacity 1 = {std::map with 0 elements},
 --Type <RET> for more, q to quit, c to continue without paging--
 
           _active_objects = std::vector of length 1, capacity 1 = {std::vector of length 0, capacity 0},
-
+    
           _all_block_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
           _active_block_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
           _all_boundary_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
@@ -3490,7 +3495,7 @@ h 1, capacity 1 = {std::map with 0 elements},
           _num_threads = 1,
           _all_objects = std::vector of length 1, capacity 1 = {std::vector of length 0, capacity 0},
           _active_objects = std::vector of length 1, capacity 1 = {std::vector of length 0, capacity 0},
-
+    
           _all_block_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
           _active_block_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
           _all_boundary_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
@@ -3621,7 +3626,7 @@ h 1, capacity 1 = {std::map with 0 elements},
           _vptr.MooseObjectWarehouseBase = 0x7ffff7d66108 <vtable for MooseObjectWarehouse<Transfer>+16>,
 
           _num_threads = 1,
-
+    
           _all_objects = std::vector of length 1, capacity 1 = {std::vector of length 0, capacity 0},
           _active_objects = std::vector of length 1, capacity 1 = {std::vector of length 0, capacity 0},
           _all_block_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
@@ -3675,7 +3680,7 @@ h 1, capacity 1 = {std::map with 0 elements},
 --Type <RET> for more, q to quit, c to continue without paging--
 
           _active_objects = std::vector of length 1, capacity 1 = {std::vector of length 0, capacity 0},
-
+    
           _all_block_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
           _active_block_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
           _all_boundary_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
@@ -3770,7 +3775,7 @@ city 1 = {std::vector of length 0, capacity 0},
         _name = "PRE_MULTIAPP_SETUP",
         _id = 14}] = {<MooseObjectWarehouseBase<Transfer>> = {
           _vptr.MooseObjectWarehouseBase = 0x7ffff7d66108 <vtable for MooseObjectWarehouse<Transfer>+16>,
-
+    
           _num_threads = 1,
           _all_objects = std::vector of length 1, capacity 1 = {std::vector of length 0, capacity 0},
           _active_objects = std::vector of length 1, capacity 1 = {std::vector of length 0, capacity 0},
@@ -3968,7 +3973,7 @@ apacity 1 = {std::vector of length 0, capacity 0},
           _num_threads = 1,
           _all_objects = std::vector of length 1, capacity 1 = {std::vector of length 0, capacity 0},
           _active_objects = std::vector of length 1, capacity 1 = {std::vector of length 0, capacity 0},
-
+    
           _all_block_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
           _active_block_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
           _all_boundary_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
@@ -4218,7 +4223,7 @@ apacity 1 = {std::vector of length 0, capacity 0},
           _num_threads = 1,
 
           _all_objects = std::vector of length 1, capacity 1 = {std::vector of length 0, capacity 0},
-
+    
           _active_objects = std::vector of length 1, capacity 1 = {std::vector of length 0, capacity 0},
           _all_block_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
           _active_block_objects = std::vector of length 1, capacity 1 = {std::map with 0 elements},
@@ -4736,7 +4741,7 @@ Undefined command: "ls".  Try "help".
 31        MooseInit init(argc, argv);
 (gdb)
 
- ----------------------------------------------------------------------------
+----------------------------------------------------------------------------
 | Reference count information                                                |
  ----------------------------------------------------------------------------
 | N7libMesh10FEAbstractE reference count information:
@@ -5660,7 +5665,7 @@ LEGACY MODES ENABLED:
 Finished Executing                                                                       [ 16.75 s] [    5 MB]
 [Thread 0x7fffe2125700 (LWP 53983) exited]
 
- ----------------------------------------------------------------------------
+----------------------------------------------------------------------------
 | Reference count information                                                |
  ----------------------------------------------------------------------------
 | N7libMesh10FEAbstractE reference count information:
@@ -6707,7 +6712,7 @@ $28 = {hdr = {classid = 1211219, bops = {{
     size = 0, rank = 0, tag1 = 0,
     tag2 = 0, send_waits = 0x0,
     recv_waits = 0x0, send_status = 0x0,
-
+    
     nsends = 0, nrecvs = 0, svalues = 0x0,
     sindices = 0x0, rvalues = 0x0,
     rindices = 0x0, nprocessed = 0,
@@ -7291,5 +7296,4 @@ main (argc=3, argv=0x7fffffffd758)
 
 
 ===================================================================================
-
 
