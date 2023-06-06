@@ -43,23 +43,44 @@ clear && make -j4 METHOD=dbg && mpiexec -n84 ./phase2eq5-dbg -i problems/1.i  -p
 make -j4 METHOD=dbg
 ./run_tests -j4
 
-# 并行
+# 多线程并行
 mpiexec -n 4 xxx-opt -i xx.i
 # 注意，C++使用多线程在输出的时候信息可能会覆盖。比如40个网格4线程输出残差，最后控制台只能看到最后的10个网格的残差。
 # opt 模式比 dbg 快近 5 倍
 
 # 调试 + 限制变量值
-# break libmesh_handleFPE
 gdb --args ./phase2eq4-dbg -i problems/liquid2vapor.i  -pc_type svd -snes_type vinewtonssls
+# 浮点溢出断点
+break libmesh_handleFPE
+# [线程终止](https://mooseframework.inl.gov/getting_started/examples_and_tutorials/examples/ex21_debugging.html)
+break MPI_Abort
+
+# [并行调试 / 多线程调试：首先确认该问题只能在并行运行时重现](https://mooseframework.inl.gov/application_development/debugging.html#b4fcff15-e278-407f-9620-f1bd1d0d4f6c)
+# 需要使用 Xterm 终端（Ctrl + 鼠标左中右键进行设置）
+sudo apt-get install xterm
+mpiexec -n 6 ./phase2eq6-dbg -i problems/1.i  --start-in-debugger='gdb'
+# 两种办法
+# 1. 原始终端为每个 MPI 进程启动一个新终端。
+# 需要我们逐一调试，例如设置浮点溢出断点 b libmesh_handleFPE。然后逐一输入命令c继续，原始终端终于开始运行。
+# 到达报错的断点处时，该进程的相应终端会报错，然后我们就可以在那个终端上像单线程调试一样工作了，例如命令bt回溯代码栈。
 
 
 # 不计算，只后处理
 # 在输入卡[Problem]块中填入solve = false
 
-
 ```
 
 # 使用技巧
+
+## 减小时间步长有利于提高稳定性
+
+## 提交代码提示 代码不符合规范
+Your code is not properly formatted.
+Run git clang-format to resolve the following issues: ...
+
+```bash
+git clang-format
+```
 
 ## kernel 编写
 变量是谁
@@ -107,6 +128,11 @@ make -j 3
 [限制变量值](https://mooseframework.inl.gov/source/auxkernels/ConstantBoundsAux.html)
 
 ```bash
+# 一定要在运行时加 -snes_type vinewtonssls 或 -snes_type vinewtonrsls才能生效
+# PJFNK 用 vinewtonrsls
+./phase2eq4-dbg -i problems/liquidvapor.i -snes_type vinewtonssls
+./phase2eq4-dbg -i problems/liquidvapor.i -snes_type vinewtonrsls
+
 [Bounds]
   [./u_upper_bound]
     type = ConstantBoundsAux
@@ -130,8 +156,7 @@ make -j 3
     family = LAGRANGE
   [../]
 []
-# 一定要运行时加-snes_type vinewtonssls才能生效
-./phase2eq4-dbg -i problems/liquidvapor.i -snes_type vinewtonssls
+
 
 ```
 

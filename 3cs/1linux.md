@@ -29,7 +29,7 @@ CTRL + D                |退出某个环境
 history 10		|查看最近10个命令
 history \| grep 'xxx'	|关键词查找命令
 Ctrl + r，'xxx'		|关键词查找（回车执行，右方向修改）
-alias 	|查看所有别名（定义alias xx='命令'）
+alias 	|查看所有程序别名（定义alias xx='命令'）
 
 ## `apt`软件管理
 
@@ -412,6 +412,58 @@ echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
 
 [github超赞的-linux-软件仓库](https://github.com/luong-komorebi/Awesome-Linux-Software/blob/master/README_zh-CN.md#%E8%B6%85%E8%B5%9E%E7%9A%84-linux-%E8%BD%AF%E4%BB%B6)
 
+
+
+
+
+## XTerm终端复制粘贴
+
+XTerm 是一个终端介面，最近刚好使用到，但在使用复制功能时就有点不顺了。传统上我们只要使用 ctrl + c 就能复制 ctrl + v 就能贴上，但在 XTerm 上却无法使用。以下我们就来看看如何处理这个问题。
+
+XTerm 内复制贴上
+用鼠标选取想复制的内文，按 shift + insert (Ins) 即可在 XTerm 的里面贴上想复制的文字。
+
+XTerm 外复制
+如果要把 XTerm 内的文字复制出来就有点麻烦了。
+
+先打开 ~/.Xresources ( 或是建立一个 )，内文输入如下
+
+XTerm*selectToClipboard: true
+接着打开 terminal 执行以下指令
+
+xrdb -merge ~/.Xresources
+再重新打开 XTerm 即可使用 ctrl + c 复制文字到外面了
+
+
+
+**XTerm终端复制粘贴2**
+
+https://www.cnblogs.com/foreverwith/p/3680842.html
+
+
+在系统自带的终端中一律是SHIFT+CRTL+C(V),但是现在用了XTerm了,这个快捷键就不支持了
+
+找了一下
+
+[让 xterm 与其它程序间复制粘贴更灵活](http://www.linuxsir.org/bbs/thread290883.html)
+
+按照这个说的来就OK啦,还记得上一篇我们说的在主文件夹下建立一个.Xdefaults文件吗,这次我们在terminal下继续输入vim .Xdefaults
+
+将以下代码复制到 `XTerm\*locale: zh\_CN.UTF-8` 的下面就可以啦,这样以后就可以自由的在XTerm中复制或者粘贴(鼠标中键,也就是滚动轮,不太习惯SHIFT+insert)
+
+鼠标框选XTerm中内容后，中键粘贴到任何地方。
+
+```
+     \*VT100\*translations: #override \\n\\ 
+    Shift <KeyPress> Insert:insert-selection(CLIPBOARD, CUT\_BUFFER1) \\n\\ 
+    ~Shift~Ctrl<Btn2Up>: insert-selection(CLIPBOARD, CUT\_BUFFER1) \\n\\ 
+    ~Shift<BtnUp>: select-end(CLIPBOARD, CUT\_BUFFER1) 
+```
+
+
+
+
+
 ## UltraEdit
 
 ```bash
@@ -532,5 +584,4 @@ echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
 
 
 ```
-
 
