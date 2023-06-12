@@ -2,16 +2,26 @@
 
 [TOC]
 
+# 参考
+
 [vscode插件Markdown Preview Enhanced——可转电子书格式](https://shd101wyy.github.io/markdown-preview-enhanced/#/)
 
 [Mermaid 图表](https://mermaid.js.org/intro/)
 
 [html-2-markdown](https://www.convertsimple.com/convert-html-to-markdown/)
 
-
 # 标题、注释、页内跳转
-## 换行：连续空格+换行符，空行
-## 等于号1级、减号2级（要换行），连续#号1~6级
+
+## 换行
+
+连续空格+换行符;
+
+ 空行
+
+## 标题分级
+
+等于号1级、减号2级（要换行），连续#号1~6级
+
 ## 注释
 以下注释不可见
 

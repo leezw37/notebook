@@ -21,7 +21,7 @@
 
 - === judge equal elements of the same type
  == judge with force type transformation
- (2== '2' is ture)
+  (2== '2' is ture)
 
 - anonymous function
   Syntax: (parameters) => output;
@@ -269,7 +269,10 @@ javascript:(
 
 ```
 
-### 视频合集时长（支持任意集数之间，支持倍速计算） 
+### 视频合集时长
+
+（支持任意集数之间，支持倍速计算）
+
 >使用方法：B站分集视频教程时长统计脚本_哔哩哔哩_bilibili
 转载自 https://www.52pojie.cn/thread-1517520-1-1.html
 ，在此表示感谢。

@@ -133,7 +133,8 @@ HEAD: 代表你当前的工作目录。使用git checkout 可移动 HEAD 指针�
 ```
 
 # 问题
-## 删除 GitHub 所有 Commit 记录——隐私泄露后
+## 隐私泄露后删除所有 Commit 
+
 ```bash
 # 把项目提交到 GitHub 上，有时候可能不小心提交了一些隐私信息，如密码和邮箱。如何删除这些记录，形成一个全新的仓库，并且保持代码不变呢？
 
@@ -214,7 +215,7 @@ chmod 600 /home/<username>/.ssh/id_rsa
 
 
 
-## git clone报错gnutls\_handshake() failed:
+## clone报错gnutls握手失败
 
 代理设置出错, 重置代理
 

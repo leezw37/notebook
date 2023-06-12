@@ -1,14 +1,6 @@
 # 目录
 [TOC]
 
-
-# 加密文档
-[日记](https://l2w.top/9%E4%B8%AA%E4%BA%BA/%E6%97%A5%E8%AE%B0.html)
-
-工具——
-[技术实现](https://github.com/robinmoisson/staticrypt)
-
-[类似的许多工具](https://mprimi.github.io/portable-secret/#prior-art)
 # GitBook
 
 [官方文档](https://docs.gitbook.com/)
@@ -19,7 +11,8 @@
 
 [GitHub Pages 搭建教程](https://sspai.com/post/54608)
 
-## 安装 (node、npm、nvm、gitbook)
+## 安装node, npm, nvm, gitbook
+
 [ubuntu 参考](https://blog.csdn.net/PY0312/article/details/105903320)
 
 
@@ -301,4 +294,15 @@ xxx.github.io.	5	IN	A	185.199.108.153
 ```
 3. 在网站仓库主分支新建文件 CNAME，填写域名 l2w.top。（踩坑：直接在仓库-设置-Pages中填域名不行，每次重建网站都会被清空。）
 
-#
+# 其他
+
+## 标题最好少于20字
+
+否则手机悬浮目录只能看见大片空白
+
+## 加密文档
+
+工具——
+[技术实现](https://github.com/robinmoisson/staticrypt)
+
+[类似的许多工具](https://mprimi.github.io/portable-secret/#prior-art)

@@ -38,5 +38,6 @@
 * 搜索结果——区域设置中选择香港。
 * 语言——搜索结果目前的显示语言，选择中文 (简体), English, 中文 (繁體)
 
-## chrome安装插件提示image decode failed
+## chrome安装插件：图像解码失败
+
 切换clash节点

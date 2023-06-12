@@ -77,6 +77,11 @@ unzip xxx.zip
 dpkg -i xxx.deb
 # .tar、.tar.gz、.tar.bz2
 tar -xzvf xxx.gz
+## APPimage，先添加可执行权限，然后执行
+chmod a+x *.AppImage
+./*.AppImage
+
+
 
 # 卸载
 # deb
@@ -156,6 +161,7 @@ passwd 选项 用户名
 ```
 
 # 使用技巧
+
 ## `base64`加密
 ```bash
 echo "wang@123"|base64
@@ -190,6 +196,8 @@ echo $?
 ## `rename`批量修改文件名
 linux终端输入`rename`命令，可以修改当前文件夹内的所有文件名
 
+此外，ubuntu自带的重命名功能也很强大。
+
 ```bash
 # 改为全大写
 sudo rename 'y/A-Z/a-z/' *
@@ -218,7 +226,7 @@ crontab -e
 
 ```
 
-## vmware自动挂载windows共享文件夹
+## vmware自动挂载win共享文件夹
 
 
 ```bash
@@ -274,7 +282,7 @@ cd /home/PyTest/123 | echo "error234"
 
 ```
 
-## open-vm-tools自由分辨率 + 文件拖拽
+## open-vm-tools自由分辨率+文件拖拽
 
 ```bash
 sudo apt install open-vm-tools
@@ -370,16 +378,7 @@ Ctrl +以上| 存放到**剪贴板**
 
 ## Alt + F2 输入r 重启gnome桌面
 
-## APPimage文件运行
 
-
-```bash
-# 添加可执行权限
-chmod a+x *.AppImage
-# 执行它！
-./*.AppImage
-
-```
 ## nvm 管理node 版本
 
 
@@ -412,7 +411,24 @@ echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
 
 [github超赞的-linux-软件仓库](https://github.com/luong-komorebi/Awesome-Linux-Software/blob/master/README_zh-CN.md#%E8%B6%85%E8%B5%9E%E7%9A%84-linux-%E8%BD%AF%E4%BB%B6)
 
+## ImageMagick批量压缩图指定大小
 
+[软件下载](https://imagemagick.org/script/download.php)AppImage格式
+
+[命令选项](https://imagemagick.org/script/convert.php)
+
+ImageMagick是一个用于查看、编辑位图文件以及进行图像格式转换的开放源代码软件套装。它可以读取、编辑超过100种图帧式。主要由大量的命令行程序组成，而不提供图形界面。它还为很多程序语言提供了API库。
+
+```bash
+chmod a+x magick 
+
+# 压缩图片略小于指定值，应该是比较判断
+./magick convert 春游*.jpg -define jpeg:extent=25MB output.jpg
+
+# reduce the image size before it is written to the PNG format:
+magick rose.jpg -resize 50% rose.png
+
+```
 
 
 
@@ -524,7 +540,10 @@ Icon=/home/lee/software/typora/typora_icon.png
 Type=Application
 Categories=Development
 
-## 安卓虚拟机waydroid（适配差，问题多）
+## 安卓虚拟机waydroid
+
+（适配差，问题多）
+
 https://docs.waydro.id/usage/install-on-desktops
 
 ```bash
@@ -551,7 +570,10 @@ service NetworkManager start
 
 ```
 
-## ubuntu 启动很慢,F2显示1m30s (swap 分区不自动挂载)
+## ubuntu 启动很慢,F2显示1m30s
+
+ (swap 分区不自动挂载)
+
 A start job is running for dev-disk-by\...UUID (xx s/ 1min30s)
 
 ```bash
