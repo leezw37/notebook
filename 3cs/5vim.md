@@ -340,11 +340,11 @@ Hello, world!
 
 `S` 等同于 `dd` + `o`。
 
-### 从当前位置开始向右删除整行：`D`
+### 从当前位置向右删除整行：`D`
 
 `D` 等同于 `d$`。
 
-### 当前位置向右删除整行并进入编辑模式：`C`
+### 向右删除行, 进入编辑模式：`C`
 
 `C` 等同于 `c$`，或者 `d$` + `a`，或者 `D` + `a`。
 
@@ -414,7 +414,7 @@ Hello, world!
 > -   在 VS Code 中，向前一个 / 后一个位置跳转的快捷键是 `<Ctrl> + [` / `<Ctrl> + ]`。
 > -   在 Intellij 等 Jetbrains 系列软件中，向前一个 / 后一个位置跳转的快捷键是 `<Command> + [` / `<Command> + ]`。如果不是，可以在 `Preferences` 中搜索 `back`，然后在 `KeyMap -> Main menu -> Navigate -> Back` 中设置。
 
-### 替换文本：`:{range}s/{old}/{new}/{flag}`
+### 替换`:{range}s/{old}/{new}/{flag}`
 
 `:s`（substitute）命令用来查找和替换文本。语法如下：
 

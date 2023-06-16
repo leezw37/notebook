@@ -162,7 +162,20 @@ passwd 选项 用户名
 
 # 使用技巧
 
+
+
+## Linux主机上qemu+kvm直通显卡
+
+?
+
+如果是linux虚拟机需要双显卡
+
+## linux作为host，qemu/kvm虚拟windows
+
+?
+
 ## `base64`加密
+
 ```bash
 echo "wang@123"|base64
 # 加-i选项也可以，输出 d2FuZ0AxMjMK
@@ -172,6 +185,7 @@ echo "d2FuZ0AxMjMK"|base64 -d
 
 ```
 ## `openssl`加密文件
+
 tar等压缩程序也可以实现。
 
 ```bash

@@ -3,6 +3,8 @@
 - 1study
   * [moose_analysis](1study/moose_analysis.md)
   * [moose](1study/moose.md)
+  * [NUSOL_FI_JFNK](1study/NUSOL_FI_JFNK.md)
+  * [relap5_analysis](1study/relap5_analysis.md)
   * [relap5](1study/relap5.md)
 - 3cs
   * [0cs](3cs/0cs.md)

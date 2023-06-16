@@ -98,6 +98,7 @@ ___
 
 ```
 # 表
+
 ## 列表
 无序列表
 - 加、减、乘号
@@ -140,16 +141,16 @@ ___
 
 Tips：
 
-Typora预览模式下，回车只能进入下一行的单元格；
+- Typora预览模式下，回车只能进入下一行的单元格；
 
-需要插入行，ctrl+enter；
+- 需要插入行，ctrl+enter；
 
-单元格内分行，shift+enter。
+- 单元格内分行，shift+enter。
+- 删除当前行，Ctrl + shift + delete/backspace
 
 | Left column | Center column | Right column |
 | :---------- | :-----------: | -----------: |
 | Cell 1      |   Centered    |        $1600 |
-|             |               |              |
 | Cell 2      |    Cell 3     |          $12 |
 
 ```

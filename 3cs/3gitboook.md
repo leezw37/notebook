@@ -300,9 +300,20 @@ xxx.github.io.	5	IN	A	185.199.108.153
 
 否则手机悬浮目录只能看见大片空白
 
-## 加密文档
+## 加密文档（重大漏洞！）
 
-工具——
-[技术实现](https://github.com/robinmoisson/staticrypt)
+工具——[技术实现](https://github.com/robinmoisson/staticrypt)，[类似的许多工具](https://mprimi.github.io/portable-secret/#prior-art)
 
-[类似的许多工具](https://mprimi.github.io/portable-secret/#prior-art)
+**此方法可能存在重大漏洞！！！**
+
+**原理是待加密的明文md文件通过本地的gitbook生成了明文html文件，然后将其移动到忽略上传的文件夹，再使用工具本地加密并替换原来的明文html。之后上传GitHub仓库时仅有加密后的暗文html，从而完成加密（没有上传明文md和明文html）。理论上互联网用户无法在gitbook网站和github仓库访问该内容。**
+
+**但是！经测试发现，可以通过gitbook网站的搜索框收到相应内容。原因尚不明确。**
+
+各位大佬晚上好，最近使用gitbook生成笔记网站遇到大麻烦。之前我都是加密部分内容后上传，但是最近突然发现可以绕过加密！
+
+首先加密原理是：待加密的明文md文件通过本地的gitbook生成了明文html文件，然后将其移动到忽略上传的文件夹，再使用工具本地加密并替换原来的明文html。
+
+之后上传GitHub仓库时仅有加密后的暗文html，从而完成加密（没有上传明文md和明文html）。理论上互联网用户无法在gitbook网站和github仓库访问该内容，除非输入加密网址的密码。
+
+但是！最近才发现，可以通过gitbook网站的搜索框直接搜到加密网页的内容！经过多设备测试都能看到加密内容，不知道大家对这个问题有没有头绪。
