@@ -1,6 +1,7 @@
 # lzw笔记
 
 - 1study
+  * [9nuclear_english](1study/9nuclear_english.md)
   * [moose_analysis](1study/moose_analysis.md)
   * [moose](1study/moose.md)
   * [NUSOL_FI_JFNK](1study/NUSOL_FI_JFNK.md)
@@ -26,5 +27,5 @@
   * [5vscode](3cs/5vscode.md)
 - 9me
   * [0read](9me/0read.md)
-  * [9else](9me/9else.md)
+  * [1book](9me/1book.md)
   * [test](9me/test.md)

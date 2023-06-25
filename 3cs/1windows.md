@@ -117,8 +117,6 @@
 
 
 
-
-
 ## EXCEL
 
 ### 筛选行号
@@ -239,8 +237,12 @@ Ctrl 逐个选中所有文本框，组合，置于顶层
 
 5. Settings——proxies——Order by——选择Latency，使得代理可以按照延迟排序。
 
-6. 机场代理的规则如果不合适可以自行修改：Settings——Profiles——parsers
-——修改完一定要在Profiles更新订阅。具体可以参考[lbyczf](https://docs.cfw.lbyczf.com/contents/parser.html)。
+6. 如果无法连接，查看本机ip是否与设置ip一致
+
+   
+
+7. 机场代理的规则如果不合适可以自行修改：Settings——Profiles——parsers
+    ——修改完一定要在Profiles更新订阅。具体可以参考[lbyczf](https://docs.cfw.lbyczf.com/contents/parser.html)。
 
 ```yaml
 parsers: # array

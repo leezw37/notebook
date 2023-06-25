@@ -1,4 +1,5 @@
 # 目录
+
 [TOC]
 
 # GitBook
@@ -296,11 +297,14 @@ xxx.github.io.	5	IN	A	185.199.108.153
 
 # 其他
 
-## 请求加入谷歌搜索索引
+## 请求加入谷歌索引
 
+[知乎参考](https://zhuanlan.zhihu.com/p/129022264)
 
-
-- 请求编入索引
+1. 查看网站是否被Google收录：打开Google搜索输入`site:l2w.top`，一般没有收录所以查询不到
+2. 手动请求收录：进入[Google Search Console](https://search.google.com/search-console?hl=zh-CN)——点击左上角添加资源——弹窗选择右边的网址前缀——选择最快的HTML文件验证方法——下载随机生成的`.html`验证文件，上传到网址根目录——自行测试该网址成功后回到console完成验证
+3. 添加Sitemaps给爬虫加速（特别是大网站、新网站、内部相互链接少的网站）：进入[XML-Sitemaps.com](https://www.xml-sitemaps.com/)，输入个人网站地址，点击start——搜索完成后view details，下载sitemap.xml文件并上传到网站根目录——回到Console点击左侧菜单站点地图，添加网址
+4. 手动请求优先编入索引（可能有效，数小时~一两周）：点击console上方搜索框输入自己的网址——若显示未收录点击“请求编入索引”——大约等待不超过半天就能检索到（实测只检测到了index根站点，子文件夹内容没有检索到）
 
 ## 标题最好少于20字
 

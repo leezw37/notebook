@@ -425,18 +425,28 @@ echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
 
 [github超赞的-linux-软件仓库](https://github.com/luong-komorebi/Awesome-Linux-Software/blob/master/README_zh-CN.md#%E8%B6%85%E8%B5%9E%E7%9A%84-linux-%E8%BD%AF%E4%BB%B6)
 
+## audacity音频降噪
+
+- [github下载](https://github.com/audacity/audacity/releases)，给运行权限`chmod +x *.AppImage`，双击运行。
+- 导入音频：file, import, audio。
+- 降噪：effect，noise removal and repair，noise reduction，get noise profile
+- 选中噪音：F1选择模式，单击选中纯噪音段起始时刻，ctrl 选中结束时刻，再次进入上一步降噪。可以设置降噪强度，敏感度，平滑度。OK确定，开始降噪处理。
+- 导出音频。
+
+
+
 ## ImageMagick批量压缩图指定大小
 
 [软件下载](https://imagemagick.org/script/download.php)AppImage格式
 
-[命令选项](https://imagemagick.org/script/convert.php)
+[命令选项网页](https://imagemagick.org/script/convert.php)
 
 ImageMagick是一个用于查看、编辑位图文件以及进行图像格式转换的开放源代码软件套装。它可以读取、编辑超过100种图帧式。主要由大量的命令行程序组成，而不提供图形界面。它还为很多程序语言提供了API库。
 
 ```bash
 chmod a+x magick 
 
-# 压缩图片略小于指定值，应该是比较判断
+# 压缩图片略小于指定值，应该是多次压缩后比较判断
 ./magick convert 春游*.jpg -define jpeg:extent=25MB output.jpg
 
 # reduce the image size before it is written to the PNG format:
@@ -553,6 +563,14 @@ Terminal=false
 Icon=/home/lee/software/typora/typora_icon.png
 Type=Application
 Categories=Development
+
+## 微信
+
+[优麒麟应用商店](https://www.ubuntukylin.com/applications/106-cn.html)下载deb包，用命令`sudo dpkg -i XXX.deb`安装。这是linux原生的，功能少很多，但比wine的要轻巧不少。
+
+## QQ
+
+[官网](https://im.qq.com/linuxqq/index.shtml)下载x86版deb包安装（ubuntu）
 
 ## 安卓虚拟机waydroid
 

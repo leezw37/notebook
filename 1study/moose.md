@@ -207,9 +207,11 @@ https://mooseframework.inl.gov/moose/syntax/UserObjects/index.html
 
 # 未整理
 ## 矢量速度
+
   ADReal j_g = (1 - alpha_g) * _u[_qp] * ADRealVectorValue(1, 0, 0);
 
-### min,`max`函数不匹配
+## min,`max`函数不匹配
+
 min(170 * (Re / Re), -Re / 6e4)
 
 ### ADReal就是（double，偏导）
