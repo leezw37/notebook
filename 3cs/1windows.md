@@ -5,7 +5,13 @@
 
 
 
+
+
+
+
 ## 用 diskgenius 将 win 环境迁移到虚拟机
+
+？
 
 ## 批量修改文件名后缀
 
@@ -19,9 +25,60 @@
 
 **方法2: Win + S运行搜索，输入cmd，以管理员身份运行——输入bcdedit，找到标识符，如果你在本地有PE系统，那么这里是一串代码，复制——然后bcdedit /delete \[你复制的代码\回车——最后弹出操作成功完成，说明成功了——然后我们在系统盘里面再把PE的文件删除即可**
 
-## win虚拟机
+## windows设置
 
-安装精简版windows，只运行微信、tim，内存可低至1G。
+- DWS移除win10跟踪及系统应用：[DWS下载后打开](https://github.com/Nummer/Destroy-Windows-10-Spying/releases)，设置菜单，专业模式选择所有（metro是预装应用）。工具菜单，删除所有metro应用（包括应用商店），删除One Drive，禁用UAC，禁用Windows update。主界面菜单，点击Destroy-Windows-10-Spying，重启。
+
+- 任务栏：右键底部任务栏。搜索，显示桌面图标。显示桌面图标，关闭。显示任务视图，关闭。
+
+- 关闭磁盘自动优化：右键磁盘，属性，工具，优化驱动器，关闭所有
+
+- 最佳性能：右键我的电脑，属性，高级，性能，设置，调整为最佳性能，确定。
+
+- 电源高性能模式：右键右下角电池图标，选择电源模式为高性能。如果没有该模式，搜索‘’命令提示符‘’，打开输入`powercfg -SETACTIVE 8c5e7fda-e8bf-4a96-9a85-a6e23a8c635c`。（适用于Intel CPU且操作系统是Windows 10 20H1或之后版本）
+
+- 激活windows：HEU_KMS_Activator激活工具
+
+- 迁移系统文件夹：文件管理器，桌面、文档等文件夹，右键属性，位置，文件路径前缀改为`D:\sys\`，确定。
+
+- 启动项管理：ctrl + shift +esc打开任务管理器，启动，基本可以禁用所有。
+
+- 卸载系统多余软件：在开始菜单中寻找，不需要的右键直接卸载。也可以右键开始菜单，弹出菜单中点击“应用和功能（F）”卸载应用。
+
+- 关闭defender防火墙：在搜索栏中输入控制面板，打开，系统和安全，安全和维护下方的【更改用户账户控制设置】，Windows defender防火墙，左侧【启用或关闭Windows defender防火墙】，全部关闭，确定；
+
+- 清空桌面系统图标和开始屏幕：右键桌面，个性化，主题，桌面图标设置，取消所有。在开始菜单中删除固定的不需要的应用，找到我的电脑、控制面板、计算机管理、power shell、命令提示符、运行等，拖动到开始屏幕固定。
+
+- 设置底部任务栏图标：右键桌面，个性化，任务栏，打开或关闭系统图标
+
+- 卸载小娜： Windows 10 2004 以上版本！搜索输入 PowerShell 并以管理员身份运行，`Get-AppxPackage -allusers Microsoft.549981C3F5F10 | Remove-AppxPackage`
+
+
+
+## 安装&激活office
+
+1. ccleaner卸载office，清理注册表
+2. 下载运行[Office Tool Plus.exe](https://otp.landian.vip/zh-cn/download.html)。
+3. 安装：右上角命令，输入
+   `deploy /addProduct O365ProPlusRetail_zh-cn_Access,Bing,Groove,Lync,OneDrive,OneNote,Outlook,Publisher,Teams /addProduct VisioProRetail_zh-cn_Groove,OneDrive /channel Current /downloadFirst`
+   （安装 Office LTSC 专业增强版 2021 批量许可 (仅 Word, PowerPoint, Excel) + Visio LTSC 专业版 2021 批量许可。[安装教程](https://www.coolhub.top/archives/11)）
+4. 激活：
+   1. 激活菜单，许可证管理小箭头，清除激活信息。
+   2. 工具箱菜单，office工具，重置 Office 设置为默认设置。
+   3. 右上角命令，输入`ospp /insLicID ProPlus2021Volume /sethst:kms.loli.best /setprt:1688 /act`和`ospp /insLicID VisioPro2021Volume /sethst:kms.loli.best /setprt:1688 /act`
+   4. 出错一般是激活代码更新了，前往[激活教程](https://www.coolhub.top/archives/14)核对。
+5. 关闭自动更新
+   在“开始屏幕”打开任意office应用，单击左下角“账户”，“更新选项”，禁用更新
+
+
+
+## windows镜像/虚拟机
+
+1. [精简版windows](http://bbs.wuyou.net/forum.php?mod=viewthread&tid=429015)，只运行微信、tim，内存可低至1G。
+2. [官方windows下载](https://www.microsoft.com/zh-cn/software-download/windows10ISO)
+3. 
+
+
 
 ### win虚拟机扩展硬盘内存容量
 
@@ -254,15 +311,15 @@ parsers: # array
 ```
 
 # 问题
-### wifi不跳转网页验证
+## wifi不跳转网页验证
 
 手动在浏览器输入`192.168.1.1`，自动跳转当前wifi的验证网址。
 
-### .msi 安装失败
+## .msi 安装失败
 
  以管理员身份运行。右键安装包, 或在Directory Opus中开启。
 
-### 打印机无法识别U盘
+## 打印机无法识别U盘
 
 - 格式化为FAT32格式。分配单元为默认配置大小。（容量最好32G及以下）
 - 硬盘格式：

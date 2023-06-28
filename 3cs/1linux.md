@@ -162,6 +162,20 @@ passwd 选项 用户名
 
 # 使用技巧
 
+## Linux刷回windows
+
+老毛桃预装360等毒瘤？下次换微PE安装。
+
+1. 准备：备份U盘，另一台windows电脑[下载老毛桃工具箱完整版](https://www.laomaotao.net)和[win10系统ios镜像官方版](https://www.microsoft.com/zh-cn/software-download/windows10ISO)。
+2. [制作u盘启动盘](https://www.laomaotao.net/doc/udiskwinpe.html)：打开老毛桃，U盘启动，普通模式，USB-HDD，NTFS，一键制作成USB启动盘
+3. 复制iso系统镜像到u盘启动盘，电脑插入U盘。
+4. BIOS设置U盘启动：重启，狂按F2（Lenovo-R720）进入BIOS设置。BOOT菜单，上下箭头移动到EFI和Legacy中的U盘USB Device (hp  v206w)，F6将两者都移动到最顶部。Exit菜单，exit saving changes，确认进入老毛桃系统。
+5. 重建分区：双击桌面图标“分区工具”，右键左侧菜单所有硬盘（HD0、HD1等），删除所有分区，保存更改。固态系统C盘128G，新建分区，全选建立ESP和MSR分区，格式化为NTFS，保存更改，确定格式化。机械数据D盘1T，新建分区，不选ESP、MSR，保存更改，确定格式化。
+6. 重装Win10：双击桌面图标“老毛桃一键装机”，打开选择镜像文件，版本选最好的专业工作站版，盘符选C盘固态，执行，选中格式化分区、网卡驱动、USB驱动、SATA驱动，勾选完成后重启，等到重启时拔掉U盘以免进入老毛桃系统。
+7. 20230625成功，卸载老毛桃预装软件。（还有360这种毒瘤？下次换微PE安装）
+
+
+
 
 
 ## Linux主机上qemu+kvm直通显卡

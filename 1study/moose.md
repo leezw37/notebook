@@ -1,8 +1,21 @@
 # 目录
 [TOC]
 
+# 基础（以官网为准！）
 
-# 基础知识
+## 准备工作
+
+1. linux系统：建议vmware 安装ubuntu。
+2. （科学上网工具：clash + 机场订阅，用于访问github等网站）
+
+[官网开始学习](https://mooseframework.inl.gov/getting_started/)
+
+[workshop研讨会视频-B站](https://www.bilibili.com/video/BV1f44y1271A)
+
+[workshop研讨会视频-YouTube](https://www.youtube.com/watch?v=2tJwBsYaLaI)
+
+
+
 ## 新建程序
 
 [官网——手动GCC调试](https://mooseframework.inl.gov/getting_started/installation/manual_installation_gcc.html)
