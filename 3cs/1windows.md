@@ -5,6 +5,53 @@
 
 
 
+## 笔记本+工位双屏协同
+
+- 原理：左侧显示器显示远程笔记本的第一屏，右侧显示器直连笔记本显示第二屏，笔记本鼠标可以无缝操作双屏，键盘可以直接用台式机操作双屏！（音量调节等部分功能不行。应该是只要笔记本鼠标把光标放在了第二屏，台式键盘只管输入内容，不论是哪个屏幕）
+- 好处：便宜、享受、便携。既能在工位享受双屏，又能在下班后直接带走所有工作。（远程软件如todesk提供虚拟双屏？198元/年。如果不购买只能在一个显示器上来回切换）
+- 屏幕：笔记本、台式大屏、笔记本拓展大屏从左向右
+- 鼠标：以笔记本鼠标为主，台式鼠标放在右上角辅助操作
+- 设置：
+  - 笔记本鼠标：点击笔记本右下角通知栏，打开投影，设置为拓展，则右侧大屏显示第二屏（没有的话打开折叠，或者右键编辑图标，加入投影）
+  - 台式机鼠标：开启todesk、向日葵等远程软件的全屏模式，则左侧大屏控制第一屏。
+- 建议常用、显示文本类的应用放在第二屏，直连笔记本更清晰。
+- 需要时间适应操作逻辑，不要混淆笔记本和台式，屏幕和屏幕。
+
+
+
+## `attrib`命令隐藏文件夹
+
+- cmd管理员运行 `attrib +s +h 文件夹完整路径`，就能隐藏。不需要了可以解，输入`attrib -s -h  文件夹完整路径`。
+
+- 在默认的资源管理器中，即使勾选显示隐藏项目也不会显示，除非直接输入路径。不过对DirectoryOpus等第三方文件管理器无效，一般够用了。
+
+- 更建议继续在隐藏目录下使用`attrib +s +h * /s /d` 和 `attrib -s -h * /s /d`，应用于所有文件夹和文件。
+
+- `attrib /?` 查看命令用法：+/- 设置/清除属性，R 只读属性，A 存档属性，S 系统属性，H 隐藏属性。/S 和 /D 分别对该目录下所有匹配的文件和文件夹执行
+
+## 添加软件到开始屏幕
+
+找到软件安装目录下的`.exe`可执行程序，右键新建快捷方式，复制到`C:\ProgramData\Microsoft\Windows\Start Menu\Programs`，右键固定到开始屏幕。（可能无法点击开始菜单的程序列表中的程序，但是可以操作开始屏幕中的程序）
+
+## 为无后缀文件设置默认打开程序
+
+- 管理员运行cmd，`assoc  .`，查看无拓展的关联类型，应该显示没有找到文件关联.。
+- `assoc .=No Extension`，自定义设置无后缀文件为`No Extension`类型
+- `ftype "No Extension"="F:\pro\UltraEdit\uedit64.exe""%1"`，设置默认打开程序为ultraedit。
+- `ftype`，查看所有后缀格式的默认打开程序，在`no extention`一行确认。
+- (outdta有效，indta无效)
+
+## 一键删除文件.bat
+
+新建文本文件，重命名为`0一键删除outdta和rstplt文件.bat`，编辑以下内容。双击即可运行。
+
+```bat
+del /f /s /q outdta
+del /f /s /q rstplt
+```
+
+
+
 
 
 
@@ -53,26 +100,40 @@
 
 - 卸载小娜： Windows 10 2004 以上版本！搜索输入 PowerShell 并以管理员身份运行，`Get-AppxPackage -allusers Microsoft.549981C3F5F10 | Remove-AppxPackage`
 
+- 设置，个性化，颜色，透明效果关闭
+
+- 设置，系统，关于，重命名此电脑
+- 关闭安全中心通知：控制面板\所有控制面板项\安全和维护，左侧更改安全与维护设置，取消勾选安全消息部分所有。
+- 
+
 
 
 ## 安装&激活office
 
 1. ccleaner卸载office，清理注册表
-2. 下载运行[Office Tool Plus.exe](https://otp.landian.vip/zh-cn/download.html)。
-3. 安装：右上角命令，输入
-   `deploy /addProduct O365ProPlusRetail_zh-cn_Access,Bing,Groove,Lync,OneDrive,OneNote,Outlook,Publisher,Teams /addProduct VisioProRetail_zh-cn_Groove,OneDrive /channel Current /downloadFirst`
-   （安装 Office LTSC 专业增强版 2021 批量许可 (仅 Word, PowerPoint, Excel) + Visio LTSC 专业版 2021 批量许可。[安装教程](https://www.coolhub.top/archives/11)）
-4. 激活：
+2. 复制此前安装的文件夹，或者下载运行[Office Tool Plus.exe](https://otp.landian.vip/zh-cn/download.html)。
+3. [安装](https://www.coolhub.top/archives/11)：
+   - 如果以前安装过，office tools文件夹会存在已下载的版本，软件自动匹配了相关配置，此时安装命令的配置
+   - 如果与以前不一致，可能会无法安装。
+   - 此时可以：1.执行以前版本的部署命令，弹出准备部署窗口，记住最后的Office版本，是，提示版本不一致，选择否就不会下载更新的版本，而是用本地安装包直接安装。2.重新下载安装。进入部署菜单，安装文件，删除该版本，执行下面部署命令。
+   - 右上角命令，输入
+     `deploy /addProduct O365ProPlusRetail_zh-cn_Access,Bing,Groove,Lync,OneDrive,OneNote,Outlook,Publisher,Teams /addProduct VisioProRetail_zh-cn_Groove,OneDrive /channel Current /downloadFirst`，（安装 Microsoft 365 企业应用版（Word, PowerPoint, Excel）+ Visio 2016）
+   - 把以前的命令备份一下：`deploy /addProduct ProPlus2021Volume_zh-cn_Access,Groove,Lync,OneDrive,OneNote,Outlook,Publisher,Teams /addProduct VisioPro2021Volume__Groove,OneDrive /channel PerpetualVL2021 /downloadFirst`（安装 Office LTSC 专业增强版 2021 批量许可 (仅 Word, PowerPoint, Excel) + Visio LTSC 专业版 2021 批量许可。）
+4. [激活](https://www.coolhub.top/archives/14)：
    1. 激活菜单，许可证管理小箭头，清除激活信息。
    2. 工具箱菜单，office工具，重置 Office 设置为默认设置。
-   3. 右上角命令，输入`ospp /insLicID ProPlus2021Volume /sethst:kms.loli.best /setprt:1688 /act`和`ospp /insLicID VisioPro2021Volume /sethst:kms.loli.best /setprt:1688 /act`
-   4. 出错一般是激活代码更新了，前往[激活教程](https://www.coolhub.top/archives/14)核对。
+   3. 右上角命令，输入`ospp /insLicID MondoVolume /sethst:kms.loli.best /setprt:1688 /act`
+   4. 备份Office LTSC 专业增强版 2021 批量许可激活命令：`ospp /insLicID ProPlus2021Volume /sethst:kms.loli.best /setprt:1688 /act` 和 和 和 和和 和 `ospp /insLicID VisioPro2021Volume /sethst:kms.loli.best /setprt:1688 /act`。
+   5. 激活失败，可以用HEU KMS Activator激活！ 
+   6. 出错一般是激活代码更新了，前往激活教程核对。
 5. 关闭自动更新
    在“开始屏幕”打开任意office应用，单击左下角“账户”，“更新选项”，禁用更新
 
 
 
-## windows镜像/虚拟机
+## windows镜像/虚拟机vmware
+
+
 
 1. [精简版windows](http://bbs.wuyou.net/forum.php?mod=viewthread&tid=429015)，只运行微信、tim，内存可低至1G。
 2. [官方windows下载](https://www.microsoft.com/zh-cn/software-download/windows10ISO)
@@ -148,20 +209,20 @@
 
 左下角开始（或右击我的电脑，属性）——设置——系统——关于——高级系统设置——高级——环境变量——（系统变量）新建——3次确定
 
-## 硬盘速度对比
+## 固态/机械/移动硬盘速度对比
 
 读/写（顺序/随机 + 8/1队列）
 
-|               | 工位固态 | 机械移动 |
-| ------------- | -------- | -------- |
-| 顺序读，8队列 | 2500     | 110      |
-| 顺序读，1队列 | 1500     | 110      |
-| 随机读，8队列 | 500      | 0.5      |
-| 随机读，1队列 | 50       | 0.5      |
-| 顺序写，8队列 | 1100     | 100      |
-| 顺序写，1队列 | 550      | 100      |
-| 随机写，8队列 | 350      | 9        |
-| 随机写，1队列 | 150      | 9        |
+|                 | 固态 | 机械 | 固态硬盘盒USB3.0 | 机械移动 |
+| --------------- | ---- | ---- | ---------------- | -------- |
+| 顺序，读，8队列 | 2500 | 140  | 440              | 110      |
+| 顺序，读，1     | 1500 | 130  | 340              | 110      |
+| 随机，读，8     | 400  | 2    | 180              | 1        |
+| 随机，读，1     | 40   | 1    | 23               | 1        |
+| 顺序，写，8     | 1000 | 135  | 460              | 100      |
+| 顺序，写，1     | 550  | 130  | 390              | 100      |
+| 随机，写，8     | 300  | 1.5  | 190              | 9        |
+| 随机，写，1     | 130  | 1..5 | 40               | 9        |
 
 ## windows永不更新
 
@@ -311,6 +372,23 @@ parsers: # array
 ```
 
 # 问题
+
+## VMware的win10蓝屏pfn share count
+
+关闭VMware的3d加速：虚拟机，设置，硬件，显示器，取消加速3D图形。
+
+（问题复现：VMware使用精简版win10的ultraedit的查找功能时，如果在第一个/最后一个查找结果后在查找上一个/下一个，直接蓝屏死机： 错误代码 PFN SHARE COUNT，位于 vm3dmp.sys。）
+
+
+
+## VMware虚拟机自动挂起
+
+右键左下角，按键p打开控制面板，搜索电源选项，打开隐藏计划的高性能模式。更改计划设置，从不关闭显示器和进入睡眠。更改高级电源设置，硬盘设置为从不关闭。
+
+## VMware虚拟机正在被使用无法运行
+
+找到虚拟机位置，将后缀为.lck的文件夹删除，或者备份，或者添加此文件夹后缀为.backup。
+
 ## wifi不跳转网页验证
 
 手动在浏览器输入`192.168.1.1`，自动跳转当前wifi的验证网址。
@@ -328,5 +406,4 @@ parsers: # array
 >- NTFS ： Windows 的默认文件系统，用来替换 FAT32。Windows 的系统盘只能使用这个系统，移动硬盘买来装的也是它。
 >- exFAT ：可以看作是 FAT32 的64位升级版，（extended，表示"扩展的 FAT32"），功能不如 NTFS，但是解决了文件和分区的大小问题，两者最大都可以到 128PB。由于 Mac 和 Linux 电脑可以读写这种系统，所以移动硬盘的文件系统可以改成它，但是不推荐。__不适合作为硬盘这种用于存放数据场景下的文件系统。__
 
-
-#
+# 0

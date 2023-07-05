@@ -29,7 +29,7 @@ Vim 对于每个服务端开发人员都不陌生，这可能是我们接触最�
 -   [Missing Semester - 3. Vim 编辑器](https://missing-semester-cn.github.io/2020/editors/)：非常推荐的课程，所有内容都很有帮助
 -   [The Vim Tutorial Part One - Youtube](https://www.youtube.com/watch?v=ER5JYFKkYDg), [Part Two](https://www.youtube.com/watch?v=tExTz7GnpdQ&t=467s)：看英文字幕比较吃力的话，可以直接看本文
 -   vimtutor：安装 vim 后自带的教程，在终端执行 `vimtutor` 即可打开，mac 系统下是中文文档
-    ![-w1439](https://imageslr.com/media/16114169033178.jpg)
+    
 -   [Vim Adventure](https://vim-adventures.com/)：以游戏的方式学习 vim
 
 > 这里顺便再推荐一些可视化学习资源：

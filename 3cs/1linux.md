@@ -162,19 +162,24 @@ passwd 选项 用户名
 
 # 使用技巧
 
+
+
+## 设置文件默认打开程序
+
+如PDF：右键任意pdf文件，属性，打开为，选中WPS PDF，设置为默认。
+
 ## Linux刷回windows
 
 老毛桃预装360等毒瘤？下次换微PE安装。
 
+如果已经安装了可以重置系统：设置，更新与安全，恢复，重置此电脑。
+
 1. 准备：备份U盘，另一台windows电脑[下载老毛桃工具箱完整版](https://www.laomaotao.net)和[win10系统ios镜像官方版](https://www.microsoft.com/zh-cn/software-download/windows10ISO)。
-2. [制作u盘启动盘](https://www.laomaotao.net/doc/udiskwinpe.html)：打开老毛桃，U盘启动，普通模式，USB-HDD，NTFS，一键制作成USB启动盘
-3. 复制iso系统镜像到u盘启动盘，电脑插入U盘。
-4. BIOS设置U盘启动：重启，狂按F2（Lenovo-R720）进入BIOS设置。BOOT菜单，上下箭头移动到EFI和Legacy中的U盘USB Device (hp  v206w)，F6将两者都移动到最顶部。Exit菜单，exit saving changes，确认进入老毛桃系统。
+2. [制作u盘启动盘](https://www.laomaotao.net/doc/udiskwinpe.html)：打开老毛桃，U盘启动，普通模式，USB-HDD，NTFS，一键制作成USB启动盘。复制ISO系统镜像文件到u盘启动盘，笔记本电脑插入U盘。
+4. BIOS设置U盘启动：重启，同时狂按F2（Lenovo-R720）进入BIOS设置。BOOT菜单，上下箭头移动到EFI和Legacy中的U盘USB Device (hp  v206w)，F6将两者都移动到最顶部。Exit菜单，exit saving changes，确认进入老毛桃系统。
 5. 重建分区：双击桌面图标“分区工具”，右键左侧菜单所有硬盘（HD0、HD1等），删除所有分区，保存更改。固态系统C盘128G，新建分区，全选建立ESP和MSR分区，格式化为NTFS，保存更改，确定格式化。机械数据D盘1T，新建分区，不选ESP、MSR，保存更改，确定格式化。
 6. 重装Win10：双击桌面图标“老毛桃一键装机”，打开选择镜像文件，版本选最好的专业工作站版，盘符选C盘固态，执行，选中格式化分区、网卡驱动、USB驱动、SATA驱动，勾选完成后重启，等到重启时拔掉U盘以免进入老毛桃系统。
 7. 20230625成功，卸载老毛桃预装软件。（还有360这种毒瘤？下次换微PE安装）
-
-
 
 
 
@@ -439,6 +444,16 @@ echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
 
 [github超赞的-linux-软件仓库](https://github.com/luong-komorebi/Awesome-Linux-Software/blob/master/README_zh-CN.md#%E8%B6%85%E8%B5%9E%E7%9A%84-linux-%E8%BD%AF%E4%BB%B6)
 
+## wps旧版可编辑pdf
+
+[直接下载安装包](https://wdl1.cache.wps.cn/wps/download/ep/Linux2019/10161/wps-office_11.1.0.10161_amd64.deb)
+
+[来源：arclinux软件仓库](https://aur.archlinux.org/cgit/aur.git/log/?h=wps-office-cn)
+
+降级安装：先删除配置，`rm -rI ~/.config/Kingsoft/`，再安装`sudo dpkg -i wps-office_11.1.0.10161_amd64.deb`。
+
+内存占用700MB。
+
 ## audacity音频降噪
 
 - [github下载](https://github.com/audacity/audacity/releases)，给运行权限`chmod +x *.AppImage`，双击运行。
@@ -578,13 +593,27 @@ Icon=/home/lee/software/typora/typora_icon.png
 Type=Application
 Categories=Development
 
+## chrome
+
+内存占用1.1GB。
+
+## typora
+
+135MB内存
+
 ## 微信
 
-[优麒麟应用商店](https://www.ubuntukylin.com/applications/106-cn.html)下载deb包，用命令`sudo dpkg -i XXX.deb`安装。这是linux原生的，功能少很多，但比wine的要轻巧不少。
+[优麒麟应用商店](https://www.ubuntukylin.com/applications/106-cn.html)下载deb包，用命令`sudo dpkg -i XXX.deb`安装。
+
+是linux原生的，但是只有基本的聊天功能，没有朋友圈小程序等，聊天不能图片编辑、@他人、显示时间，内存占用仍有870MB，但比wine的微信好像更轻巧。
 
 ## QQ
 
-[官网](https://im.qq.com/linuxqq/index.shtml)下载x86版deb包安装（ubuntu）
+[官网](https://im.qq.com/linuxqq/index.shtml)下载x86版deb包安装（ubuntu），内存占用190MB。
+
+## 搜狗输入法
+
+60MB内存
 
 ## 安卓虚拟机waydroid
 
@@ -604,7 +633,7 @@ sudo apt install waydroid -y
 
 # 问题
 
-##  网络图标消失
+##  网络图标消失，无法联网
 
 
 ```bash
