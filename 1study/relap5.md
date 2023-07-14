@@ -484,8 +484,8 @@
 11250301  1.0  4
 * 初始温度; 网格点编号
 11250401  538.98  5
-* 左、右边界条件501、601：边界相邻水力控制体/通用表编号; 增量（一般10000，对应控制体12501/2/3/.../40）; 
-		*边界条件类型（0对称/绝热，1/1nn对应多种对流边界，nxxx其他类型）; 
+* 左、右边界条件501、601：边界相邻水力控制体/通用表编号的负值; 增量（一般10000，对应控制体12501/2/3/.../40）; 
+		*边界条件类型（0对称/绝热，1/1nn对应多种对流边界，1xxx查总表xxx左/右边界温度，2xxx热流密度，3xxx对流系数随时间变化表，4xxx对流系数随壁面温度变化表）; 
 		*表面积标记（决定后面参数5，0左表面积，1矩形体表面积/圆柱体高度/球形份额）; 
 		*表面积（热构件控制体高度）/系数; 热构件编号
 11250501  125010000  10000  1  1  0.1385  40
@@ -948,77 +948,7 @@
 
 
 
-# 其他
-
-
-
-
-
-## 为无后缀文件设置默认打开程序
-
-- 管理员运行cmd，`assoc  .`，查看无拓展的关联类型，应该显示没有找到文件关联.。
-- `assoc .=No Extension`，自定义设置无后缀文件为`No Extension`类型
-- `ftype "No Extension"="F:\pro\UltraEdit\uedit64.exe""%1"`，设置默认打开程序为ultraedit。
-- `ftype`，查看所有后缀格式的默认打开程序，在no extention一行确认。
-
-## 一键删除文件.bat
-
-新建文本文件，重命名为`0一键删除outdta和rstplt文件.bat`，编辑以下内容。双击即可运行。
-
-```bat
-del /f /s /q outdta
-del /f /s /q rstplt
-```
-
-
-
-## AptPlot快速绘图rstplt
-
-1. 安装jdk运行环境：双击 jdk-7u51-windows-x64.exe
-2. 安装aptplot：右键`AptPlotInstaller.jar`——打开方式选择java (TM) Plateform SE binary——install or update from a local folder——选择当前文件夹提取安装包（含有文件AptPlot_6.5.2）——选择安装目录——按步骤操作完成安装
-3. 处理relap再启动文件rstplot：打开aptplot的file目录——read——relap5 data——选择rstplt再启动文件——在弹出的select relap channels窗口选中关心的数据channel（单击/ +ctrl/ +shift）——plot绘制——可以在data sets中查看已选数据集，继续选中channel增加数据，或者在data sets中右键显示show/隐藏hide/删除kill数据，或者clear sets清空数据集。
-4. 各种绘图框的设置可以通过保存一个apf文件的形式保留下来。
-
-
-
-其他注意事项/使用技巧
-
-1. 不懂就去查文档：Help目录——help contents
-2. 查看、编辑数据表：双击data sets——双击单元格修改
-3. 解决Data Sets不显示变量名：右键Data Sets框体——selector operations——勾选view sets comments
-4. 导出到Origin：select relap channels窗口——data sets框——选择数据右键Edits——复制数据（如何大批量复制：选中第一行第二列单元格，拖动滚动条到最后，按住Shift时单击最后一行最后一列单元格，ctrl +c）
-5. 调整坐标轴范围：Plot菜单进入Axes设置（或双击四周框线弹出）——general的Edit设置编辑对象——start、stop设置范围
-6. 调整绘图框大小位置：双击四角的黑点不松手，拖动即可调整。也可以去Graph Appearance——Main——viewport调整XY范围。
-7. 调整图例框位置Legends Box：双击图例框或点击Plot菜单弹出Graph Appearance——编辑Leg. Box Location中的X Y（分别是左、上边的位置）
-8. 选择数据操作麻烦，如果关闭select relap channels窗口后还想继续选择数据，只能重新去file目录——read——relap5 data。
-
-## UltraEdit 列编辑outdta
-
-1. 双击 ue_chinese_64.exe 64位版官方安装程序。
-2. 安装完成后关闭程序，复制 IDM_Universal_Patch_v6.0.exe 到安装目录，以管理员身份运行。
-3. 选择 ultra edit v27.x -(x64) , 点击patch。
-4. 若提示未找到安装路径，点击是，手动选择安装目录下的 ProtectionPlusDLL.dll 打开，再次patch。
-
-使用：
-
-1. 列编辑：主菜单——编辑菜单——列模式，打开即可对某一列数据进行操作，对outdta很实用。
-2. 空格处理：格式菜单，制表符/空格，转换制表符为空格（全部）。删除行首空格。删除行尾空格。
-3. 
-
-## Origin严肃画图outdta
-
-安装：
-
-- 先修改系统时间为20210701（设置，时间与语言，关闭自动设置时间， 手动设置日期，否则提示试用期已过无法安装）。
-- 双击setup.exe安装，安装origin pro试用，用户和公司名`yuzhuyi`，下一步直到安装完毕，稍后重启。
-- 复制crack文件夹所有文件至安装目录下，替换同名文件。
-- 重新设置系统时间。
-
-AptPlot功能少、操作繁琐，只能绘制某个控制体的某个变量随时间变化的曲线。如果想绘制该变量随所有控制体的变化曲线，则需要使用Origin和Ultraedit来处理outdta。此外，Origin的图也被视为学术规范。
-
-
-
-## rstplt&outdta变量
+# rstplt&outdta变量
 
 参见input manual A4小编辑部分
 
@@ -1119,6 +1049,87 @@ AptPlot功能少、操作繁琐，只能绘制某个控制体的某个变量随�
 | voidg                       | 空泡份额(前一时间步)               | Vapor void fraction previous time step (n)                   |
 | vol-flag                    | 控制体控制标记                     | volume control flag (tlpvbfe)<br />t0不用热前沿追踪跟踪模型，<br />l0不用mixture level混合物水平面追踪模型，<br />p0使用water packing scheme水填充方案，<br />v0不使用垂直分层模型，<br />b0使用管道相间摩擦模型，<br />f0沿体积的x坐标计算壁摩擦效应，<br />e0使用非平衡(不相等温度)计算 |
 |                             |                                    |                                                              |
+
+
+
+# 其他
+
+
+
+## 增加终端默认宽度
+
+问题：relap5计算时终端输出总是由于宽度不够而自动换行。
+
+解决：右键终端上方框体，默认值，布局，窗口大小，设置为140，确定。重新运行。
+
+## 为无后缀文件设置默认打开程序
+
+- 管理员运行cmd，`assoc  .`，查看无拓展的关联类型，应该显示没有找到文件关联.。
+- `assoc .=No Extension`，自定义设置无后缀文件为`No Extension`类型
+- `ftype "No Extension"="F:\pro\UltraEdit\uedit64.exe""%1"`，设置默认打开程序为ultraedit。
+- `ftype`，查看所有后缀格式的默认打开程序，在no extention一行确认。
+
+## 一键删除并运行.bat
+
+新建文本文件，重命名为`0一键删除outdta和rstplt，运行relap5.bat`，编辑以下内容，双击即可运行。
+
+其中/p提示确认，/f强制删除只读，/S删除所有子目录中的指定的文件，  /Q 安静模式，删除全局通配符时，不要求确认。  /A 根据属性选择要删除的文件。（属性: R  只读文件, S  系统文件, H  隐藏文件, A  存档文件, I  无内容索引文件,   L  重分析点, `-`表示“否”的前缀）
+
+
+```bat
+del /f /q outdta
+del /f /q rstplt
+.\Relap.exe
+
+```
+
+
+
+## AptPlot快速绘图rstplt
+
+1. 安装jdk运行环境：双击 jdk-7u51-windows-x64.exe
+2. 安装aptplot：右键`AptPlotInstaller.jar`——打开方式选择java (TM) Plateform SE binary——install or update from a local folder——选择当前文件夹提取安装包（含有文件AptPlot_6.5.2）——选择安装目录——按步骤操作完成安装
+3. 处理relap再启动文件rstplot：打开aptplot的file目录——read——relap5 data——选择rstplt再启动文件——在弹出的select relap channels窗口选中关心的数据channel（单击/ +ctrl/ +shift）——plot绘制——可以在data sets中查看已选数据集，继续选中channel增加数据，或者在data sets中右键显示show/隐藏hide/删除kill数据，或者clear sets清空数据集。
+4. 为了简化操作，各种绘图框的设置可以通过保存apf文件的形式保留下来。先read一个不需要的rstplt文件，然后read需要的。这样在需要重新运行时，只需要点击`select RELAP channels`窗口的删除按钮就能解除文件占用，然后去文件夹运行一键删除和运行脚本并读入rstplt文件就能快速查看第二次。
+
+
+
+其他注意事项/使用技巧
+
+1. 不懂就去查文档：Help目录——help contents
+2. 查看、编辑数据表：双击data sets——双击单元格修改
+3. 解决Data Sets不显示变量名：右键Data Sets框体——selector operations——勾选view sets comments
+4. 导出到Origin：select relap channels窗口——data sets框——选择数据右键Edits——复制数据（如何大批量复制：选中第一行第二列单元格，拖动滚动条到最后，按住Shift时单击最后一行最后一列单元格，ctrl +c）
+5. 调整坐标轴范围：Plot菜单进入Axes设置（或双击四周框线弹出）——general的Edit设置编辑对象——start、stop设置范围
+6. 调整绘图框大小位置：双击四角的黑点不松手，拖动即可调整。也可以去Graph Appearance——Main——viewport调整XY范围。
+7. 调整图例框位置Legends Box：双击图例框或点击Plot菜单弹出Graph Appearance——编辑Leg. Box Location中的X Y（分别是左、上边的位置）
+8. 选择数据操作麻烦，如果关闭select relap channels窗口后还想继续选择数据，只能重新去file目录——read——relap5 data。
+
+## UltraEdit 列编辑outdta
+
+1. 双击 ue_chinese_64.exe 64位版官方安装程序。
+2. 安装完成后关闭程序，复制 IDM_Universal_Patch_v6.0.exe 到安装目录，以管理员身份运行。
+3. 选择 ultra edit v27.x -(x64) , 点击patch。
+4. 若提示未找到安装路径，点击是，手动选择安装目录下的 ProtectionPlusDLL.dll 打开，再次patch。
+
+使用：
+
+1. 列编辑：主菜单——编辑菜单——列模式，打开即可对某一列数据进行操作，对outdta很实用。
+2. 空格处理：格式菜单，制表符/空格，转换制表符为空格（全部）。删除行首空格。删除行尾空格。
+3. 
+
+## Origin严肃画图outdta
+
+安装：
+
+- 先修改系统时间为20210701（设置，时间与语言，关闭自动设置时间， 手动设置日期，否则提示试用期已过无法安装）。
+- 双击setup.exe安装，安装origin pro试用，用户和公司名`yuzhuyi`，下一步直到安装完毕，稍后重启。
+- 复制crack文件夹所有文件至安装目录下，替换同名文件。
+- 重新设置系统时间。
+
+AptPlot功能少、操作繁琐，只能绘制某个控制体的某个变量随时间变化的曲线。如果想绘制该变量随所有控制体的变化曲线，则需要使用Origin和Ultraedit来处理outdta。此外，Origin的图也被视为学术规范。
+
+
 
 
 

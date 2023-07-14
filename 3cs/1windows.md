@@ -122,8 +122,8 @@ del /f /s /q rstplt
 4. [激活](https://www.coolhub.top/archives/14)：
    1. 激活菜单，许可证管理小箭头，清除激活信息。
    2. 工具箱菜单，office工具，重置 Office 设置为默认设置。
-   3. 右上角命令，输入`ospp /insLicID MondoVolume /sethst:kms.loli.best /setprt:1688 /act`
-   4. 备份Office LTSC 专业增强版 2021 批量许可激活命令：`ospp /insLicID ProPlus2021Volume /sethst:kms.loli.best /setprt:1688 /act` 和 和 和 和和 和 `ospp /insLicID VisioPro2021Volume /sethst:kms.loli.best /setprt:1688 /act`。
+   3. 右上角命令，输入`ospp /insLicID MondoVolume /sethst:kms.loli.best /setprt:1688 /act`和 和 和 和和 和 visio2021`ospp /insLicID VisioPro2021Volume /sethst:kms.loli.best /setprt:1688 /act`。
+   4. 备份Office LTSC 专业增强版 2021 批量许可激活命令：`ospp /insLicID ProPlus2021Volume /sethst:kms.loli.best /setprt:1688 /act` 和 和 和 和和 和visio2021 `ospp /insLicID VisioPro2021Volume /sethst:kms.loli.best /setprt:1688 /act`。
    5. 激活失败，可以用HEU KMS Activator激活！ 
    6. 出错一般是激活代码更新了，前往激活教程核对。
 5. 关闭自动更新
@@ -233,7 +233,14 @@ del /f /s /q rstplt
 
 # 软件
 
+## BBDown使用教程
 
+1. [下载BBDown](https://github.com/nilaoda/BBDown/releases)（windows下win-x64.zip，linux下linux-x64.zip），并解压到BBDown文件夹下，应该只有`BBDown.exe`或者`BBDwon`。
+
+1. [下载ffmpeg](https://www.gyan.dev/ffmpeg/builds/)（ffmpeg-release-full.7z）实现视频音频合并能力，复制`\bin\ffmpeg.exe`到`BBDown.exe`同级文件夹。(ubuntu下载可能是`sudo apt install ffmpeg`)
+2. 登录账号：在BBDown文件夹下右键打开cmd命令提示符，输入`BBDown login`，app扫码登陆。
+3. 下载：`BBDown 链接或者BV号单集下载`，或者收藏夹等链接批量下载（点击头像进入个人空间，收藏菜单，收藏夹，复制右键或地址栏链接）。（linux先给运行权限`chmod +x BBDown`，然后`./BBDown 链接或BV号`，但是好像多P无法下载，无法合并第一集）
+4. 有些字幕有问题无法下载，`BBDown --skip-subtitle 链接或BV号`跳过。
 
 ## EXCEL
 
@@ -247,9 +254,10 @@ del /f /s /q rstplt
 * 筛选该列数据
 
 ## Word
+
 ### 解决尾注默认在文档最后
 
-，导致很多操作（如将致谢显示到最后）无法做到
+尾注默认在文档最后，导致很多操作（如将致谢显示到最后）无法做到
 
 整体思路：1.新增参考文献节、致谢节等从而可以操作这些内容。2.将尾注改到节最后显示从而使参考文献能置于致谢之前。3.通过在整篇文档取消尾注合并所有尾注，此时会在文档最后生成合并版的尾注。4.通过在参考文献节禁用“取消尾注”从而将尾注显示到这一节
 

@@ -54,6 +54,8 @@
 3. 若无法挂载data无法解密，搜索 twrp k30 pro最近一年，下载最新twrp.img
 4. 无法[跳过验证谷歌](https://www.hztdst.com/2985.html)，一直卡在“正在准备你的手机”——进入twrp，点击高级，点击终端，高通cpu的输入dd if=/dev/zero of=/dev/block/by-name/frp，确定（联发科cpu输入dd if=/dev/zero of=/dev/block/bootdevice/by-name/frp）
 5. lineage开发者模式，设置——关于手机——版本号点需点击
+6. 微信小程序同程艺龙完全无法使用。支付宝小程序飞猪、12306有时无法选择起始和终点站。（使用微信飞猪一切正常。。。。）
+7. 
 
 
 

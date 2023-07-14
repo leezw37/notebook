@@ -6,17 +6,380 @@
 
 [TOC]
 
-# RELAP5-mod 3.3简介
+
+
+# 程序主要流程
+
+
+
+1. 输入: inputd
+   1. 输入卡: rnewp
+   2. 初始化: mewp
+2. 瞬态计算: trnctl调用tran
+   1. 时间步长控制体及输出: dtstep
+   2. TDV和TDJ计算: tstate
+   3. 壁面导热计算: htadv	(Qwg;Qwf、壁面蒸汽蒸发量)
+      1. 再淹没导热计算: qfmove	
+      2. 非再淹没一维导热计算: htatdp
+         1. 对流换热计算: htrcl
+            1. 壁面蒸汽产生率: suboil
+            2. 单相对流换热: dittus
+            3. 核态沸腾: prednb
+            4. CHF:  chfcal	
+            5. 过渡及膜态沸腾: pstdnb	
+            6. 冷凝: conden	
+   4. 水力学计算: hydro	
+      1. 相间传热传质: phantv ( 得到hig`*`A，hif`*`A)
+         1. 流型判断：horizhifreg，verthifreg，得到flomap(1,ix)赋值给floreg。
+         2. 判断postdry：无干涸后则湿壁面相间换热wethif，干涸则dryhif。对应流型的换热。
+            1. wethif：
+               1. bubhif，floreg=4
+               2. slughif, floreg=5
+               3. amisthif, floreg=6
+               4. dispwethif, floreg=7
+               5. horizhif, floreg=12
+      2. 相间摩擦: phantj ( 得到 fi)	
+         1. horizdragreg，vertdragreg
+         2.  wetdrag，drydrag
+            1. wetdrag
+               1. bubdrag
+               2. slugdrag
+               3. amistdrag
+               4. dispdrag
+               5. hstratdrag
+         3. 为垂直分层流调整相间传热adjusthif
+         4. 修正: filterdrag，finaldrag
+      3. 壁面摩擦: fwdrag ( 得到 fwalf，fwalg)	
+      4. 局部阻力: hloss ( 得到 hlossg、Hlossf)	
+      5. 显式速度: vexplt(计算质量、动量，能量方程源项，并求解显式速度)
+      6. 临界流: jchoke(计算临界流量)
+      7. ccfl
+      8. 最终速度和压力: vfinl
+         1. 5*5系数矩阵和压力矩阵计算: preseq
+         2. 求解压力矩阵: syssol
+      9. 内能，空泡份额: eqfinl
+      10. 物性: state
+          1. stacc，计算安注箱状态方程，存储变量
+          2. statep
+             1.  classifyvols，控制体分类：一般控制体（非安注箱、TDV）、空气控制体和无空气的一般控制体（不凝性气体质量份额quala<1e-9，且，此时间步不会出现空气）。
+             2. supertosub (numnormvol)
+             3. withair (numnormvol, numairvol, matrl) 和 nwithair (numnormvol, numairvol, matrl)
+             4. withoutair (numnoairvol)
+             5. 最终物性：statepfinal(numnormvol,check)
+             6. 质量误差检查：masserror (check,syserr,sysesq,sysmsq,sysvol,sysvsq)
+      11. 水位追踪模型计算: level
+      12. jprop (0): Get donered properties (include stratified void fraction)
+      13. 控制体平均速度: vlvela
+   5. 中子动力学: rkin
+   6. 控制系统：convar
+   7. 输出到outdta
+3. 其他	
+
+# 子程序速查表
+
+| 子程序    | 功能                                                         |
+| --------- | ------------------------------------------------------------ |
+| accum     | 模拟安注箱水力、壁面和水表面的换热、蒸汽圆顶冷凝及水面蒸发的过程。 |
+| alg63     | alg63子程序使用高斯消去法求解一个5×5矩阵方程组               |
+| alg63n    | 子程序主要使用了高斯消去法求解两个5×5矩阵方程组，然后依据方程的解计算中间变量 |
+| amux      | 将矩阵A以点积的形式乘以一个向量，矩阵A以压缩稀疏行的形式存储 |
+| bishop    | 计算超临界条件下的bishop换热系数和次临界状态下的D-B换热系数，当换热包选项htopta=161时，被dittus调用 |
+| blkdta    | 定义一些不应改变的数据                                       |
+| borbnd    | 利用BPLU算法计算压力系数矩阵，包括LU分解和回代求解压力系数矩阵 |
+| bparam    | 被tsetsl子程序调用，用于瞬态计算前BPLU结构初始化，将系统矩阵重排为border-profile的形式，是BPLU法矩阵重排的主要子程序。 |
+| bpcnst    | bpcnst子程序被bpord子程序调用，主要用于BPLU求解器的重排技术之一——constant removal。 |
+| bpform    | 被bpord子程序调用，主要用于BPLU求解器的重排技术之一——constant removal |
+| bplu      | 被borbnd子程序调用，对系数矩阵进行LU分解。bplu子程序是主要的系数矩阵分解进程 |
+| bpmap22   | 被tsetsl子程序调用，用于瞬态计算开始前BPLU结构初始化，将系统矩阵重排为border-profile的形式，是BPLU法矩阵重排的主要子程序。Bpmap22与bpmap的区别是，bpmap22只用作控制体变量个数不超过8或a22子矩阵的分解。 |
+| bpmul     | 被setrhs子程序调用，setrhs只有在出现错误时被调用。bpmul子程序辅助setrhs，对解子矩阵行求和 |
+| bpord     | 被bparam子程序调用，主要用于BPLU求解器的重排运算             |
+| bppart    | 是BPLU矩阵求解器中重排处理的重要部分，主要作用是在重排后建立分区索引数组indblk，实现矩阵数值分解时的并行效果 |
+| bprcm     | 是BPLU矩阵求解器中重排处理的重要部分，主要作用是利用Reverse Cuthill-Mckee算法对系数矩阵进行重排，使得系数矩阵形成border-banded的形式 |
+| bpsqlu    | 被borbnd和bplu子程序调用，利用部分选主元的高斯消去法处理a（borbnd）或a22（bplu）子矩阵 |
+| bpsqsl    | 被borbnd子程序调用，在bpsqlu和bplu子程序之后。主要作用是在bpsqlu子程或bplu的LU分解之后进行回代，得到Ax=b方程中的解x |
+| bpsub     | 被borbnd子程序调用，在bplu子程序之后。主要作用是在LU分解后进行回代，得到Ax=b方程中的解x |
+| brntrn    | 使用二阶 Godunov方法计算硼的输运                             |
+| bwlim     | BPLU矩阵求解器中重排处理的重要部分，主要作用是利用带宽限制算法对系数矩阵进行重排，使得系数矩阵形成border-banded的形式。 |
+| ccfl      | 先判断接管是否发生逆流流动限制(Countercurrent Flow Limitation,CCFL)，若在接管处存在ccfl，则利用Wallis-Kutateladze的淹没限制方程对ccfl进行计算。子程序最后根据半隐和近隐处理格式不同，分别计算其所需的中间变量；若为半隐格式，计算接管汽液两相速度velfj、velgj，计算半隐格式所需的中间变量vfdpk、vgdpk、vfdpl、vgdpl；若为近隐格式，程序计算近隐格式计算所需的中间变量coefv、sourcv、difdpk、difdpl。 |
+| celmdr    | 计算包壳的杨氏模量和泊松比                                   |
+| chfcal    | 根据选项采用不同的方法进行CHF的预测                          |
+| chfitr    | 使用INTER CHF 模型计算临界热流密度                           |
+| chfkut    | 使用Kutateladze CHF关系式和Folkin-Goldberg空泡因子以及Ivey Morris冷却因子计算临界热流密度 |
+| chforn    | 针对窄缝板状燃料组件进行CHF的预测                            |
+| chfosm    | 使用Osmachkin关系式计算石墨堆功率通道的临界热流密度CHF       |
+| chfpgf    | 使用PGF关系式计算临界热流密度比通量形式                      |
+| chfpgg    | 使用PGG关系式计算临界热流密度比几何形式                      |
+| chfpgp    | 使用PGP关系式计算临界热流密度比的动力形式                    |
+| chfpg     | 计算临界热流密度比                                           |
+| chfsrl    | 根据SRL关系式计算临界热流密度                                |
+| chftab    | 根据1986 AECL-UO CHF查询表进行CHF的预测                      |
+| chklev    | 控制控制体之间两相液位的移动                                 |
+| chngva    | 计算由于包壳变形引起的控制体面积变化                         |
+| coev3d    | 计算速度矩阵系数coefv项，并计算相关动量通量项convf、convg    |
+| conden    | 计算冷凝换热的各相换热系数和热流密度                         |
+| condn2    | 采用了新的模型计算冷凝换热，只有当输入卡1的第45个选项开启时，才会调用这个子程序进行计算 |
+| convar    | 用来模拟水力系统中的控制系统的子程序                         |
+| courn1    | 计算最小基于接管速度的courant限值（时间步长限值）            |
+| cournt    | 计算最小基于体平均速度的courant限值（时间步长限值）          |
+| cov3dl    | 计算三维部件的动量通量项的速度矩阵方程的边界条件             |
+| cov3dy    | 计算速度矩阵系数coefv项，并计算相关动量通量项convf、convg，针对三维控制体y方向速度。 |
+| cov3dz    | 计算速度矩阵系数coefv项，并计算相关动量通量项convf、convg，针对三维控制体y方向速度。 |
+| cplexp    | 使用NUREG-0630的数据计算塑性应变。该子程序假设应用了间隙导热模型，当环向应力为负的时候跳过该子程序的计算过程 |
+| cprssr    | 计算压缩机的压差、转矩和转速，以及异步电动机的转矩           |
+| cramer2   | 通过克莱默法则解一系列方程                                   |
+| cthxpr    | 计算锆合金包壳的径向热膨胀                                   |
+| daxpy     | 一个向量乘以一个常数再加上另一个向量                         |
+| ddot      | 计算两个向量的点积(数量积)，采用开式循环使增量等于一         |
+| detector  |                                                              |
+| detmnt    | 采用高斯消去法用于计算行列式的值的子程序                     |
+| dittus    | 计算Dittus-Boelter强迫对流换热关系式。                       |
+| dmpcom1   | 指向seldmp1或selpdmp2的单元1或2写入重启记录                  |
+| dmplst    | 计算common /ftb/ 中的参数,如数据标识、数组大小、文件数量、上次描述的文件位置等，对所有链接表循环，对每个链接表内的参数设立相关的指针参数，并通过指针参数ix、iy输出各个参数相关的指针位置 |
+| dnrm2     | 求n维向量dx的范数                                            |
+| dyer      | 通过GE干燥器模型计算干燥器出口的汽液空间份额                 |
+| dtstep    | 瞬态计算过程中选择时间步长以及控制输出和画图的频率           |
+| eccmxj    |                                                              |
+| eccmxv    |                                                              |
+| eprij     |                                                              |
+| eqfinal   |                                                              |
+| errorn    |                                                              |
+| fidis2    |                                                              |
+| fidisj    |                                                              |
+| fidisv    |                                                              |
+| fildmp    |                                                              |
+| flux3d    |                                                              |
+| fmvlwr    |                                                              |
+| fricid    |                                                              |
+| fwdrag    |                                                              |
+| gapcon    |                                                              |
+| gasthc    |                                                              |
+| gcsub     |                                                              |
+| gctp,     |                                                              |
+| genchn    |                                                              |
+| gesep     |                                                              |
+| gesub     |                                                              |
+| gniel     |                                                              |
+| gninit    | gninit performs once only calculations and general initializations  including setting common block lengths and clearing them. |
+| grdnrj    |                                                              |
+| griftj    |                                                              |
+| helphd    |                                                              |
+| hifbub    |                                                              |
+| hloss     |                                                              |
+| hseflw    |                                                              |
+| ht1tdp    |                                                              |
+| ht2tdp    |                                                              |
+| htadv     |                                                              |
+| htcond    |                                                              |
+| htfilm    |                                                              |
+| htfinl    |                                                              |
+| htheta    |                                                              |
+| htlev     |                                                              |
+| htrc1     |                                                              |
+| htrc2     |                                                              |
+| hydro     | 控制水力学计算过程                                           |
+| hzflow    |                                                              |
+| idfind    |                                                              |
+| inputd    | Controls all input data processing.  If an error is found, editing for the case is completed, but all following cases only have their input listed |
+| jacksn    |                                                              |
+| jchoke    |                                                              |
+| jprop     | Donors junction properties from adjacent volume quantities   |
+| katokj    |                                                              |
+| helm      |                                                              |
+| htadv     | Controls advancement of heat structures and computes heat added to   hydrodynamic volumes. |
+| khoo      |                                                              |
+| kloss     |                                                              |
+| koshi     |                                                              |
+| level     | c  level tracks two-phase level in 1-D vertical components.<br/>c<br/>c  Cognizant engineer: kuo,wlw<br/>c<br/>c  Purpose --<br/>c  Perform calculations to detect a two-phase level within a<br/>c  hydrodynamic cell.<br/>c  Compute level propagation velocity, above-level void fraction,<br/>c  below-level void fraction, and level position related to<br/>c  the bottom of the cell.<br/>c  Set level flags.<br/>c  This subroutine consists of three main blocks.<br/>c    1) the first block determines the level position, either by<br/>c       examination on the level criteria (icheck = 0), or by<br/>c       extrapolation of the level position (icheck = 1).<br/>c    2) the second block detemines the pressure gradient correction<br/>c       term for each volume containing a level after propagating<br/>c       the level to the adjacent volume if the level position<br/>c       determined in the first block lies outside of the volume. The<br/>c       junctions effected by either level movement or by level<br/>c       appearance are marked for processing by the next block.<br/>c    3) the velocities in the junctions marked by the second block<br/>c       are recomputed to be consistent with the level positions.<br/>c  The first two blocks are contained in a loop over all volumes<br/>c  while the second loop is over a list containing the indices<br/>c  of the junctions marked by the loop over volumes. |
+| lint1     |                                                              |
+| lusol0    |                                                              |
+| madata1   |                                                              |
+| majout    |                                                              |
+| mapmat    |                                                              |
+| mcheck    |                                                              |
+| mdata2    |                                                              |
+| mhdfwf    |                                                              |
+| mirec1    |                                                              |
+| mixcon    |                                                              |
+| modmem    |                                                              |
+| mover     |                                                              |
+| mprop     |                                                              |
+| ncfilm    |                                                              |
+| ncprop    |                                                              |
+| ncwall    |                                                              |
+| newtseg1  |                                                              |
+| nnkmout   |                                                              |
+| noncnd    |                                                              |
+| nwithair  | nwithair (numnormvol, numairvol, matrl)<br />Compute equation of state and derivatives for volumes with air<br/>c  Specifically for fluid 15 = new steam tables 9-16-00 |
+| outpoint  |                                                              |
+| outputtr  |                                                              |
+| packer    |                                                              |
+| petukv    |                                                              |
+| pgmres    |                                                              |
+| phantj    |                                                              |
+| phantv    | 相间传热<br />Subroutine computes interphase heat transfer and also calculates   some information for vexplt.  This replaces the volume loop in   earlier subroutine phaint, which replaced earlier subroutines   fidrag and mdot. |
+| pimplt    |                                                              |
+| pintfc    |                                                              |
+| plstrn    |                                                              |
+| pltwda    |                                                              |
+| pltwrt    |                                                              |
+| pminv1    |                                                              |
+| pminv4    |                                                              |
+| pminvd    |                                                              |
+| pminvf    |                                                              |
+| pminvr    |                                                              |
+| pminvx    |                                                              |
+| pol2s     |                                                              |
+| pol8      |                                                              |
+| polat     |                                                              |
+| polatr    |                                                              |
+| prebun    |                                                              |
+| precr     |                                                              |
+| prednb    |                                                              |
+| presej    |                                                              |
+| preseq    |                                                              |
+| psatpd    |                                                              |
+| pset      |                                                              |
+| pstdnb    |                                                              |
+| pstpd2    |                                                              |
+| pump      |                                                              |
+| pump2     |                                                              |
+| pzrlev    | Added subroutine for calculate water level in PRIZER component        Much similar to icompn.f file. Since pzr volume component index,        is reset in 'trnset' before tansient calculation, use kk = przvn  This routine is called every time advancement during transient |
+| qfhtrc    |                                                              |
+| qfmove    |                                                              |
+| qfsrch    |                                                              |
+| qmwr      |                                                              |
+| qsplit    |                                                              |
+| radht     |                                                              |
+| rcards    | Subroutine reads input data for the next case, writes data on disk if not last case. |
+| rkin      |                                                              |
+| rmblnk1   |                                                              |
+| rstimg    |                                                              |
+| rstrda    |                                                              |
+| rstrec    |                                                              |
+| ruplas    |                                                              |
+| seta      |                                                              |
+| setreason | Routine that sets all the reasons for the setting of the success flag |
+| setrhs    |                                                              |
+| sieder    |                                                              |
+| simplt    |                                                              |
+| solr      |                                                              |
+| sol       |                                                              |
+| sortup    |                                                              |
+| splin3    |                                                              |
+| sstchk    |                                                              |
+| stacc     | stacc advances the energy equation, evaluates the equation of state<br/>c  for an accumulator, and performs a backup of the accumulator<br/>c  variables on a time step failure. |
+| statep    | Compute equation of state and derivitives for time advanced volumes. |
+| state     |                                                              |
+| stcset    |                                                              |
+| stdsp     |                                                              |
+| stgodu    |                                                              |
+| sth2x1    |                                                              |
+| sth2x2    |                                                              |
+| sth2x3    |                                                              |
+| sth2x5    |                                                              |
+| sth2x6    |                                                              |
+| stnpu     |                                                              |
+| stnsat    |                                                              |
+| stntp     |                                                              |
+| stntx     |                                                              |
+| stnx      |                                                              |
+| stpu00    |                                                              |
+| stpu0p    |                                                              |
+| stpu2p    |                                                              |
+| stpu2t    |                                                              |
+| stpupu    |                                                              |
+| stputp    |                                                              |
+| strip     |                                                              |
+| strpu     |                                                              |
+| strpx     |                                                              |
+| strsat    |                                                              |
+| strtp1    |                                                              |
+| strtx     |                                                              |
+| strx      |                                                              |
+| stvnpx    |                                                              |
+| stvrpx    |                                                              |
+| suboil    |                                                              |
+| surftn    |                                                              |
+| svpu2p    |                                                              |
+| svpupu    |                                                              |
+| syssol    |                                                              |
+| tcnvsl    |                                                              |
+| tempi     |                                                              |
+| tempifc   |                                                              |
+| thront    |                                                              |
+| tideal    |                                                              |
+| timinit   | Initializes the timing routines                              |
+| timset    | Timing subroutine.  Maintains two nested timing measures.    |
+| tran      | 控制瞬态计算过程                                             |
+| trilu     |                                                              |
+| trip      |                                                              |
+| trisub    |                                                              |
+| trnctl    | calls set up, advancement, and finish subroutines for  transient problem. |
+| trnset    |                                                              |
+| tsetsl    |                                                              |
+| tstate    | processes time dependent volumes and junctions.              |
+| turbst    |                                                              |
+| valve     |                                                              |
+| varvol    |                                                              |
+| vexplt    | Subroutine computes the explicit liquid and vapor velocities and<br/>c  the pressure gradient coefficients needed for the implicit pressure<br/>c  solution.  It also computes the old time source terms for the mass<br/>c  and energy equations. |
+| vfinl     |                                                              |
+| vimdbt    |                                                              |
+| vimplt    |                                                              |
+| vlvela    |                                                              |
+| voidangle |                                                              |
+| volvel    |                                                              |
+| volvol    |                                                              |
+| vtfrnt    |                                                              |
+| wethif    | Subroutine computes wetted wall interphase heat transfer.    |
+| zbrent    |                                                              |
+| zfslgj    |                                                              |
 
 
 
 
 
+# CVF源代码调试运行
+
+### 安装
+
+- 安装包文件夹为``Compaq.Visual.Fortran.v6.6.win10-已测试`，找到`X86文件夹`内的`SETUPX86.EXE`，右键，属性，设置以兼容模式运行这个程序（如win7,winxp），并勾选以管理员身份运行。选择右上角第一项install visual fortran。
+- 名字公司随便填，序列号从`crack文件夹`内生成复制（无法全部复制，其他手敲）
+- 安装方式typical，设置第一个文件夹路径，如`f: \pro\cvf\common`，则其他路径也随之变为cvf文件夹下。
+- 继续安装，96%时弹出环境变量更新，选择yes。安装完成，不注册，确定，不安装array visualizer。
+- 安装完毕，在安装目录下找到`DFDEV.EXE`（`F: \pro\cvf\common\MSDEV98\BIN\DFDEV.EXE`），右键属性，设置兼容模式为win7+管理员身份运行。
+- 从此可以正常打开`Relap33\Relap33.dsw`项目文件，测试build菜单rebuild all，无报错则成功（中文路径会报错）。
 
 
-# 其他
 
-##
+### 使用调试
+
+- `Relap33\Relap\`文件夹内存放有indta、outdta、rstplt和`Debug`文件夹，内含Relap.exe，可以单独拿到indta同级目录下运行。
+- 设定debug模式：
+  点击菜单Build/Set Active Project Configuration，选 *- Win32 Debug，OK，即设定为debug模式。
+- 以debug模式执行到报错处：
+  点击“Go (F5)”按钮，或直接按F5键，则执行程序，并在第一个出错语句处停止，在该语句前有一个小黄色箭头。
+  若程序没错，则一直执行完毕，自动关闭dos窗口。此时，宜用“！”按钮或“Ctrl+F5”键，执行完成后，dos窗口等待用户关闭。
+- `Ctrl + F10` debug 执行完光标行前一行
+- `F9`设置断点：
+  若希望执行时在某一语句处暂停，可将光标置于该语句，点击“手”形状的按钮，或按F9键，则程序执行到该语句时停在该语句处。
+- `F10`下一行，`F11`下一步，`shift + F11`跳出子程序：区别是F10下一行（不进入子过程程序段）或者F11（遇到子过程进入子过程程序段继续单步执行）
+- 查看变量值：
+  小黄箭头停在某语句时，按下Variable按钮，显示当前程序段的变量值；对于简单变量，将光标放在该变量上，则即时显示该变量值。
+- 运行调试时改动了源代码，如果直接链接生成Relap.exe会报错`cannot open file "Debug/Relap.exe"  Error executing link.exe.`（relap.exe还在运行没有解除占用）。退出compaq，删除outdta和rstplt，重新打开项目，ctrl+F7仅编译当前修改文件，再 F7 链接主程序relap.exe（或者rebuild all）发现无报错成功编译。
+- 
+
+```fortran
+
+！调试插入类似语句制造某个时刻和某个控制体的断点
+
+if ((timehy .gt. 2.70e0) .and. (volno(1,i) .eq. 110010000)) then 
+	write(*,*) timehy,volno(1,i)
+end if
+```
+
+
+
+## 调试思路
 
 从五变量出发，XnUfUgP, 形如Ax=B,发现Uf的方程异常？问题源项或者与变量相乘的系数，源项是液相能量方程的本构之和，经查壁面无问题，相间本构有问题。
 
@@ -28,9 +391,15 @@
 一系列操作，可以突破0.999，到达0.86，但是却不是环雾流Annular mist ANM 6，仍然是弥散流，只有液滴没有液膜。因而发现水平工况流型判断的bug，仅判断液相，三流场时无法转换。再查看它的源项：夹带和沉降本构，发现只会沉降，不会夹带，导致液滴项份额从1e-4到1e-13。但是应该影响不大？
 
 
-eqfinl.f(492):	write(484,*)timehy,uf(i),hif(i),hig(i),voidg(i)
+eqfinl.f(492): 	write(484,*)timehy,uf(i),hif(i),hig(i),voidg(i)
 
 生成fort.484文件，调试查看变量值
+
+
+
+# 其他
+
+
 
 
 
@@ -94,289 +463,6 @@ JFNK 方法中使用 Krylov 子空间迭代法求解牛顿修正方程，Krylov 
 纯代数的预处理技术需要提前写出雅克比系数矩阵，不适用于当前两流体三流场模型全隐数值算法的预处理。基于物理的预处理技术中，算子分裂的预处理技术适用于不同物理场之间的耦合求解问题，基于低阶离散的预处理技术效率较低，而基于半隐数值算法的预处理技术计算效率更高，因此在后续研究中拟使用基于半隐数值算法的预处理技术，针对两流体三流场模型的特点构造预处理矩阵。
 
 
-
-## 子程序简介
-
-
-
-| 序号 | 子程序    | 功能                                                         |      |
-| ---- | --------- | ------------------------------------------------------------ | ---- |
-| 1    | accum     | 模拟安注箱水力、壁面和水表面的换热、蒸汽圆顶冷凝及水面蒸发的过程。 |      |
-| 2    | alg63     | alg63子程序使用高斯消去法求解一个5×5矩阵方程组               |      |
-| 3    | alg63n    | 子程序主要使用了高斯消去法求解两个5×5矩阵方程组，然后依据方程的解计算中间变量 |      |
-| 4    | amux      | 将矩阵A以点积的形式乘以一个向量，矩阵A以压缩稀疏行的形式存储 |      |
-| 5    | bishop    | 计算超临界条件下的bishop换热系数和次临界状态下的D-B换热系数，当换热包选项htopta=161时，被dittus调用 |      |
-| 6    | borbnd    | 利用BPLU算法计算压力系数矩阵，包括LU分解和回代求解压力系数矩阵 |      |
-| 7    | bparam    | 被tsetsl子程序调用，用于瞬态计算前BPLU结构初始化，将系统矩阵重排为border-profile的形式，是BPLU法矩阵重排的主要子程序。 |      |
-| 8    | bpcnst    | bpcnst子程序被bpord子程序调用，主要用于BPLU求解器的重排技术之一——constant removal。 |      |
-| 9    | bpform    | 被bpord子程序调用，主要用于BPLU求解器的重排技术之一——constant removal |      |
-| 10   | bplu      | 被borbnd子程序调用，对系数矩阵进行LU分解。bplu子程序是主要的系数矩阵分解进程 |      |
-| 11   | bpmap22   | 被tsetsl子程序调用，用于瞬态计算开始前BPLU结构初始化，将系统矩阵重排为border-profile的形式，是BPLU法矩阵重排的主要子程序。Bpmap22与bpmap的区别是，bpmap22只用作控制体变量个数不超过8或a22子矩阵的分解。 |      |
-| 12   | bpmul     | 被setrhs子程序调用，setrhs只有在出现错误时被调用。bpmul子程序辅助setrhs，对解子矩阵行求和 |      |
-| 13   | bpord     | 被bparam子程序调用，主要用于BPLU求解器的重排运算             |      |
-| 14   | bppart    | 是BPLU矩阵求解器中重排处理的重要部分，主要作用是在重排后建立分区索引数组indblk，实现矩阵数值分解时的并行效果 |      |
-| 15   | bprcm     | 是BPLU矩阵求解器中重排处理的重要部分，主要作用是利用Reverse Cuthill-Mckee算法对系数矩阵进行重排，使得系数矩阵形成border-banded的形式 |      |
-| 16   | bpsqlu    | 被borbnd和bplu子程序调用，利用部分选主元的高斯消去法处理a（borbnd）或a22（bplu）子矩阵 |      |
-| 17   | bpsqsl    | 被borbnd子程序调用，在bpsqlu和bplu子程序之后。主要作用是在bpsqlu子程或bplu的LU分解之后进行回代，得到Ax=b方程中的解x |      |
-| 18   | bpsub     | 被borbnd子程序调用，在bplu子程序之后。主要作用是在LU分解后进行回代，得到Ax=b方程中的解x |      |
-| 19   | brntrn    | 使用二阶 Godunov方法计算硼的输运                             |      |
-| 20   | bwlim     | BPLU矩阵求解器中重排处理的重要部分，主要作用是利用带宽限制算法对系数矩阵进行重排，使得系数矩阵形成border-banded的形式。 |      |
-| 21   | ccfl      | 先判断接管是否发生逆流流动限制(Countercurrent Flow Limitation,CCFL)，若在接管处存在ccfl，则利用Wallis-Kutateladze的淹没限制方程对ccfl进行计算。子程序最后根据半隐和近隐处理格式不同，分别计算其所需的中间变量；若为半隐格式，计算接管汽液两相速度velfj、velgj，计算半隐格式所需的中间变量vfdpk、vgdpk、vfdpl、vgdpl；若为近隐格式，程序计算近隐格式计算所需的中间变量coefv、sourcv、difdpk、difdpl。 |      |
-| 22   | celmdr    | 计算包壳的杨氏模量和泊松比                                   |      |
-| 23   | chfcal    | 根据选项采用不同的方法进行CHF的预测                          |      |
-| 24   | chfitr    | 使用INTER CHF 模型计算临界热流密度                           |      |
-| 25   | chfkut    | 使用Kutateladze CHF关系式和Folkin-Goldberg空泡因子以及Ivey Morris冷却因子计算临界热流密度 |      |
-| 26   | chforn    | 针对窄缝板状燃料组件进行CHF的预测                            |      |
-| 27   | chfosm    | 使用Osmachkin关系式计算石墨堆功率通道的临界热流密度CHF       |      |
-| 28   | chfpgf    | 使用PGF关系式计算临界热流密度比通量形式                      |      |
-| 29   | chfpgg    | 使用PGG关系式计算临界热流密度比几何形式                      |      |
-| 30   | chfpgp    | 使用PGP关系式计算临界热流密度比的动力形式                    |      |
-| 31   | chfpg     | 计算临界热流密度比                                           |      |
-| 32   | chfsrl    | 根据SRL关系式计算临界热流密度                                |      |
-| 33   | chftab    | 根据1986 AECL-UO CHF查询表进行CHF的预测                      |      |
-| 34   | chklev    | 控制控制体之间两相液位的移动                                 |      |
-| 35   | chngva    | 计算由于包壳变形引起的控制体面积变化                         |      |
-| 36   | coev3d    | 计算速度矩阵系数coefv项，并计算相关动量通量项convf、convg    |      |
-| 37   | conden    | 计算冷凝换热的各相换热系数和热流密度                         |      |
-| 38   | condn2    | 采用了新的模型计算冷凝换热，只有当输入卡1的第45个选项开启时，才会调用这个子程序进行计算 |      |
-| 39   | convar    | 用来模拟水力系统中的控制系统的子程序                         |      |
-| 40   | courn1    | 计算最小基于接管速度的courant限值（时间步长限值）            |      |
-| 41   | cournt    | 计算最小基于体平均速度的courant限值（时间步长限值）          |      |
-| 42   | cov3dl    | 计算三维部件的动量通量项的速度矩阵方程的边界条件             |      |
-| 43   | cov3dy    | 计算速度矩阵系数coefv项，并计算相关动量通量项convf、convg，针对三维控制体y方向速度。 |      |
-| 44   | cov3dz    | 计算速度矩阵系数coefv项，并计算相关动量通量项convf、convg，针对三维控制体y方向速度。 |      |
-| 45   | cplexp    | 使用NUREG-0630的数据计算塑性应变。该子程序假设应用了间隙导热模型，当环向应力为负的时候跳过该子程序的计算过程 |      |
-| 46   | cprssr    | 计算压缩机的压差、转矩和转速，以及异步电动机的转矩           |      |
-| 47   | cramer2   | 通过克莱默法则解一系列方程                                   |      |
-| 48   | cthxpr    | 计算锆合金包壳的径向热膨胀                                   |      |
-| 49   | daxpy     | 一个向量乘以一个常数再加上另一个向量                         |      |
-| 50   | ddot      | 计算两个向量的点积(数量积)，采用开式循环使增量等于一         |      |
-| 51   | detector  |                                                              |      |
-| 52   | detmnt    | 采用高斯消去法用于计算行列式的值的子程序                     |      |
-| 53   | dittus    | 计算Dittus-Boelter强迫对流换热关系式。                       |      |
-| 54   | dmpcom1   | 指向seldmp1或selpdmp2的单元1或2写入重启记录                  |      |
-| 55   | dmplst    | 计算common /ftb/ 中的参数,如数据标识、数组大小、文件数量、上次描述的文件位置等，对所有链接表循环，对每个链接表内的参数设立相关的指针参数，并通过指针参数ix、iy输出各个参数相关的指针位置 |      |
-| 56   | dnrm2     | 求n维向量dx的范数                                            |      |
-| 57   | dyer      | 通过GE干燥器模型计算干燥器出口的汽液空间份额                 |      |
-| 58   | dtstep    | 瞬态计算过程中选择时间步长以及控制输出和画图的频率           |      |
-| 59   | eccmxj    |                                                              |      |
-| 60   | eccmxv    |                                                              |      |
-| 61   | eprij     |                                                              |      |
-| 62   | eqfinal   |                                                              |      |
-| 63   | errorn    |                                                              |      |
-| 64   | fidis2    |                                                              |      |
-| 65   | fidisj    |                                                              |      |
-| 66   | fidisv    |                                                              |      |
-| 67   | fildmp    |                                                              |      |
-| 68   | flux3d    |                                                              |      |
-| 69   | fmvlwr    |                                                              |      |
-| 70   | fricid    |                                                              |      |
-| 71   | fwdrag    |                                                              |      |
-| 72   | gapcon    |                                                              |      |
-| 73   | gasthc    |                                                              |      |
-| 74   | gcsub     |                                                              |      |
-| 75   | gctp,     |                                                              |      |
-| 76   | genchn    |                                                              |      |
-| 77   | gesep     |                                                              |      |
-| 78   | gesub     |                                                              |      |
-| 79   | gniel     |                                                              |      |
-| 80   | grdnrj    |                                                              |      |
-| 81   | griftj    |                                                              |      |
-| 82   | helphd    |                                                              |      |
-| 83   | hifbub    |                                                              |      |
-| 84   | hloss     |                                                              |      |
-| 85   | hseflw    |                                                              |      |
-| 86   | ht1tdp    |                                                              |      |
-| 87   | ht2tdp    |                                                              |      |
-| 88   | htadv     |                                                              |      |
-| 89   | htcond    |                                                              |      |
-| 90   | htfilm    |                                                              |      |
-| 91   | htfinl    |                                                              |      |
-| 92   | htheta    |                                                              |      |
-| 93   | htlev     |                                                              |      |
-| 94   | htrc1     |                                                              |      |
-| 95   | htrc2     |                                                              |      |
-| 96   | hydro     | 控制水力学计算过程                                           |      |
-| 97   | hzflow    |                                                              |      |
-| 98   | idfind    |                                                              |      |
-| 99   | jacksn    |                                                              |      |
-| 100  | jchoke    |                                                              |      |
-| 101  | jprop     |                                                              |      |
-| 102  | katokj    |                                                              |      |
-| 103  | helm      |                                                              |      |
-| 104  | khoo      |                                                              |      |
-| 105  | kloss     |                                                              |      |
-| 106  | koshi     |                                                              |      |
-| 107  | level     |                                                              |      |
-| 108  | lint1     |                                                              |      |
-| 109  | lusol0    |                                                              |      |
-| 110  | madata1   |                                                              |      |
-| 111  | majout    |                                                              |      |
-| 112  | mapmat    |                                                              |      |
-| 113  | mcheck    |                                                              |      |
-| 114  | mdata2    |                                                              |      |
-| 115  | mhdfwf    |                                                              |      |
-| 116  | mirec1    |                                                              |      |
-| 117  | mixcon    |                                                              |      |
-| 118  | modmem    |                                                              |      |
-| 119  | mover     |                                                              |      |
-| 120  | mprop     |                                                              |      |
-| 121  | ncfilm    |                                                              |      |
-| 122  | ncprop    |                                                              |      |
-| 123  | ncwall    |                                                              |      |
-| 124  | newtseg1  |                                                              |      |
-| 125  | nnkmout   |                                                              |      |
-| 126  | noncnd    |                                                              |      |
-| 127  | outpoint  |                                                              |      |
-| 128  | outputtr  |                                                              |      |
-| 129  | packer    |                                                              |      |
-| 130  | petukv    |                                                              |      |
-| 131  | pgmres    |                                                              |      |
-| 132  | phantj    |                                                              |      |
-| 133  | phantv    |                                                              |      |
-| 134  | pimplt    |                                                              |      |
-| 135  | pintfc    |                                                              |      |
-| 136  | plstrn    |                                                              |      |
-| 137  | pltwda    |                                                              |      |
-| 138  | pltwrt    |                                                              |      |
-| 139  | pminv1    |                                                              |      |
-| 140  | pminv4    |                                                              |      |
-| 141  | pminvd    |                                                              |      |
-| 142  | pminvf    |                                                              |      |
-| 143  | pminvr    |                                                              |      |
-| 144  | pminvx    |                                                              |      |
-| 145  | pol2s     |                                                              |      |
-| 146  | pol8      |                                                              |      |
-| 147  | polat     |                                                              |      |
-| 148  | polatr    |                                                              |      |
-| 149  | prebun    |                                                              |      |
-| 150  | precr     |                                                              |      |
-| 151  | prednb    |                                                              |      |
-| 152  | presej    |                                                              |      |
-| 153  | preseq    |                                                              |      |
-| 154  | psatpd    |                                                              |      |
-| 155  | pset      |                                                              |      |
-| 156  | pstdnb    |                                                              |      |
-| 157  | pstpd2    |                                                              |      |
-| 158  | pump      |                                                              |      |
-| 159  | pump2     |                                                              |      |
-| 160  | qfhtrc    |                                                              |      |
-| 161  | qfmove    |                                                              |      |
-| 162  | qfsrch    |                                                              |      |
-| 163  | qmwr      |                                                              |      |
-| 164  | qsplit    |                                                              |      |
-| 165  | radht     |                                                              |      |
-| 166  | rkin      |                                                              |      |
-| 167  | rmblnk1   |                                                              |      |
-| 168  | rstimg    |                                                              |      |
-| 169  | rstrda    |                                                              |      |
-| 170  | rstrec    |                                                              |      |
-| 171  | ruplas    |                                                              |      |
-| 172  | seta      |                                                              |      |
-| 173  | setrhs    |                                                              |      |
-| 174  | sieder    |                                                              |      |
-| 175  | simplt    |                                                              |      |
-| 176  | solr      |                                                              |      |
-| 177  | sol       |                                                              |      |
-| 178  | sortup    |                                                              |      |
-| 179  | splin3    |                                                              |      |
-| 180  | sstchk    |                                                              |      |
-| 181  | stacc     |                                                              |      |
-| 182  | statep    |                                                              |      |
-| 183  | state     |                                                              |      |
-| 184  | stcset    |                                                              |      |
-| 185  | stdsp     |                                                              |      |
-| 186  | stgodu    |                                                              |      |
-| 187  | sth2x1    |                                                              |      |
-| 188  | sth2x2    |                                                              |      |
-| 189  | sth2x3    |                                                              |      |
-| 190  | sth2x5    |                                                              |      |
-| 191  | sth2x6    |                                                              |      |
-| 192  | stnpu     |                                                              |      |
-| 193  | stnsat    |                                                              |      |
-| 194  | stntp     |                                                              |      |
-| 195  | stntx     |                                                              |      |
-| 196  | stnx      |                                                              |      |
-| 197  | stpu00    |                                                              |      |
-| 198  | stpu0p    |                                                              |      |
-| 199  | stpu2p    |                                                              |      |
-| 200  | stpu2t    |                                                              |      |
-| 201  | stpupu    |                                                              |      |
-| 202  | stputp    |                                                              |      |
-| 203  | strip     |                                                              |      |
-| 204  | strpu     |                                                              |      |
-| 205  | strpx     |                                                              |      |
-| 206  | strsat    |                                                              |      |
-| 207  | strtp1    |                                                              |      |
-| 208  | strtx     |                                                              |      |
-| 209  | strx      |                                                              |      |
-| 210  | stvnpx    |                                                              |      |
-| 211  | stvrpx    |                                                              |      |
-| 212  | suboil    |                                                              |      |
-| 213  | surftn    |                                                              |      |
-| 214  | svpu2p    |                                                              |      |
-| 215  | svpupu    |                                                              |      |
-| 216  | syssol    |                                                              |      |
-| 217  | tcnvsl    |                                                              |      |
-| 218  | tempi     |                                                              |      |
-| 219  | tempifc   |                                                              |      |
-| 220  | thront    |                                                              |      |
-| 221  | tideal    |                                                              |      |
-| 222  | timset    |                                                              |      |
-| 223  | tran      | 控制瞬态计算过程                                             |      |
-| 224  | trilu     |                                                              |      |
-| 225  | trip      |                                                              |      |
-| 226  | trisub    |                                                              |      |
-| 227  | trnctl    |                                                              |      |
-| 228  | trnset    |                                                              |      |
-| 229  | tsetsl    |                                                              |      |
-| 230  | tstate    |                                                              |      |
-| 231  | turbst    |                                                              |      |
-| 232  | valve     |                                                              |      |
-| 233  | varvol    |                                                              |      |
-| 234  | vexplt    |                                                              |      |
-| 235  | vfinl     |                                                              |      |
-| 236  | vimdbt    |                                                              |      |
-| 237  | vimplt    |                                                              |      |
-| 238  | vlvela    |                                                              |      |
-| 239  | voidangle |                                                              |      |
-| 240  | volvel    |                                                              |      |
-| 241  | volvol    |                                                              |      |
-| 242  | vtfrnt    |                                                              |      |
-| 243  | zbrent    |                                                              |      |
-| 244  | zfslgj    |                                                              |      |
-
-
-
-
-
-## CVF源代码调试运行
-
-### 安装
-
-- 安装包文件夹为``Compaq.Visual.Fortran.v6.6.win10-已测试`，找到`X86文件夹`内的`SETUPX86.EXE`，右键，属性，设置以兼容模式运行这个程序（如win7,winxp），并勾选以管理员身份运行。选择右上角第一项install visual fortran。
-- 名字公司随便填，序列号从`crack文件夹`内生成复制（无法全部复制，其他手敲）
-- 安装方式typical，设置第一个文件夹路径，如`f:\pro\cvf\common`，则其他路径也随之变为cvf文件夹下。
-- 继续安装，96%时弹出环境变量更新，选择yes。安装完成，不注册，确定，不安装array visualizer。
-- 安装完毕，在安装目录下找到`DFDEV.EXE`（`F:\pro\cvf\common\MSDEV98\BIN\DFDEV.EXE`），右键属性，设置兼容模式为win7+管理员身份运行。
-- 从此可以正常打开`Relap33\Relap33.dsw`项目文件，测试build菜单rebuild all，无报错则成功（中文路径会报错）。
-
-
-
-### 使用调试
-
-- `Relap33\Relap\`文件夹内存放有indta、outdta、rstplt和`Debug`文件夹，内含Relap.exe，可以单独拿到indta同级目录下运行。
-- 设定debug模式：
-  点击菜单Build/Set Active Project Configuration，选 *- Win32 Debug，OK，即设定为debug模式。
-- 以debug模式执行：
-  点击“Go (F5)”按钮，或直接按F5键，则执行程序，并在第一个出错语句处停止，在该语句前有一个小黄色箭头。
-  若程序没错，则一直执行完毕，自动关闭dos窗口。此时，宜用“！”按钮或“Ctrl+F5”键，执行完成后，dos窗口等待用户关闭。
-- 设置断点：
-  若希望执行时在某一语句处暂停，可将光标置于该语句，点击“手”形状的按钮，或按F9键，则程序执行到该语句时停在该语句处。
-- 单步执行：
-  F10（不进入子过程程序段）或者F11（遇到子过程进入子过程程序段继续单步执行）。在工具栏上都有相应的按钮。
-- 查看变量值：
-  小黄箭头停在某语句时，按下Variable按钮，显示当前程序段的变量值；对于简单变量，将光标放在该变量上，则即时显示该变量值。
 
 
 

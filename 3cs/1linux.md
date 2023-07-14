@@ -638,9 +638,12 @@ sudo apt install waydroid -y
 
 ```bash
 service NetworkManager stop
+
 # 弹出用户认证
+
 sudo rm /var/lib/NetworkManager/NetworkManager.state
 service NetworkManager start
+
 # 弹出用户认证
 
 ```
