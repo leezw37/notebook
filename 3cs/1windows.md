@@ -233,7 +233,7 @@ del /f /s /q rstplt
 
 # 软件
 
-## BBDown使用教程
+## BBDown下载B站视频
 
 1. [下载BBDown](https://github.com/nilaoda/BBDown/releases)（windows下win-x64.zip，linux下linux-x64.zip），并解压到BBDown文件夹下，应该只有`BBDown.exe`或者`BBDwon`。
 
@@ -380,6 +380,20 @@ parsers: # array
 ```
 
 # 问题
+
+
+
+## 电脑蓝牙无法搜到耳机等设备
+
+1. 原因可能是卸载了realtek音频组件等。
+2. 在服务中打开`蓝牙支持服务(Bluetooth Support Service)`。
+3. 其他可能解决方案：更新蓝牙驱动，打开Bit Locker Drive Encryption Service服务，删除其他所有设备的配对信息或者重置耳机。
+
+## 笔记本无法联网
+
+可能是之前一直是通过虚拟机内弹出的网页验证。
+
+打开虚拟机验证网络。
 
 ## VMware的win10蓝屏pfn share count
 

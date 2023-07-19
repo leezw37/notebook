@@ -377,6 +377,14 @@ if ((timehy .gt. 2.70e0) .and. (volno(1,i) .eq. 110010000)) then
 end if
 ```
 
+## 问题
+
+### 只能build relaplib不能relap.exe
+
+有时报错已存在outdta，但是实际已删除，或者只能build relaplib不能build relap.exe。
+
+在Build菜单`set active configuration`选择`Relap-Win32 Debug`。
+
 
 
 ## 调试思路
@@ -391,9 +399,54 @@ end if
 一系列操作，可以突破0.999，到达0.86，但是却不是环雾流Annular mist ANM 6，仍然是弥散流，只有液滴没有液膜。因而发现水平工况流型判断的bug，仅判断液相，三流场时无法转换。再查看它的源项：夹带和沉降本构，发现只会沉降，不会夹带，导致液滴项份额从1e-4到1e-13。但是应该影响不大？
 
 
-eqfinl.f(492): 	write(484,*)timehy,uf(i),hif(i),hig(i),voidg(i)
+eqfinl.f(492): 	write(484,*)timehy,uf(i),hif(i),hig(i),voidg(i),voide(i),volno(1,i),velf(i),velg(i)
 
 生成fort.484文件，调试查看变量值
+
+
+
+## 测试
+
+phantv
+
+verthifreg
+
+phantv
+
+wethif
+
+hydro
+
+phantj
+
+
+
+
+
+```
+0******** Error return from pminvd because the matrix is singular.  row     21 is dependent on the rest.
+0####################################################################################################################################
+     syssol Diagnostic printout, timehy =  1.8149195E-02, dt =  8.1266095E-04, ncount =       130, help =  1, lsuces =  0, fail = F
+```
+
+0Solution array 
+ ==========================================================================================================================
+        sourcp(i)    sourcp(i+1)  sourcp(i+2)  sourcp(i+3)  sourcp(i+4)  sourcp(i+5)  sourcp(i+6)  sourcp(i+7)  sourcp(i+8)
+ ==========================================================================================================================
+         0.0000       34.193       110.15       70.189       84.382       93.208       94.192       94.759       95.032    
+         95.096       94.946       94.590       94.043       93.290       92.322       91.157       89.807       88.249    
+         86.475       84.509       82.365       80.048       77.548       74.867       72.003       68.957       65.715    
+         62.281       58.639       54.793       50.726       46.405       41.858       37.060       31.963       26.577    
+         20.899       15.045       8.8569      -1052.8     NaN            0.0000    
+0Singularity parameter (if gerr .lt. 0.0, the matrix solution is singular)
+ gerr =  -1.0000    
+0####################################################################################################################################
+      jprop Diagnostic printout, timehy =  1.8149195E-02, dt =  8.1266095E-04, ncount =       130, help =  1, lsuces =  0, fail = F
+0Junctiondonoredproperties,icheck=  1
+
+
+
+
 
 
 

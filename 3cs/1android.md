@@ -67,7 +67,7 @@
    - 下载安装[谷歌相机](https://1-dontsharethislink.celsoazevedo.com/file/filesc/GCam_7.3.018_Urnyx05-v2.6.apk)，连击快门按钮周边的区域，选择配置，restore。（[若无谷歌框架需要解决闪退](https://blog.csdn.net/ONE_SIX_MIX/article/details/123444620)，下载安装[谷歌相机伪装](https://github.com/lukaspieper/Gcam-Services-Provider/releases)）
    - 点击上部箭头进入相机设置——照片——使用第三方图库
 
-2. 应用切换页面，点击图标，可以进入应用设置、上下分屏、固定。
+2. 底部上划进入应用切换页面时，点击应用图标，可以进入应用设置、上下分屏、固定。
 3. 搜狗输入法，设置为默认
 4. MT文件管理器，设置为默认
 5. 开发者选项/无障碍设置，关闭动画
@@ -100,13 +100,13 @@
 
 ### 冰箱随时冻结、解冻软件
 
-
+禁用谷歌服务框架，就能直接跳过biubiu加速器广告，不显示广告直接拿到加速时长奖励，加速 PUBG mobile。
 
 
 
 ### AdHome广告拦截
 
-[下载该模块](https://github.com/410154425/AdGuardHome_magisk)后用magisk添加（甚至可以跳过biubiu加速器广告直接拿到时长奖励）：
+[下载该模块](https://github.com/410154425/AdGuardHome_magisk)后用magisk添加：
 
 浏览器打开http://127.0.0.1:3000/#filters，新增规则列表。
 

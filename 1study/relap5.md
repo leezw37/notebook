@@ -332,7 +332,7 @@
 1001300   1
 *接管初始条件：水质量流量; 汽质量流量; 相间速度未实现0; 接管编号
 1001301   120.34     0.0     0.0    1
-*接管水力直径; CCFL关系式（默认0使用Wallis模型，1则Kutateladze，0-1插值）; 气体截距1; 斜率1
+*接管水力直径; CCFL关系式（默认0使用Wallis模型，1则Kutateladze，0-1插值）; 气体截距1.0; 斜率1.0； 接管编号
 1001401   0.3304     0.0     1.0    1.0    1
 ```
 
@@ -1105,7 +1105,11 @@ del /f /q rstplt
 7. 调整图例框位置Legends Box：双击图例框或点击Plot菜单弹出Graph Appearance——编辑Leg. Box Location中的X Y（分别是左、上边的位置）
 8. 选择数据操作麻烦，如果关闭select relap channels窗口后还想继续选择数据，只能重新去file目录——read——relap5 data。
 
-## UltraEdit 列编辑outdta
+## UltraEdit / Notepad++ 列编辑outdta
+
+Notepad++ 列编辑时只需按住`alt`键选择。
+
+
 
 1. 双击 ue_chinese_64.exe 64位版官方安装程序。
 2. 安装完成后关闭程序，复制 IDM_Universal_Patch_v6.0.exe 到安装目录，以管理员身份运行。
