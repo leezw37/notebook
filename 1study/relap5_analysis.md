@@ -421,6 +421,8 @@ phantj
 
 
 
+syssol
+
 
 
 ```
@@ -429,8 +431,11 @@ phantj
      syssol Diagnostic printout, timehy =  1.8149195E-02, dt =  8.1266095E-04, ncount =       130, help =  1, lsuces =  0, fail = F
 ```
 
-0Solution array 
+0
  ==========================================================================================================================
+
+Solution array 
+
         sourcp(i)    sourcp(i+1)  sourcp(i+2)  sourcp(i+3)  sourcp(i+4)  sourcp(i+5)  sourcp(i+6)  sourcp(i+7)  sourcp(i+8)
  ==========================================================================================================================
          0.0000       34.193       110.15       70.189       84.382       93.208       94.192       94.759       95.032    
@@ -448,7 +453,19 @@ phantj
 
 
 
+withoutair  p是NAN
 
+line 210 ，268
+
+rsth2xv(iv) = fa(ivx+72)
+
+
+
+subroutine nth2x6f (a,s,it,err,satflag)
+
+
+
+subroutine getsatatp (tables,getprops,p,x,s,err)的p是NAN
 
 # 其他
 
