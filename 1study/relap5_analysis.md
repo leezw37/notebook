@@ -1,6 +1,10 @@
 # 问题
 
-
+1. 前后加上修改标记ccclzw230728
+2. 改了vexplt沉降，0.018应该是0.18，且恢复了被注释的沉降结果，好像没有影响？
+3. ~~改了preseq，1022行起输出所有调试信息。~~
+4. 注释掉了dispdrag和drydrag的rddrp造成结果为0的重复计算。（有效！）
+5. 
 
 # 目录
 
@@ -18,16 +22,16 @@
 2. 瞬态计算: trnctl调用tran
    1. 时间步长控制体及输出: dtstep
    2. TDV和TDJ计算: tstate
-   3. 壁面导热计算: htadv	(Qwg;Qwf、壁面蒸汽蒸发量)
+   3. 壁面传热传质计算: htadv	(Qwg;Qwf、壁面蒸汽蒸发量)
       1. 再淹没导热计算: qfmove	
-      2. 非再淹没一维导热计算: htatdp
-         1. 对流换热计算: htrcl
+      2. 非再淹没一维导热计算: ht1tdp
+         1. 对流换热计算: htrc1
             1. 壁面蒸汽产生率: suboil
             2. 单相对流换热: dittus
             3. 核态沸腾: prednb
             4. CHF:  chfcal	
             5. 过渡及膜态沸腾: pstdnb	
-            6. 冷凝: conden	
+            6. 冷凝: conden
    4. 水力学计算: hydro	
       1. 相间传热传质: phantv ( 得到hig`*`A，hif`*`A)
          1. 流型判断：horizhifreg，verthifreg，得到flomap(1,ix)赋值给floreg。
@@ -35,9 +39,10 @@
             1. wethif：
                1. bubhif，floreg=4
                2. slughif, floreg=5
-               3. amisthif, floreg=6
+               3. amisthif, floreg=6，三流场在此加入了液滴夹带massen。
                4. dispwethif, floreg=7
                5. horizhif, floreg=12
+         3. 三流场在此加入了液滴沉降massden。
       2. 相间摩擦: phantj ( 得到 fi)	
          1. horizdragreg，vertdragreg
          2.  wetdrag，drydrag
@@ -53,7 +58,7 @@
       4. 局部阻力: hloss ( 得到 hlossg、Hlossf)	
       5. 显式速度: vexplt(计算质量、动量，能量方程源项，并求解显式速度)
       6. 临界流: jchoke(计算临界流量)
-      7. ccfl
+      7. ccfl  
       8. 最终速度和压力: vfinl
          1. 5*5系数矩阵和压力矩阵计算: preseq
          2. 求解压力矩阵: syssol
@@ -74,6 +79,165 @@
    6. 控制系统：convar
    7. 输出到outdta
 3. 其他	
+
+
+
+# vexplt
+
+```vexplt
+sat1 = gammsw(ix)*dt
+sat2 = gammsc(ix)*dt
+sourcmg(ix) = (sat1 + sat2 - ff1) * v(i) - vagrg(ix)
+sourcmf(ix) = - ((sat1 + sat2) - (1.0 - etapf(i))*ff(ix)- (1.0 - etapg(i))*gg(ix))*v(i) - assen(i)*dt - vafrf
+sourcme(ix) = - ((sat1 + sat2) - etapf(i)*ff(ix)- etapg(i)*gg(ix))*v(i) + massen(i)*dt - vaerf
+aaa2 = (aaa2 - sat1*sathg(i) - sat2*sathf(i))*v(i)
+sourcg(ix) = qwg(i)*dt - aaa2 - vagrg(ix)*ugo(i)
+sourcf(ix) = qwf(i)*dt + aaa2 - (vafrf + vaerf)*ufo(i)
+```
+
+# preseq
+
+40控制体开始出现液膜，sourcg在40控制体突然由正变为负值。
+
+```preseq
+        if (timehy .gt. 1.8e-2 .and. volno(1,i) .gt. 125370000) then
+            write(230725,*)timehy,volno(1,i)
+            write(230725,*)p(i),ug(i),uf(i)
+            write(230725,*)voidg(i),voide(i),voidf(i)
+            write(230725,*)velg(i),velf(i),vele(i)
+            write(230725,*)sourcmg(ix),sourcmf(ix)
+            write(230725,*)sourcg(ix),sourcf(ix)
+            write(230725,*)qwg(i),qwf(i)
+        end if
+  1.814919466547800E-002   125390000
+   286041.753864857        2542510.33842387        554209.829969752     
+  0.999930291654598       6.970834540231952E-005  0.000000000000000E+000
+   26.2887672347571        29.2967290007591        31.8737455655349     
+  0.000000000000000E+000  0.000000000000000E+000
+  2.557143455480214E-004 -0.219861320037307     
+  0.000000000000000E+000  -270.544953745225 
+  
+  1.814919466547800E-002   125400000
+   286098.831770267        2542550.05942930        554029.085840901     
+  0.999876772080615       1.100664472066963E-004  1.316147217876387E-005
+   25.9107522900545        22.0083922473061        22.0083758230836     
+ -7.361893236922008E-008  1.291515536309666E-007
+ -0.200686233462843      -1.541082559748223E-002
+  -1.92040536134923       -264.644126739091 
+
+```
+
+
+
+# 变量速查表
+
+参见input manual A4小编辑部分
+
+
+| 变量缩写                    | 解释.............................  | 备注                                                         |
+| --------------------------- | ---------------------------------- | :----------------------------------------------------------- |
+| acqtank                     | 安注箱内向气相传热总能             | Total energy transport to the gas by heat and mass transfer in the accumulator (W, Btu/s). |
+| acrhon                      | 安注箱不可凝气体密度               | Accumulator noncondensable density (kg/m^3 , lb/ft^3 ).      |
+| acttank                     | 安注箱平均壁温                     | Mean accumulator tank wall metal temperature (K, ℉).         |
+| acvdm                       | 安注箱* 气相体积                   | Gas volume in the accumulator tank, standpipe, and surge line (m^3 , ft^3 ). |
+| acvliq                      | 安注箱* 液相体积                   | Liquid volume in the accumulator tank, standipipe, and surge line (m^3, ft^3) |
+| boron                       | 硼浓度                             | Spatial boron density, ρb (kg/m^3, lb/ft^3).                 |
+| count                       | 时间步计数                         | Current attempted advancement count number.                  |
+| cntrlvar                    | 控制变量                           |                                                              |
+| cputime                     | CPU 时间                           | Current CPU time for this problem (s).                       |
+| dt                          | 当前时间步长                       | Current time step (s).                                       |
+| dtcrnt                      | 当前库朗特数时间步长               | Current Courant time step (s).                               |
+| emass                       | 质量误差                           | Estimate of mass error in all the systems (kg, lb).          |
+|                             |                                    |                                                              |
+| fij                         | 相间摩擦的系数                     | (N-s2/m5)                                                    |
+| floreg<br />flow regi       | 流型1                              | Flow regime number; the parameter is the volume number. A chart showing the meaning of each number is shown in Volume II, page 14<br /><br />High mixing bubbly,  CTB,  1<br/>High mixing bubbly/mist transition CTT 2<br/>High mixing mist CTM 3<br/>**Bubbly BBY 4<br/>Slug SLG 5<br/>Annular mist ANM 6<br/>Mist pre-CHF MPR 7<br/>**Inverted annular IAN 8<br/>Inverted slug ISL 9<br/>**Mist MST 10<br/>**Mist post-CHF MPO 11<br/>Horizontal stratified HST 12<br/>Vertical stratified VST 13<br/>Level tracking LEV 14<br/>Jet junction JET 15<br/><br />ECC mixer wavy MWY 16<br/>ECC mixer wavy/annular mist MWA 17<br/>ECC mixer annular mist MAM 18<br/>ECC mixer mist MMS 19<br/>ECC mixer wavy/slug transition MWS 20<br/>ECC mixer wavy-plug-slug transition MWP 21<br/>ECC mixer plug MPL 22<br/>ECC mixer plug-slug transition MPS 23<br/>ECC mixer slug MSL 24<br/>ECC mixer plug-bubbly transition MPB 25<br/>ECC mixer bubbly MBB 26<br /> |
+| fjunft                      | 顺流不可逆的总形状损失系数         | Total form loss coefficient for irreversible losses, forward |
+| fjunrt                      | 逆流不可逆的总形状损失系数         | Total form loss coefficient for irreversible losses, reverse |
+| formfj                      | 液相形状损失系数                   |                                                              |
+| formgj                      | 气相形状损失系数                   |                                                              |
+| fwalfj                      | 液相壁面摩擦的系数                 |                                                              |
+| fwalgj                      | 汽相壁面摩擦的系数                 |                                                              |
+| Gamma.boil                  | 蒸发总速率                         |                                                              |
+| Hif.liq.int                 | 衡量相间传热的系数，液相           | (Watts/m3-K)                                                 |
+| Hig.vap.int                 | 衡量相间传热的系数，汽相           | (Watts/m3-K)                                                 |
+| htchf                       | 临界热流密度                       | Critical (maximum) heat flux (W/m^2, Btu/s•ft^2).            |
+| htchfr                      | 临界热流密度比率                   | Critical heat flux ratio (ratio of HTCHF to HTRNR).          |
+| hthtc                       | 传热系数                           | Heat transfer coefficient (W/m^2•K, Btu/s-ft^2•℉).           |
+| htrnr                       | 热流密度（热通量)                  | Heat flux (W/m^2, Btu/s•ft^2).                               |
+| httemp                      | 网格点温度                         | Mesh point temperature (K, ℉).                               |
+| htvat                       | 热构件体积平均温度                 | Volume averaged temperature in the heat structure (K, ℉).    |
+| jun.area                    | 接管面积                           | junction area                                                |
+| jun-flag                    | 接管控制标记                       | junction control flag (jefvcahs) <br /> j0不是jet喷放接管，<br />e0不用能量方程PV修正项，<br />f0不用CCFL模型，<br />v0不用水平分层夹带模型，<br />c0开启壅塞choking模型（临界流？无1卡/1卡无50选项则为Henry-Fauske模型，否则是relap5模型），<br />a0光滑变截面，<br />h0非均相流，<br />s0同时使用来/去向部件的动量通量 跟随3个临界流参数 临界流常数1（取决于参数6：Henry-Fausk耗散常数discharge默认1.0，relap5模型过冷耗散常数默认1.0）;  临界流常数2（Henry-Fausk未使用此值0.0，Relap5过热耗散常数默认1.0）;  临界流常数3（Henry-Fausk热力非平衡常数默认0.14，Relap5模型默认1.0）; |
+|                             |                                    |                                                              |
+| massden(i)                  | 液滴沉降率（控制体）               | kg*s-1。位于`phantv.f`，相间传热传质                         |
+| massen(i)                   | 液滴总夹带率（控制体）             | kg*s-1。位于`amithif.f`，环雾流相间传热传质                  |
+| Mass.flux                   | 质量流密度                         | (kg/sec-m2)                                                  |
+|                             |                                    |                                                              |
+| mflowj<br />mass flow       | 总质量流率                         | Combined liquid and vapor flow rate (kg/s, lb/s).            |
+| p                           | 压力                               | Volume pressure (Pa, lbf/in2).                               |
+| pmphead                     | 泵扬程（水头）                     | Pump head in the pump component (Pa, lbf/ in2).              |
+| pmptrq                      | 泵扭矩                             | Pump torque in the pump component (N•m, lbf•ft).             |
+| pmpvel                      | 泵转速                             | Pump rotational velocity in the pump component (rad/s, rev/min) |
+| q                           | 气液壁面总热源                     | Total volume heat source from the wall and direct moderator ( 慢化剂 )  heating to liquid and vapor (W, Btu/s). This variable request is the same as “Q.wall.tot.” in the major edits. |
+| quala<br />quality non-cond | 不可凝气体质量份额                 | Volume noncondensable mass fraction. The ratio of the mass of the noncondensable gas to the total mass of the vapor phase. |
+| qualaj                      | 接管不可凝气体质量份额             | Junction noncondensable mass fraction.                       |
+| quale<br />quality mix-cup  | 热平衡含气率                       | Volume equilibrium quality. This quality uses phasic enthalpies and mixture quality, with the mixture enthalpy calculated using the flow quality. |
+|                             |                                    |                                                              |
+|                             |                                    |                                                              |
+| quals<br />quality static   | 静态含气率                         | Volume static quality.                                       |
+| qwg<br />Qwg.wall.gas       | 气相壁面总热源                     | Volume heat source from the wall and direct moderator heating to vapor (W, Btu/s). This variable request is the same as “Qwg.wall.gas.” in the major edits. |
+| Qwg.wall.total              | 壁面总热源                         |                                                              |
+| reac                        | 总反应性反馈                       | reactivity feedback total (dollars). This is the sum of reacm, reacrb, reacs, and reactf. |
+| reacm                       | 慢化剂密度总* 反应性反馈=密度+温度 | reactivity feedback total from moderator density changes (dollars). This is the sum of reacrm and reactm. |
+| reacrb                      | 硼浓度反应性反馈                   | reactivity feedback from boron density changes (dollars).    |
+| reacrm                      | 慢化剂密度反应性反馈               | reactivity feedback from moderator density changes (dollars). |
+| reacs                       | 紧急停堆曲线反应性反馈             | reactivity feedback from scram curve (dollars).              |
+| reactf                      | 燃料温度反应性反馈                 | reactivity feedback from fuel temperature changes (dollars). |
+| reactm                      | 慢化剂温度反应性反馈               | reactivity feedback from moderator temperature (spectral) changes (dollars) |
+| Reynolds  liquid / vapor    | 液/汽雷诺数                        |                                                              |
+| rho                         | 混合密度                           | Total density (kg/m^3, lb/ft^3).                             |
+| rho-boron                   | 硼浓度                             |                                                              |
+| rhof                        | 液相密度                           | Liquid density ρf (kg/m^3, lb/ft^3).                         |
+| rhofj                       | 接管液相密度                       | Junction liquid density (kg/m^3, lb/ft^3).                   |
+| rhog                        | 气相密度                           | Vapor density ρg (kg/m^3, lb/ft^3).                          |
+| rhogj                       | 接管气相密度                       | Junction vapor density (kg/m^3, lb/ft^3).                    |
+| rho-mix                     | 混合平均密度                       |                                                              |
+| rkfipow                     | 裂变功率                           | Reactor power from fission (W).                              |
+| rkgapow                     | 总衰变功率=锕系+裂变产物           | Reactor power from decay of fission products and actinides (W). |
+| rkpowa                      | 锕系元素衰变功率                   | Reactor power from decay of actinides (W).                   |
+| rkpowk                      | 裂变产物衰变功率                   | Reactor power from decay of fission products (W).            |
+| rkreac                      | 反应性                             | Reactivity (dollars).                                        |
+| rkrecper                    | 反应堆周期的倒数                   | Reciprocal period (s-1).<br />period：反应堆周期，即堆内中子密度变化e倍所需时间。 |
+| rktpow                      | 反应堆总(热)功率=裂变+衰变         | Total reactor power, i.e., sum of fission and decay powers (W). |
+| sattemp<br />satt-part      | 饱和温度（基于蒸汽分压）           | Volume saturation temperature based on the partial pressure of steam (K, ℉). |
+| sounde                      | 声速                               | Volume sonic velocity (m/s, ft/s).                           |
+| tempf                       | 液相温度                           | Volume liquid temperature Tf (K, ℉).                         |
+| tempg                       | 气相温度                           | Volume vapor temperature Tg (K, ℉).                          |
+| throat ratio                | 喉部接管面积比                     | 喉部面积/接管面积（v2p25, 26）                               |
+| time                        | 模拟物理时间                       | Time (s).                                                    |
+| tmass                       | 系统总质量                         | Total mass of water, steam, and noncondensables in all the systems (kg, lb). |
+| uf                          | 液相比内能                         | Liquid specific internal energy (J/kg, Btu/lb).              |
+| ufj                         | 接管液相比内能                     | Junction liquid specific internal energy (J/kg, Btu/lb).     |
+| ug                          | 气相比内能                         | Vapor specific internal energy (J/kg, Btu/lb).               |
+| ugj                         | 接管气相比内能                     | Junction vapor specific internal energy (J/kg, Btu/lb).      |
+| vapgen<br />Vapor.gen       | 蒸发净总速率                       | Total mass transfer rate per unit volume at the vapor/liquid interface in the bulk fluid for  vapor generation/condensation and in the boundary layer near the wall for vapor  generation/condensation (kg/m^3  •s, lb/ft^3  •s). |
+| velf<br />vel-liquid        | 液相速度                           | Volume oriented liquid velocity (m/s, ft/s); the parameter is the volume number plus F. |
+| velfj<br />liq.j.vel        | 接管液相速度                       | Junction liquid velocity (m/s, ft/s). This velocity is based on the junction area Aj, which is  discussed in Volume II, Section 2.4. |
+| velg<br />vel-vapor         | 气相速度                           | Volume oriented vapor velocity (m/s, ft/s); the parameter is the volume number plus F. |
+| velgj<br />vap.j.vel        | 接管气相速度                       | Junction vapor velocity (m/s, ft/s). This velocity is based on the junction area Aj, which is  discussed in Volume II, Section 2.4. |
+| vlvarea                     | 阀门与接管面积比                   | Ratio of the current valve physical area to the junction area. |
+| vlvstem                     | 阀门面积开启比例<br />阀杆位置比   | 对于开启了归一化阀杆位置选项的电动阀和伺服阀，是当前阀杆位置与全开时的比值; 否则是面积比 |
+| voidf                       | 液相截面份额                       | Volume liquid fraction.                                      |
+| voidfj                      | 接管液相截面份额                   | Junction liquid fraction.                                    |
+| voidg                       | 空泡份额                           | Volume vapor fraction (void fraction).                       |
+| voidgj                      | 接管空泡份额                       | Junction vapor fraction (void fraction).                     |
+| voidg                       | 空泡份额(前一时间步)               | Vapor void fraction previous time step (n)                   |
+| vol-flag                    | 控制体控制标记                     | volume control flag (tlpvbfe)<br />t0不用热前沿追踪跟踪模型，<br />l0不用mixture level混合物水平面追踪模型，<br />p0使用water packing scheme水填充方案，<br />v0不使用垂直分层模型，<br />b0使用管道相间摩擦模型，<br />f0沿体积的x坐标计算壁摩擦效应，<br />e0使用非平衡(不相等温度)计算 |
+|                             |                                    |                                                              |
+
+
+
+
 
 # 子程序速查表
 
@@ -224,7 +388,7 @@
 | pltwrt    |                                                              |
 | pminv1    |                                                              |
 | pminv4    |                                                              |
-| pminvd    |                                                              |
+| pminvd    | pminvd子程序是压力矩阵求解器旧版本MA18中的一个子程序，被三个子程序调用，分别是子程序tsetsl、pminvf和syssol。其中在tsetsl子程序中调用，用于直接解法的预处理，包含矩阵系数的存储、选主元排序及消元。pminvd中求解方式属于最基本的选主元消去法。形式为：subroutine pminvd (a,ind,iw,n,np,g,ux,ia)。<br />a	压力矩阵系数<br/>ind	系数位置<br/>iw	压力矩阵特性参数<br/>n	变量个数<br/>np	变量个数+1<br/>ux	指数<br/>ia	矩阵允许最大个数<br/> |
 | pminvf    |                                                              |
 | pminvr    |                                                              |
 | pminvx    |                                                              |
@@ -236,7 +400,7 @@
 | precr     |                                                              |
 | prednb    |                                                              |
 | presej    |                                                              |
-| preseq    |                                                              |
+| preseq    | 加载压力矩阵，计算系数矩阵和源向量中的元素。形式为subroutine preseq。<br />preseq uses the phasic equations for mass and energy to eliminate<br/>c  liquid specific internal energy, vapor specific internal energy, void<br/>c  fraction, and noncondensible quality.The preseq subroutine fills the coefficient matrix and row reduces this matrix prior to the call to<br/>syssol. The row reduction reduces the block 5x5 matrix that has one block for each volume in the loop that<br/>is being solved to a block 1x1 matrix. The block 1x1 matrix is the pressure matrix and is sent to syssol to<br/>solve for the increment in pressure in each volume for this time step. |
 | psatpd    |                                                              |
 | pset      |                                                              |
 | pstdnb    |                                                              |
@@ -261,7 +425,7 @@
 | setreason | Routine that sets all the reasons for the setting of the success flag |
 | setrhs    |                                                              |
 | sieder    |                                                              |
-| simplt    |                                                              |
+| simplt    | simplt computes the new time liquid specific internal energy,<br/>c  vapor specific internal energy, void fraction, noncondensible<br/>c  quality, and boron density using implicit convective terms in<br/>c  the mass and energy equations. |
 | solr      |                                                              |
 | sol       |                                                              |
 | sortup    |                                                              |
@@ -302,7 +466,7 @@
 | surftn    |                                                              |
 | svpu2p    |                                                              |
 | svpupu    |                                                              |
-| syssol    |                                                              |
+| syssol    | 加载压力矩阵，计算系数矩阵和源向量中的元素。形式为：SUBROUTINE SYSSOL (isol,ilsw,offst)。有三种方式求解压力矩阵：旧版本方式、BPLU法和广义最小残差迭代法。用户可在输入卡中选择性激活chngno34和35选择求解压力矩阵的方式。 |
 | tcnvsl    |                                                              |
 | tempi     |                                                              |
 | tempifc   |                                                              |
@@ -389,7 +553,7 @@ end if
 
 ## 调试思路
 
-从五变量出发，XnUfUgP, 形如Ax=B,发现Uf的方程异常？问题源项或者与变量相乘的系数，源项是液相能量方程的本构之和，经查壁面无问题，相间本构有问题。
+从五变量出发，(六变量Xn?) Ug、Uf、αg、αf、P, 形如Ax=B,发现Uf的方程异常？问题源项或者与变量相乘的系数，源项是液相能量方程的本构之和，经查壁面无问题，相间本构有问题。
 
 因为以前的本构中液相都是除以的液膜项，现在是三流畅，在弥散流无液膜项算不下去，替换为液膜+液滴项-12,-8
 
@@ -398,30 +562,29 @@ end if
 
 一系列操作，可以突破0.999，到达0.86，但是却不是环雾流Annular mist ANM 6，仍然是弥散流，只有液滴没有液膜。因而发现水平工况流型判断的bug，仅判断液相，三流场时无法转换。再查看它的源项：夹带和沉降本构，发现只会沉降，不会夹带，导致液滴项份额从1e-4到1e-13。但是应该影响不大？
 
+eqfinl.f(492): 	
 
-eqfinl.f(492): 	write(484,*)timehy,uf(i),hif(i),hig(i),voidg(i),voide(i),volno(1,i),velf(i),velg(i)
+write(484,*)timehy
 
 生成fort.484文件，调试查看变量值
 
+	if (timehy .gt. 1.8e-2 .and. volno(1,i) .gt. 125380000) then
+		write(230725,*)timehy,volno(1,i),ug(i),voidg(i),voide(i),velg(i)
+	end if
 
+# 测试
 
-## 测试
+1. syssol，奇异矩阵。preseq处理后vfinl调用syssol时传入的压力矩阵系数数组coefp(ixcofp(1,issys))的120/121元素是NaN，122是1，123-184是0。（前面基本都是-41，-41，83，除了最开始1，0，42）（根据定义，应该就是142个控制体压力与速度的关系式联立）调用 pminvd 的 sourcp(i+4) 是 NaN，可能是line106、200、239报错，
+2. 后面statep，调用物性withoutair，p是NAN
+3. 刚刚从弥散流到环雾流，出现液膜，fwalfj
+4. 
+5. preseq  的 pshig(ix)=0
 
-phantv
-
-verthifreg
-
-phantv
-
-wethif
-
-hydro
-
-phantj
+vexplt
 
 
 
-syssol
+syssol，调用 pminvd 的 sourcp(i+4) 是 NaN。
 
 
 
@@ -429,15 +592,9 @@ syssol
 0******** Error return from pminvd because the matrix is singular.  row     21 is dependent on the rest.
 0####################################################################################################################################
      syssol Diagnostic printout, timehy =  1.8149195E-02, dt =  8.1266095E-04, ncount =       130, help =  1, lsuces =  0, fail = F
-```
-
-0
- ==========================================================================================================================
-
-Solution array 
-
-        sourcp(i)    sourcp(i+1)  sourcp(i+2)  sourcp(i+3)  sourcp(i+4)  sourcp(i+5)  sourcp(i+6)  sourcp(i+7)  sourcp(i+8)
- ==========================================================================================================================
+     0Solution array 
+         sourcp(i)    sourcp(i+1)  sourcp(i+2)  sourcp(i+3)  sourcp(i+4)  sourcp(i+5)  sourcp(i+6)  sourcp(i+7)  sourcp(i+8)
+          ==========================================================================================================================
          0.0000       34.193       110.15       70.189       84.382       93.208       94.192       94.759       95.032    
          95.096       94.946       94.590       94.043       93.290       92.322       91.157       89.807       88.249    
          86.475       84.509       82.365       80.048       77.548       74.867       72.003       68.957       65.715    
@@ -445,9 +602,42 @@ Solution array
          20.899       15.045       8.8569      -1052.8     NaN            0.0000    
 0Singularity parameter (if gerr .lt. 0.0, the matrix solution is singular)
  gerr =  -1.0000    
-0####################################################################################################################################
-      jprop Diagnostic printout, timehy =  1.8149195E-02, dt =  8.1266095E-04, ncount =       130, help =  1, lsuces =  0, fail = F
-0Junctiondonoredproperties,icheck=  1
+
+```
+
+
+
+```fortran
+call pminvd (coefp(ixcofp(1,issys)),fa(ixirnx(1,issys)),
+     &       fa(ixipx(1,issys)),nvr(1,matrxi-1),nvrp(1,matrxi-1),gerr,
+     &       0.25d0,nnz2(1,matrxi-1))
+     
+     
+subroutine pminvd (a,ind,iw,n,np,g,ux,ia)
+!n42, np43, g2.8e294,ux0.25,ia184
+
+if(iw(1,ir,l+6).le.0)go to 560
+if(amax.eq.0.0d0)go to 560
+
+
+560    write (output,570) errmsg,rowcol(l),ir
+570    format (a,'the matrix is singular.',2x,a6,i4,' is dependent on the rest.')
+
+data errmsg/'0******** Error return from pminvd because '/
+data rowcol/'row','column'/
+ir=iw(1,1,l+10)
+
+0******** Error return from pminvd because the matrix is singular.  row     21 is dependent on the rest.
+
+```
+
+
+
+```
+preseq.f(903): coefp(ll) = coefp(ll) + terml
+preseq.f(906): coefp(lk) = coefp(lk) - termk
+
+```
 
 
 
@@ -466,6 +656,10 @@ subroutine nth2x6f (a,s,it,err,satflag)
 
 
 subroutine getsatatp (tables,getprops,p,x,s,err)的p是NAN
+
+
+
+
 
 # 其他
 
