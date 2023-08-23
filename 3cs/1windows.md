@@ -340,18 +340,36 @@ Ctrl 逐个选中所有文本框，组合，置于顶层
 >将底部状态栏的“改写”改为“插入”。
 （右键单击Word底部空白状态栏，在弹出的“自定义状态栏”中，勾选“改写”选项，以在底部显示。）
 
-
 ## Rss订阅
-软件——[Inoreader网页端](https://www.inoreader.com/all_articles)
 
-找订阅的网站——[RSSHUB](https://docs.rsshub.app/)，
-[播客](https://getpodcast.xyz/)，
-[中文个人博客](https://blogwe.com/)
+软件——
+
+[Inoreader网页端](https://www.inoreader.com/all_articles)
+
+
+
+找订阅的网站——
+
+[RSSHUB](https://docs.rsshub.app/)，
+
+[小宇宙播客排行榜](https://getpodcast.xyz/)，
+
+[中文个人博客](https://blogwe.com/)，
+
+[丑搜博客内容](https://uglysearch.othing.xyz/)
+
+
 
 插件找订阅——
 [RSS+油猴插件](https://greasyfork.org/zh-CN/scripts/373252-rss-show-site-all-rss)，
+
 [Inoreader插件——RSS Reader](https://chrome.google.com/webstore/detail/rss-reader-extension-by-i/kfimphpokifbjgmjflanmfeppcjimgah),
+
 [RSSHB插件——RSSHub Radar](https://chrome.google.com/webstore/detail/rsshub-radar/kefjpfngnndepjbopdmoebkipbgkggaa)
+
+
+
+常用——
 
 - B站up主视频——进入[up主页](https://space.bilibili.com/697166795), RSS+发现up主的动态订阅
 
@@ -363,17 +381,29 @@ Ctrl 逐个选中所有文本框，组合，置于顶层
 
 - [订阅 Youtube 频道](https://anotherdayu.com/2023/4530/)：`https://www.youtube.com/feeds/videos.xml?channel_id=` + `Channel id`，最后的ID可以跳过复制频道主页的链接后打开这个[网站](https://commentpicker.com/youtube-channel-id.php)获取
 
+
+
+
+
 ## IPTV直播源
 使用方法
 * Windows：PotPlayer右键——打开——打开链接——输入直播源地址（.m3u）——确定
 * Android：VLC。（或者部分设备浏览器（手机）上，可打开.m3u文件，单独播放其中的.m3u8文件）
 
 [直播源]
-* [国内，快，IPV6](https://raw.githubusercontent.com/YueChan/IPTV/main/IPTV.m3u)
-* [仓库，国人的](https://github.com/imDazui/Tvlist-awesome-m3u-m3u8)
-* [仓库，国外](https://github.com/iptv-org/iptv)
+
+[随时可能失效，github项目](https://github.com/fanmingming/live)
+
+* 🌏Global直播源	https://live.fanmingming.com/tv/m3u/global.m3u	198个	2023.8.13
+* 📺IPTV(IPV6专用)	https://live.fanmingming.com/tv/m3u/ipv6.m3u	120个	2023.8.13
+* 📻Radio直播源	https://live.fanmingming.com/radio/m3u/index.m3u	317个	2023.5.3
+
+
+
+
 
 无法播放？
+
 * 在clash中打开IPV6
 
 ## clash 科学上网
@@ -406,6 +436,31 @@ parsers: # array
         - DOMAIN-SUFFIX,nist.gov,DIRECT
         - DOMAIN,yuguo.us,GLOBAL
 ```
+
+## 电子书
+
+**看什么书**
+
+1. [豆瓣读书top250](https://book.douban.com/top250?icn=index-book250-all)
+
+2. [2013版豆瓣读书top250](https://www.douban.com/doulist/43621091/)
+
+3. [你所在领域的入门书单是怎样的？ - 知乎](https://www.zhihu.com/question/51265095)
+
+4. [通识千书书单](https://docs.qq.com/sheet/DY2RmcVVMVE9Qd3JV?tab=xwaub9)
+
+   
+
+**从哪找书**
+
+1. [zlibrary](https://lib-c463qd25h2ypw2am7wpqmfy6.1lib.ph)，公网仅有私密域名，与本人账号唯一绑定
+2. [读书](https://doosho.com/)——可能是电子书爱好者自制的，少量古籍和现代作品，甚至还有马督工睡前消息的[文字稿](https://doosho.com/cn/44)
+3. [安娜书库存档](https://annas-archive.org/)，含zlibrary，libgen等，速度慢？
+4. [全国图书馆参考咨询联盟](http://www.ucdrs.superlib.net/)，国家数据库，可查信息，可试看
+5. [图书联盟](https://dazzling-bacon-763.notion.site/eecbb4284b434f76a85d99f240349ddb)，付费，网上找书商家应该用的这个
+6. [电子书独秀库百度网盘妙传下载](https://freembook.com/)（好像失效了，存不到网盘内）
+
+
 
 # 问题
 

@@ -335,5 +335,9 @@ xxx.github.io.	5	IN	A	185.199.108.153
 cd ~/Desktop/notebook && book sm && cp SUMMARY.md README.md && mv 9me/test.md node_modules/test.md && gitbook build &&  mv _book/search_plus_index.json node_modules/search_plus_index.json && mv node_modules/test.md 9me/test.md && gitbook build && staticrypt _book/9me/test.html mima --short && rm _book/9me/test.html && mv _book/9me/test_encrypted.html _book/9me/test.html && mv 9me/test.md node_modules/test.md && mv node_modules/search_plus_index.json _book/search_plus_index.json  && gh-pages -d _book && git add --all && git commit -a -m "." --no-verify && git push && mv node_modules/test.md 9me/test.md && echo ====================success==================
 ```
 
+## Nginx 网站加密认证
+
+https://segmentfault.com/a/1190000018195589
+
 
 

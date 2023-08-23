@@ -193,6 +193,10 @@ passwd 选项 用户名
 
 ?
 
+https://linux.cn/article-15834-1.html
+
+https://www.google.com/search?q=linux%E4%BD%9C%E4%B8%BAhost%EF%BC%8Cqemu%2Fkvm%E8%99%9A%E6%8B%9Fwindows&ie=UTF-8
+
 ## `base64`加密
 
 ```bash
@@ -444,6 +448,10 @@ echo "nameserver 8.8.8.8" | sudo tee /etc/resolv.conf > /dev/null
 
 [github超赞的-linux-软件仓库](https://github.com/luong-komorebi/Awesome-Linux-Software/blob/master/README_zh-CN.md#%E8%B6%85%E8%B5%9E%E7%9A%84-linux-%E8%BD%AF%E4%BB%B6)
 
+[linux游戏站](https://www.linuxgame.cn/)
+
+
+
 ## wps旧版可编辑pdf
 
 [直接下载安装包](https://wdl1.cache.wps.cn/wps/download/ep/Linux2019/10161/wps-office_11.1.0.10161_amd64.deb)
@@ -475,7 +483,7 @@ ImageMagick是一个用于查看、编辑位图文件以及进行图像格式转
 ```bash
 chmod a+x magick 
 
-# 压缩图片略小于指定值，应该是多次压缩后比较判断
+# 压缩图片略小于指定值(MB、KB)，应该是多次压缩后比较判断
 ./magick convert 春游*.jpg -define jpeg:extent=25MB output.jpg
 
 # reduce the image size before it is written to the PNG format:

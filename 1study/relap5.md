@@ -649,6 +649,8 @@
 - 无法识别Tab键：`0******** Unable to determine processing type on card 100, no further processing possible.`，RELAP输入卡中的tab符号无法被识别，使用空格替代。
 - 环路高度不闭合：`******** Closure by junction 100030000 shown below is incorrect, position from loop is 0.00000 0.00000 0.00000 .`，如果闭合环路中的同一个控制体计算的高度相差大于0.0001m，则程序会提示环路高度不闭合。
   - outdta文件的输入编辑部分也有输出高度检查信息，形如`1         Reference volumes and positions for each loop and segment for each hydrodynamic system for z coordinate direction`。
+- 生成的文件过大：再启动rstplt等文件超过2GB会闪退。增大再启动输出间隔即可。报错`forrtl: 试图将文件指针移到文件开头之前`
+  `forrtl: severe (38): error during write,unit 13，file C:\xxx\rstplt`
 
 # 运行程序
 
