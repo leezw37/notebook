@@ -85,6 +85,7 @@
 | reactor coolant pump      | 主泵                                               |                                                              |
 | reactor (pressure) vessel | 反应堆（压力）容器                                 |                                                              |
 | reflector                 | 反射层                                             | 放在堆芯周围，反射中子减少损耗，使得反应堆体积可以减小       |
+| reflood                   | 再淹没                                             | 在冷却剂丧失等事故中，一回路冷却剂流量减小，堆芯水位降低，燃料棒外壳可能暴露在空气中。通过安注系统等重新注入冷却剂，可以使重新淹没燃料棒。从而避免燃料棒过热，减少核反应堆事故的风险。 |
 | relief valve              | 释放阀                                             |                                                              |
 | RPV                       | 反应堆压力容器                                     | reactor pressure vessel                                      |
 |                           |                                                    |                                                              |

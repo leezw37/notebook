@@ -5,7 +5,11 @@
 
 
 
+## 查看电脑已保存wifi的密码
 
+1. 已连接上：设置，网络和Internet，状态，网络和共享中心，点击该WiFi ”WLAN（xxx_Printer）”，无线属性，安全，勾选“显示字符”。
+
+2. “命令提示符”工具查询所有使用过的WiFi连接密码：命令提示符（管理员）输入`netsh wlan show profiles`，找到你想查询的连接名称，然后套入如下命令`netsh wlan show profile name="查询WiFi名" key=clear`，密码显示在安全设置的关键内容。
 
 ## win定时任务自动备份重要文件
 
@@ -449,12 +453,12 @@ parsers: # array
 
 4. [通识千书书单](https://docs.qq.com/sheet/DY2RmcVVMVE9Qd3JV?tab=xwaub9)
 
-   
+
 
 **从哪找书**
 
 1. [zlibrary](https://lib-c463qd25h2ypw2am7wpqmfy6.1lib.ph)，公网仅有私密域名，与本人账号唯一绑定
-2. [读书](https://doosho.com/)——可能是电子书爱好者自制的，少量古籍和现代作品，甚至还有马督工睡前消息的[文字稿](https://doosho.com/cn/44)
+2. [读书](https://doosho.com/)，可能是电子书爱好者自制的，少量古籍和现代作品，甚至还有马督工睡前消息的[文字稿](https://doosho.com/cn/44)，[飞书文档](https://bedtime.news/)
 3. [安娜书库存档](https://annas-archive.org/)，含zlibrary，libgen等，速度慢？
 4. [全国图书馆参考咨询联盟](http://www.ucdrs.superlib.net/)，国家数据库，可查信息，可试看
 5. [图书联盟](https://dazzling-bacon-763.notion.site/eecbb4284b434f76a85d99f240349ddb)，付费，网上找书商家应该用的这个
