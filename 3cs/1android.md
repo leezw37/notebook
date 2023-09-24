@@ -15,6 +15,8 @@
 
 [！LineageOS 官方教程——Redmi K30 Pro](https://wiki.lineageos.org/devices/lmi/install/variant2)
 
+[Pixel Experience 安装教程——基于Lineage，原生谷歌生态；貌似更好用，bug更少](https://wiki.pixelexperience.org/devices/lmi/install/)
+
 [网络教程安装MIUI或者lineage](https://www.cnblogs.com/ls1519/p/16088770.html)
 
 [跳过验证谷歌](https://www.hztdst.com/2985.html)
@@ -23,9 +25,11 @@
 
 [XDA论坛redmi k30 pro 刷机资源收集](https://forum.xda-developers.com/t/poco-f2-pro-redmi-k30-pro-latest-collection-roms-tools-more-miui-14-updated-april-2023.4554851/)
 
+
+
 **准备**
 
-1. 下载rom包和recovery包！[lineage](https://download.lineageos.org/devices/lmi/builds)(lineage系统必须使用专用recovery)
+1. 下载rom包和recovery包！[lineage](https://download.lineageos.org/devices/lmi/builds) ( lineage系统必须使用专用recovery)
 2. 手机设置——小米账号——云备份——桌面云备份
 3. 手机设置——我的设备——备份与恢复——手机备份
 4. 连接电脑——复制文件夹MIUI/backup/allbackup
@@ -45,12 +49,12 @@
 5. 刷入谷歌套件：再次apply update，apply from ADB——执行`.\adb.exe sideload MindTheGapps-13.0.0-arm64-20221025_100653.zip`刷入google——手机提示signature verification failed，点击继续。——手机reboot system now
 6. 进入系统初始设置，建议取消google所有勾选，关闭更新lineage恢复。建议关闭系统更新，因为似乎会使magisk失效，冰箱已冻结的app无法启用。（系统app需要重新启用，非系统app需要手动重新安装）
 
-~~4. 刷入miui：清除数据（wipe）——格式化data分区——返回高级清除（advanced wipe）——勾选所有（）——返回重启——recovery。安装（install）——sdcard/twrp(复制lineage安装包到此目录)——重启~~
+~~4. 刷入miui（出现过lineage无法刷入其他recovery的情况，好像没关系。直接刷其他系统包就行）：清除数据（wipe）——格式化data分区——返回高级清除（advanced wipe）——勾选所有（）——返回重启——recovery。安装（install）——sdcard/twrp(复制lineage安装包到此目录)——重启~~
 
 **问题**
 
-1. lineage 重新刷回 低版本安卓 miui后，如果更新系统会一直卡在recovery，无法进入系统。解决办法是重新刷回lineage，或者最新版本miui（也无法更新系统，但是可以进入系统）。
-2. lineage 刷 microG 发现没有声音。（）
+1. lineage 重新刷回 **低版本**安卓的 miui后，如果更新系统会一直卡在recovery，无法进入系统。解决办法是重新刷回lineage，或者最新版本miui（也无法更新系统，但是可以进入系统）。
+2. lineage 横屏时音量增减反了；刷 入microG套件后发现没有声音。
 3. 若无法挂载data无法解密，搜索 twrp k30 pro最近一年，下载最新twrp.img
 4. 无法[跳过验证谷歌](https://www.hztdst.com/2985.html)，一直卡在“正在准备你的手机”——进入twrp，点击高级，点击终端，高通cpu的输入dd if=/dev/zero of=/dev/block/by-name/frp，确定（联发科cpu输入dd if=/dev/zero of=/dev/block/bootdevice/by-name/frp）
 5. magisk可能干扰微信、中国银行等的人脸验证，在magisk设置中伪装隐藏，但仍然可能无效

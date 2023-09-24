@@ -30,5 +30,4 @@
   * [1book](9me/1book.md)
   * [test](9me/test.md)
 - no_upload
-  * [dairy](no_upload/dairy.md)
   * [Untitled](no_upload/Untitled.md)

@@ -2,7 +2,7 @@
 
 1. 前后加上修改标记ccclzw230728
 2. 改了vexplt沉降，0.018应该是0.18，且恢复了被注释的沉降结果，好像没有影响？
-4. 相间摩擦：注释掉了dispdrag、amistdrag和drydrag的液滴直径rddrp造成结果为0的重复计算。（有效！！）
+4. 相间摩擦：注释掉了dispdrag、amistdrag和drydrag的液滴直径rddrp造成结果为0的重复计算。
 5. 相间传热传质：disp, amist
 
 # 目录

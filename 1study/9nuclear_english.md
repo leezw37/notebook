@@ -22,7 +22,7 @@
 |                           |                                                    |                                                              |
 |                           |                                                    |                                                              |
 | CEDM、CRDM                | 控制棒驱动机构                                     | control element/rod drive mechanism                          |
-| CMT                       |                                                    |                                                              |
+| CMT                       | 堆芯补水箱                                         | core makeup tank                                             |
 | cold leg                  | 冷管段（冷腿）                                     |                                                              |
 | containment               | 安全壳                                             |                                                              |
 | Core (support) barrel     | 堆芯吊篮                                           | 属于堆芯下部支撑结构，装载着反应堆。其他的下栅格板（下侧）、热中子屏蔽（外侧）、堆芯围板（内侧）等都依附于其上。 |
@@ -39,6 +39,7 @@
 | dose equivalent           | 剂量当量                                           | 用来衡量辐射的生物效应，单位西弗Sv（Sievert，希沃特），=吸收剂量*品质因数（衡量某种辐射引起的生物学损伤能力）。 |
 |                           |                                                    |                                                              |
 | ECCS                      | 应急堆芯冷却系统                                   | emergency core cooling system                                |
+| EPSS                      | 应急非能动安全系统                                 | Emergency Passive Safety System (EPSS)                       |
 |                           |                                                    |                                                              |
 | feedwater                 | 给水                                               | e.g. SG feedwater 蒸汽发生器给水，和堆芯流动类似也是先下降段再上升段 |
 | FP                        | 满功率                                             | full power                                                   |
@@ -53,11 +54,14 @@
 |                           |                                                    |                                                              |
 | inner radiation hazard    | 内照射危害                                         | 体内放射性物质造成的危害                                     |
 | IPWR                      | 一体化压水反应堆                                   | integrated pressurized water reactor                         |
+| IRWST                     | 安全壳内置换料水箱                                 | in-containment refueling water storage tank                  |
 |                           |                                                    |                                                              |
 | latent heat               | 潜热                                               |                                                              |
 | lattice                   | 栅格                                               |                                                              |
 | LNPS                      | 岭澳核电站                                         | Lingao Nuclear Power Station (LNPS)                          |
 | LOCA                      | 失水事故                                           | loss of coolant  accident                                    |
+| LOFA                      | 给水丧失事故                                       | 核电站中给水系统发生故障或中断的事故。无法提供足够的冷却剂，核反应堆的温度将迅速上升，这可能导致核反应失控和燃料组件过热。 |
+| LOFT                      | 失水试验                                           | loss of coolant test                                         |
 | loop seal                 | 环路水封                                           | 环路水封清除（LSC，loop seal clearing）：在冷管段小破口时，如果一回路自然循环驱动力不足以克服过渡段U型管内的环路水封时，自然循环被中断，导致堆芯上腔室内蒸汽不断聚积，引起堆芯坍塌液位下降和燃料包壳峰值温度上升 |
 | lower core plate          | 堆芯下栅格板                                       |                                                              |
 | lower head                | 下封头                                             |                                                              |
@@ -88,6 +92,8 @@
 | reflood                   | 再淹没                                             | 在冷却剂丧失等事故中，一回路冷却剂流量减小，堆芯水位降低，燃料棒外壳可能暴露在空气中。通过安注系统等重新注入冷却剂，可以使重新淹没燃料棒。从而避免燃料棒过热，减少核反应堆事故的风险。 |
 | relief valve              | 释放阀                                             |                                                              |
 | RPV                       | 反应堆压力容器                                     | reactor pressure vessel                                      |
+| RWST<br />IRWST           | 换料水箱<br />安全壳内置换料水箱                   | refueling water storage tank<br />in-containment refueling water storage tank |
+|                           |                                                    |                                                              |
 |                           |                                                    |                                                              |
 | safety injection system   | 安注系统                                           | 也称应急堆芯注水系统，失水事故、主蒸汽管道破裂事故时紧急注水 |
 | safety valve              | 安全阀                                             | 蒸汽发生器上，弹簧加载，超压开启                             |
