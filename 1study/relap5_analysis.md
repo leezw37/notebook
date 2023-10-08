@@ -17,7 +17,7 @@
 
 1. 输入: inputd
    1. 输入卡: rnewp
-   2. 初始化: mewp
+   2. 初始化: rnewp
 2. 瞬态计算: trnctl调用tran
    1. 时间步长控制体及输出: dtstep
    2. TDV和TDJ计算: tstate
