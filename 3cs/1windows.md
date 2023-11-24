@@ -13,7 +13,19 @@
 
 ## win定时任务自动备份重要文件
 
-1. 新建`backup.bat`备份脚本。（rem是注释命令，注意文件夹路径尾部的`\`）
+1. 新建`backup.bat`备份脚本。
+
+   1. rem是注释命令；
+   2. 注意文件夹路径尾部的`\`
+   3. %date% 表示当前日期，格式为 "周几 MM/DD/YYYY"，例如 "Wed 02/17/2023"。
+      * %date:~0,4% 表示从日期字符串中提取第 0 到第 4 个字符，也就是年份。
+      * %date:~5,2% 表示从日期字符串中提取第 5 到第 6 个字符，也就是月份。
+      * %date:~8,2% 表示从日期字符串中提取第 8 到第 9 个字符，也就是日。
+   4. %time% 表示当前时间，格式为 "HH:mm:ss.00"，例如 "10:30:45.99"。
+      * %time:~0,2% 表示从时间字符串中提取第 0 到第 2 个字符，也就是小时。
+      * %time:~3,2% 表示从时间字符串中提取第 3 到第 4 个字符，也就是分钟。
+      * %time:~6,2% 表示从时间字符串中提取第 6 到第 7 个字符，也就是秒。
+   5. 可以用短横线连接，但是冒号不行。。。
 
    ```basic
    @echo off
@@ -22,8 +34,8 @@
    set sourcePath=C:\0r720\sourcePath\
    rem 要备份到的文件夹
    set targetPath=D:\BackupHistory\
-   rem 自动备份生成的文件名
-   set folderName=%date:~0,4%-%date:~5,2%-%date:~8,2%
+   rem 自动备份生成的文件名，形如2023-11-13-14-21-43
+   set folderName=%date:~0,4%-%date:~5,2%-%date:~8,2%-%time:~0,2%-%time:~3,2%-%time:~6,2%
    
    XCOPY /e /c /y "%sourcePath%*" "%targetPath%%folderName%\"
    
@@ -459,7 +471,7 @@ parsers: # array
 
 1. [zlibrary](https://lib-c463qd25h2ypw2am7wpqmfy6.1lib.ph)，公网仅有私密域名，与本人账号唯一绑定
 2. [读书](https://doosho.com/)，可能是电子书爱好者自制的，少量古籍和现代作品，甚至还有马督工睡前消息的[文字稿](https://doosho.com/cn/44)，[飞书文档](https://bedtime.news/)
-3. [安娜书库存档](https://annas-archive.org/)，含zlibrary，libgen等，速度慢？
+3. [安娜书库存档](https://annas-archive.org/)，含zlibrary，libgen等，速度慢？但资源很多！
 4. [全国图书馆参考咨询联盟](http://www.ucdrs.superlib.net/)，国家数据库，可查信息，可试看
 5. [图书联盟](https://dazzling-bacon-763.notion.site/eecbb4284b434f76a85d99f240349ddb)，付费，网上找书商家应该用的这个
 6. [电子书独秀库百度网盘妙传下载](https://freembook.com/)（好像失效了，存不到网盘内）
