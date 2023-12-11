@@ -1,7 +1,12 @@
 # 目录
+
 [TOC]
 
 # 使用技巧
+
+
+
+
 
 ## MIUI关闭系统广告
 
@@ -37,7 +42,7 @@
 2. 手机设置——小米账号——云备份——桌面云备份
 3. 手机设置——我的设备——备份与恢复——手机备份
 4. 连接电脑——复制文件夹MIUI/backup/allbackup
-5. 手机设置——更多设置——开发者选项——打开USB调试（我的设备——全部参数——miui版本连续点击）（设备解锁状态，需要提前一周申请）
+5. 手机恢复出厂设置——更多设置——开发者选项——打开USB调试（我的设备——全部参数——miui版本连续点击）（设备解锁状态，需要提前一周申请）
 6. （[下载谷歌套件开源替代——MindTheGapps-13.0.0-arm64-20221025_100653.zip，注意选择安卓版本与arm64](https://wiki.lineageos.org/gapps))（或者[microG版本的Lineage系统](https://download.lineage.microg.org/lmi/)）
 
 （关机时同时长按音量下键和开关机键，可以进入fastboot模式，音量+和电源键则是recovery模式）
@@ -48,7 +53,7 @@
 
 1. 刷miui的Recovery跳过验证谷歌：打开脚本 `H:\3backup\redmi K30 PRO\刷机\TWRP\recovery-twrp一键刷入工具-1-先跳过谷歌验证.bat`，按照指示操作；手机弹窗允许usb调试；重启后自动先后进入fastboot和recovery模式。（更改bat脚本中的包名set rec_img=从而刷入不同的recovery包：刷miui用twrp_3.6.2_LMI_unofficialtwrp.img，刷lineage用lineage_recovery.img）
 2. 跳过验证谷歌：打开recovery后，点击高级，点击终端，高通cpu的输入`dd if=/dev/zero of=/dev/block/by-name/frp`，联发科cpu输入dd if=/dev/zero of=/dev/block/bootdevice/by-name/frp，最后重启到Boot Loader（fastboot）。(**注意zero 和of之间有空格。**)
-3. 刷入lineage的recovery ( 功能太少 )：打开脚本`H:\3backup\redmi K30 PRO\刷机\TWRP\recovery-twrp一键刷入工具-2-lineage.bat`，按照指示操作后手机自动进入recovery。**(建议使用twrp，以部分防止变砖：1. 清除数据——格式化Data分区，高级清除全选；2. 开启adb侧载——高级，ADB sideload，全选，开始；3. 电脑刷入系统：`adb devices`查看是否已连接设备，如果有，则`adb sideload lineage-xxx.zip`；4. 成功后重启系统)**
+3. 刷入lineage的recovery ( 功能太少 )：打开脚本`H:\3backup\redmi K30 PRO\刷机\TWRP\recovery-twrp一键刷入工具-2-lineage.bat`，按照指示操作后手机自动进入recovery。**(建议使用twrp，以部分防止变砖：1. 清除数据——同一系统可能仅滑动恢复出厂即可（不同系统乃至安卓版本不一样，则必须格式化Data分区、高级清除全选）；2. 开启adb侧载——高级，ADB sideload，全选，开始；3. 电脑刷入系统：`adb devices`查看是否已连接设备，如果有，则`adb sideload lineage-xxx.zip`；4. 成功后重启系统)**
 4. 刷入lineage系统：Factory Reset——格式化全部三项——返回apply update ——apply from ADB——电脑双击`打开cmd命令行.bat`执行`.\adb.exe sideload lineage-20.0-20230325-nightly-lmi-signed.zip`（或者`adb sideload lineage-20.0-20231109-microG-lmi.zip`）（两个文件和终端路径在同一目录下；Table键可以帮助填充文件名）（刷入microG版本时手机报错鉴权错误时应该继续）
 5. 刷入谷歌套件(lineage-microG版不需要)：再次apply update，apply from ADB——执行`.\adb.exe sideload MindTheGapps-13.0.0-arm64-20221025_100653.zip`刷入google——手机提示signature verification failed，点击继续。——手机reboot system now
 6. 进入系统初始设置，建议取消google所有勾选，关闭更新lineage恢复。建议关闭系统更新，因为似乎会使magisk失效，冰箱已冻结的app无法启用。（系统app需要重新启用，非系统app需要手动重新安装）
