@@ -7,7 +7,7 @@
 
 1. **amisthif**：修改液滴直径rddrp
 2. **dispdryhif**：修改液滴直径rddrp。`velgj(i)`改成`max(1.0d-5,abs(velgj(i)))`，防止速度=0。velfj(i)同理。（是否换R5本构？scrchh用公式算较大，很难达到700K，应该是相对速度需要加个绝对值？alpdrp应该是voidf）。**液相换热系数有各分支过小导致液相内能过大报错。**
-3. **drydrag **：注释计算液滴直径的第二个本构
+3. **drydrag **：注释计算液滴直径的第二个本构 
 
 
 
