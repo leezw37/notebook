@@ -93,7 +93,7 @@ pipe
 hstructure
 
 *轴向控制体数量; 径向网格点数; 几何类型(1矩形体2圆柱3球形);
-*左边界坐标(管内径); 再淹没标记1(0禁用1启用); 再淹没标记2
+*左边界坐标(管内径); 再淹没标记1(0禁用模型1启用); 再淹没标记2
 11050000   20   5   2   0.006   0   0
 
 11050100   1 *网格格式标记
@@ -160,6 +160,39 @@ table
 ```idl
 .end. *核对某行前五个字符
 ```
+
+
+
+# 输出
+
+参考文件`NUSOL_FI_JFNK.f90`
+
+```fortran
+100——input.txt
+200——output.txt
+101——velocity_gas.txt
+102——velocity_liquid.txt
+103——internal_energy_gas.txt
+104——internal_energy_liq.txt
+105——void_fraction.txt
+106——pressure.txt
+107——tempg.txt
+108——tempf.txt
+109——JFNK.txt
+110——wucha.txt
+111——satt.txt
+112——sathg.txt
+113——sathf.txt
+150——1111.txt
+114——fi.txt
+115——quale.txt
+116——mflow.txt
+117——htemp.txt
+218——218.txt
+```
+
+
+
 
 
 

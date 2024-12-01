@@ -1,10 +1,4 @@
-```idl
-
-```
-
-
-
-# 目录
+目录
 
 [TOC]
 
@@ -14,6 +8,11 @@
 2. 集两流体、六方程水力学、一维热传导、点堆中子动力学于一体的系统分析程序。
 3. 该程序除拥有泵、导管、阀门、喷射泵、透平、汽水分离器和控制系统部件等通用部件模型外，还包括再淹没传热、气隙导热、壅塞流、非凝气体等特殊过程模型。
 4. 该程序可用来模拟轻水堆系统的冷却剂丧失事故 (LOCA) 、丧失流量事故(LOFA)、蒸汽发生器传热管破裂事故（SGTR）、主蒸汽管道破裂事故（MSLB）等事故及某些非核的水蒸气系统的热工水力瞬态性状，是目前核电安全中物理模型较完善的大型程序之一。
+5. 常见版本：
+   *  relap5-mod3.3，最常用*
+   * relap5-scdap，严重堆芯事故？不能用aptplot画图？
+   * relap5-3d，relap5mod3系列的三维改进版，但是官方没有mod4及其后续的说法
+   * 3d和mod3系列的输入卡几乎可以通用。（除了3d的泵曲线要严格从小到大，而且临界流模型有点不同？）
 
 ## 参考文档
 
@@ -45,8 +44,8 @@
    - 报错诊断编辑
 4. rstplt， 再启动（和绘图）文件，restart and plot，包含所有指定时刻运行的原始非文本数据，作为再启动工况或者绘图时的输入
 5. tpfh2onew， 水物性文件，thermodynamic property file of new light water，不带new为旧版轻水物性。
-6. screen，运行日志，运行时shell框体输出的内容
-7. read_steam_comment.o，运行时读取物性生成的
+6. screen，运行日志，运行时shell框体输出的内容，可以用来查看**库朗特限值**、运行时间步长、质量误差等信息。
+7. read_steam_comment.o，运行时读取物性生成的，没什么价值。
 
 
 
@@ -82,6 +81,10 @@
 
 
 
+
+
+
+
 1. 类控制体部件输入顺序：
 
    - 面积; 长度; 体积; 方位角; 垂直倾斜角; 高度变化; 壁面粗糙度; 水力直径; 控制体控制标记 tlpvbfe; 控制体初始条件控制标记 εbt。
@@ -90,20 +93,20 @@
 2. 四种常见控制标记
 
    - 控制体控制标记 tlpvbfe
+     
        - t0不用热前沿追踪跟踪模型，l0不用mixture level混合物水平面追踪模型，p0使用water packing scheme水填充方案，v0不使用垂直分层模型，b0使用管道相间摩擦模型，f0沿体积的x坐标计算壁摩擦效应，e0使用非平衡(不相等温度)计算
-   
    
    - 接管控制标记 jefvcahs
    
-        - j0不是jet喷放接管，e0不用能量方程PV修正项，f0不用CCFL模型，v0不用水平分层夹带模型，c0开启壅塞choking模型（临界流？无1卡/1卡无50选项则为Henry-Fauske模型，否则是relap5模型），a0光滑变截面，h0非均相流，s0同时使用来/去向部件的动量通量
-   
-        - 跟随3个临界流参数
-   
-        - 临界流常数1（取决于参数6：Henry-Fausk耗散常数discharge默认1.0，relap5模型过冷耗散常数默认1.0）; 
-   
-        - 临界流常数2（Henry-Fausk未使用此值0.0，Relap5过热耗散常数默认1.0）; 
-   
-        - 临界流常数3（Henry-Fausk热力非平衡常数默认0.14，Relap5模型默认1.0）; 
+        - j0不是jet喷放接管，e0不用能量方程PV修正项，f0不用CCFL模型，v0不用水平分层夹带模型，c0开启临界流模型（choking、壅塞）（默认为Henry-Fauske模型，除非有1卡且包含50选项才是relap5模型）（**ps: relap3d的0默认为自带模型，1不启用，2才是Henry-Fauske模型。故直接替换俩种程序的卡会报错，因为后面参数的个数不一致**），a0光滑变截面，h0非均相流，s0同时使用来/去向部件的动量通量
+        
+   - 接管控制标记后可跟随2个（Henry-Fauske）或3个（relap）临界流参数，省略则为默认值。（默认H-F模型，设置卡`1  50`后激活RELAP5模型）
+     
+      - 临界流系数1：取决于参数6：Henry-Fauske流量系数(discharge coefficient，排放系数)默认1.0，relap5模型过冷流量系数默认1.0；
+      
+     - 临界流系数2：Henry-Fauske热力非平衡常数默认0.14，Relap5两相流量系数默认1.0; （对于relap3d: c=0两相流量系数，c=2 热力非平衡常数）
+     - 临界流系数3：Henry-Fauske无；Relap5模型过热流量系数默认1.0；（对于relap3d: c=0过热流量系数，c2 不输入）
+     
    - 控制体初始条件控制标记 εbt
    
         - ε ：流体类型。0/省略时为默认流体，>0对应120~129卡设定。
@@ -111,11 +114,28 @@
         - t：热力学状态。0-3单组分，4-6双组分有不凝性气体。0【P,Uf,Ug,αg】，1【T,xs】，2【P,xs】，3【P,T】，4【P,T,xs】（xs=0.0纯不凝性气体），5【T,xs,xn】，6【P,Uf,Ug,αg,xn】。
           - xs平衡态静态气相质量分数， xs = Mg/(Mg + Mf)， Mg =Ms + Mn。 static quality in equilibrium condition
           - xn平衡态不凝性气体质量分数，Xn=Mn/(Mn + Ms)。（vol1，3.1）。 noncondensable quality in equilibrium condition
-   
-   
-      - 接管初始条件控制标记 0/1
-          - （1表示后面某两个参数是水、汽质量流量kg/s，0则为速度）
-   
+  - 接管初始条件控制标记 0/1
+      - （1表示后面某两个参数是水、汽质量流量kg/s，0则为速度）
+
+
+
+## 小编辑301-399 & 变量绘图2080XXXX
+
+minor edits
+
+Expanded Plot Variables
+
+```idl
+
+* 变量名; 作用参数（随变量名改变，如热构件换热模式需要 CCCG0NN0X：CCCG热构件编号，NN热构件细分控制体编号，0X左边界00右边界01）
+* (换热模式: 0空气水，1超临界，2水，3、4核态，5、6过渡，7、8膜态，9汽，10、11冷凝。遇到再淹没+40)
+301  htmode  125001300
+* 
+20800002   htmode     125001300
+
+```
+
+
 
 
 
@@ -127,7 +147,7 @@
 * title card 题目卡; A1.3
 = Bennett 5253
 
-* 问题类型、选项（new、restart类型有瞬态transnt/稳态STDY-ST， strip有格式化输出fmtout/二进制binary）
+* 问题类型、选项（new、restart类型有瞬态transnt/稳态stdy-st， strip有格式化输出fmtout/二进制binary）
 100 new  transnt
 
 * input / output units,A2.4,国际单位si， 英制单位british
@@ -151,18 +171,20 @@
 
 ## Trips信号卡401-799
 
-Trips动作信号卡分为两类：变量Trips卡401-599，逻辑Trip卡601-799。
+Trips动作信号卡分为三类：终止运行trip卡600，变量Trips卡401-599，逻辑Trip卡601-799。
 
 ```idl
-*变量Trips卡A5.3: 401-599 or 20600010-20610000
 
-*变量; 参数; 关系运算符(lt,le,eq,ne,gt,ge，即less,than,equal,not,greater); 
-		*变量; 参数; 额外内容; 开关指示（L一开常开，N始终判断（每个时间步））
-*此处定义布尔值401：时间大于等于1000s后永远为真1。
+
+*变量Trips卡A5.3: 401-599 or 20600010-20610000
+*变量; 参数（变量）; 关系运算符(lt,le,eq,ne,gt,ge，即less,than,equal,not,greater); 
+		*变量; 参数（变量）; 额外内容（+n）; 开关指示（L一开常开，N始终判断（每个时间步））
+*定义布尔值401：时间大于等于1000s后永远为真1。
 401 time     0         ge  null       0       1000.0      l
-*定义布尔值450、451：每当控制体变量265小于等于14.0时450为真1，大于等于67.7时451为真1
+*定义450：每当控制体变量265小于等于14.0时450为真1
 450 cntrlvar      265 le null       0       14.0      n   * 265稳压器低水位
-451 cntrlvar      265 ge null       0       67.7      n   * 稳压器高水位
+*定义510: 时间大于等于502为真后1.0s时，510永远为真1。
+510 time     0          ge timeof     502     1.0        l   * reactor trip
 
 *逻辑Trip卡A5.4: 601-799 or 20610010-20620000
 *变量Trip卡号; 逻辑运算符（and和，or或，xor异或）; 变量Trip卡号; 开关指示（L一开常开，N始终判断（每个时间步））
@@ -170,6 +192,11 @@ Trips动作信号卡分为两类：变量Trips卡401-599，逻辑Trip卡601-799�
 689 -401     or       -401    n
 *此处非450是>14%,非451是<67.7%，两者和运算结果为布尔值650，即14%<稳压器水位百分比<67.7%时为真1。
 650   -450   and    -451   n    *14%<pzr-l<67.7%
+
+
+*终止运行trip卡（401为真时，停止relap计算）
+600 401
+
 ```
 
 
@@ -251,7 +278,7 @@ Trips动作信号卡分为两类：变量Trips卡401-599，逻辑Trip卡601-799�
 ```
 
 ### pipe管道
-“pipe”管道，含有1~99个子控制体，具体个数由自己定义，各子控制体之间有内部接管相连，相当于一定数量的snglvol和sngljun的集合体
+“pipe”管道，含有1~99个子控制体，具体个数由自己定义，各子控制体之间有内部接管相连，相当于一定数量的snglvol和sngljun的集合体（CCCNN0000，CCCJJ0000 ）
 
 ```idl
 1250000  guanzi pipe
@@ -277,7 +304,7 @@ Trips动作信号卡分为两类：变量Trips卡401-599，逻辑Trip卡601-799�
 *接管控制标记
 1251101  00000000    39
 * 控制体初始条件控制标记 εbt 格式; 参数二到六初始条件数据，此为压力温度; 参数7控制体编号
-1251201  3  6.9e6  538.98  0  0  0  40
+1251201  3  6.9e6  538.98  0.0 0.0 0.0  40
 * 内部接管初始条件控制编号（0则1301为液相/气相/相界面速度0.0/编号，1则前两项为质量流量）
 1251300  1
 1251301  0.0   0.0   0.0  39
@@ -475,7 +502,7 @@ Trips动作信号卡分为两类：变量Trips卡401-599，逻辑Trip卡601-799�
 
 ## 热构件1CCCGXNN(以下均为8位)
 
-热构件（A10，1CCCGXNN）：CCC是热构件编号，一般与水力部件相同，G几何编号用来区分接触同一水力控制体的不同热构件，X卡类型，NN该类型的编号
+热构件（A10，1CCCGXNN）：CCC是热构件编号，一般与水力部件相同，G几何编号用来区分接触同一水力控制体的不同热构件，X卡类型，NN该类型卡的编号
 
 * 疑问：cpr1000全厂卡模拟中，堆芯通道热构件的写法与以下内容不一致。
   * 11300000等的左边界坐标写成0.0。
@@ -484,8 +511,12 @@ Trips动作信号卡分为两类：变量Trips卡401-599，逻辑Trip卡601-799�
 ```idl
 * 常见数据1CCCG000：轴向控制体数量（一般=水力部件控制体数）; 径向网格点数; 
 		*几何类型（1矩形体2圆柱3球形）; 稳态初始化标记（0温度由1CCCG401-499给定，1程序计算）; 
-		*左边界坐标（模拟管则为内径）; 再淹没条件标记（0无，1/2/trip卡号则需填写78字段）
-11250000  40  5  2  0  0.0063  0
+		*左边界坐标（模拟管则为内径）; 再淹没条件标记（0无不填78字段，trip卡号启动，1控制体平均p<1.2MPa且α>0.9，2<1.2MPa且α>0.1)
+		*再淹没边界(0左1右); 最大细分轴向间隔数(2, 4, 8, 16, 32, 64, or 128）
+11250000  40  5  2  0  0.0063  502   0   64
+* 气隙gap初始压力; 气隙导热conductance参考控制体
+11250001  7.869e6    125400000                                     * 燃料表面粗糙度; 包壳表面粗糙度；由于裂变气体引起的燃料膨胀和致密化导致的径向位移；由于包壳蠕变导致的径向位移；热构件编号    
+12310011  1.0e-6     2.0e-6    0.0  0.0  40
 * 网格位置标记（0则在1CCCG101~201填网格信息，否则同该编号热构件且以下不用填); 
 		*网格格式标记(1/2为卡1CCCG101-G199格式一/二，参数一是0时填写)
 11250100  0  1
@@ -504,7 +535,7 @@ Trips动作信号卡分为两类：变量Trips卡401-599，逻辑Trip卡601-799�
 		*表面积（热构件控制体等效长度:可以将堆芯通道的成百上千根热构件等效equivalent为一个超长的热构件，）/系数; 热构件编号
 11250501  125010000  10000  1  1  0.1385  40
 11250601  0  0  0  1  0.1385  40
-* 热源类型（0无，1~999查总表，1000~1002中子动力学，10001~14095热源是控制变量，序号减10000); 
+* 热源类型（0无，1~999为TTT查总表202TTTNN，1000~1002中子动力学，参见30，10001~14095热源是控制变量，序号减10000得到ccc,查表205CCCNN); 
 		*内热源乘子(轴向峰值因子可在该处输入，作用于参数一指明的功率); 
 		*左边界慢化剂直接加热乘子（卷2节3.3）; 右边界慢化剂直接加热乘子; 热构件编号
 11250701  975  1.0  0.0  0.0  40
@@ -524,10 +555,10 @@ Trips动作信号卡分为两类：变量Trips卡401-599，逻辑Trip卡601-799�
 * 热构件材料成分类型，201MMM00 卡，内置碳钢C-STEEL，不锈钢S-STEEL，二氧化铀UO2和锆ZR
 20100500   c-steel
 
-* 也可以使用用户自定义表/函数TBL/FCTN，此时需要参数二三和201MMM01-49; 
+* 也可以使用用户自定义表/函数，tbl/fctn，此时需要参数二三和201MMM01-49; (大写可能报错)
 		*热导率格式标记/gap 摩尔份额标记（1输入表，2函数，3包含气体组分名和摩尔份额的表）; 
 		*体积热容标记（-1表只有热容，温度可以从热导率表对应，1输入包含温度、体积热容的表，2函数）
-*20100500  TBL/FCTN  1  1
+*20100500  tbl/fctn  1  1
 ** AISI 304 e/L 不锈钢：温度（K）; 热导率（W/m•K）
 *20100501 0.3 14.88
 *20100502 343. 14.88
@@ -537,7 +568,6 @@ Trips动作信号卡分为两类：变量Trips卡401-599，逻辑Trip卡601-799�
 *20100552 343.   8.51e6
 *20100553 373.   8.53e6
 ```
-
 
 ## 总表202TTTNN
 
@@ -557,7 +587,7 @@ Trips动作信号卡分为两类：变量Trips卡401-599，逻辑Trip卡601-799�
 
 
 ```idl
-*名称; 控制类型（SUM, MULT, DIV等）; 缩放系数S; 初值; 初值标记（0无初值计算用参数4; 1计算初值条件）
+*名称; 控制类型（SUM, MULT, DIV等）; 缩放系数S; 初值; 初值标记（0无初值，计算用参数4; 1计算得初值条件）
 20501600  avgtemp     sum      0.5      0.0          1
 
 *sum和类型：Y=S*(A0+A1*V1+A2*V2+...+Aj*Vj)。
@@ -599,6 +629,10 @@ Trips动作信号卡分为两类：变量Trips卡401-599，逻辑Trip卡601-799�
 
 用于模拟反应堆的裂变、衰变等核反应。
 
+* 稳态卡不要加上反馈？（初始条件离稳态差距过大时可能导致堆型功率并非预期的满功率）
+
+* 模拟双端断裂等的工况时，急速降压会导致堆芯闪蒸，慢化剂密度反馈使堆芯功率骤降。
+
 ```idl
 *中子动力学类型（只有点堆）; 反应性反馈类型（默认seperabl，独立看待慢化剂密度、空泡权重的慢化剂温度、燃料温度的反馈）
 30000000  point       separabl
@@ -606,7 +640,7 @@ Trips动作信号卡分为两类：变量Trips卡401-599，逻辑Trip卡601-799�
 		*总反应堆功率（裂变+裂变衰变+锕系元素衰变）; 初始反应性; 
 		*缓发中子份额over 瞬发中子generation time (s-1).; 
 		*裂变产物yield因子; U239 yield因子; 
-30000001  gamma-ac    2.9529e9   0.0  241.9354  1.2   1.0  1.0  200.  day
+30000001  gamma-ac    2.9529e9   0.0  241.9354  1.2   1.0
 *裂变产物类型ANS73,ANS79-1,ANS79-3; 每次裂变反应释放的能量（默认200 MeV/fission）; （其他类型见手册）
 30000002  ans73       200.0
 *缓发中子precursor yield ratio(1~50组); 缓发中子衰变常数（s^-1）
@@ -619,25 +653,49 @@ Trips动作信号卡分为两类：变量Trips卡401-599，逻辑Trip卡601-799�
 *反应性曲线总表卡号（0~999）/控制变量的卡号（>10000，查找时应该减去10000）
 30000011  904
 *慢化剂密度反馈：密度（线性插值，若范围超出最后数据点用最后的数据）; 反应性（dollar）。
-*(此卡需要反应性反馈类型为seperabl，且30000701~709卡输入)
+*(此卡需要反应性反馈类型为seperabl，且30000701~709卡有输入)
 30000501   100. -26.95906667   
 30000502   300. -6.137333333
 30000503   500. -0.4472     
 30000504   600. 0.164533333 
 30000505   700. 0.           
 
-*慢化剂温度反馈（多普勒反应性表）：温度; 反应性。(此卡需要反应性反馈类型为seperabl，且30000801~899卡输入)
+*堆芯燃料温度反馈（多普勒反应性表）：温度; 反应性。(此卡需要反应性反馈类型为seperabl，且30000801~899卡有输入)
 30000601  473.15    3.44756 
 30000602  973.15    0.34756 
 30000603  1073.15  -0.27244
 30000604  2873.15  -11.43244
 
 *水力部件控制体编号; 编号增量; 密度反馈权重因子; 水温度系数(dollars/K, dollars/℉)
-30000701  130010000   10000         0.100000    0.0
+**         vol.no      incre     weig,f    temp.coef
+30000701  130010000   0         0.100000    0.0
+30000702  130020000   0         0.100000    0.0
+30000703  130030000   0         0.100000    0.0
+30000704  130040000   0         0.100000    0.0
+30000705  130050000   0         0.100000    0.0
+30000706  130060000   0         0.100000    0.0
+30000707  130070000   0         0.100000    0.0
+30000708  130080000   0         0.100000    0.0
+30000709  130090000   0         0.100000    0.0
+30000710  130100000   0         0.100000    0.0
 
 *热构件编号; 编号增量; 多普勒反馈权重因子; 燃料温度系数(dollars/K, dollars/℉)
-30000801  1300001     10000         0.100000    0.0
+**         st-no       incre     weig.f    temp.coef
+30000801  1300001     0         0.100000    0.0
+30000802  1300002     0         0.100000    0.0
+30000803  1300003     0         0.100000    0.0
+30000804  1300004     0         0.100000    0.0
+30000805  1300005     0         0.100000    0.0
+30000806  1300006     0         0.100000    0.0
+30000807  1300007     0         0.100000    0.0
+30000808  1300008     0         0.100000    0.0
+30000809  1300009     0         0.100000    0.0
+30000810  1300010     0         0.100000    0.0
 ```
+
+## 控制变量绘图2080XXXX
+
+Expanded plot variables ()
 
 
 
@@ -653,12 +711,20 @@ Trips动作信号卡分为两类：变量Trips卡401-599，逻辑Trip卡601-799�
 
 # 处理报错
 
-如果成功运行，会在outdta最后输出`0Transient terminated by end of time step cards.`，否则会输出`0******** Errors detected during input processing.`。
+如果成功运行，会在outdta最后输出`0Transient terminated by end of time step cards.`，否则会输出`0******** Transient terminated by failure.` 或者`0******** Errors detected during input processing.`。
 
 在outdta文件中搜索`0********`，找到第一个报错的位置。
 
-常见报错如，
+常见报错如，（一些报错减小最大时间步长即可解决，如改为0.001s）
 
+- 
+- CVF build程序链接错误，需要重新打开dsw文件后build。（复现：调试时 `shift + F5`强行终止程序，然后修改后build。）（采取操作可避免：如果离报错不久，可以F5让他正常运行至报错退出）——`LINK : fatal error LNK1104: cannot open file "Debug/Relap.exe" Error executing link.exe.`
+- 直接运行exe时闪退且无报错信息，CVF软件调试运行时才出现报错——`run-time error M6201: MATH - exp: DOMAIN error`  ：程序某处`exp(x)`函数的参数`x`超出定义域 。
+  - 思路是：首先定位时间，再定位本构，最后定位位置和错误的代码行。
+    1. 调试时监视时间，记录出错时的时间，在例如`hydro`之类的主干程序上设置`if`语句，从而定位到该时刻。
+    2. 逐行运行，找到出错的被调用的本构程序。遇到循环时监视循环变量，逐次循环找到出错的循环（一般是某个控制体）
+    3.  依此循环操作。                                                                                                   
+- 修改并生成程序后调试未删除outdta等文件：报错`Loaded 'APP01.EXE', no matching symbolic information found.`
 - 水力部件名超过8 个字符：`0******** Unrecognizable card number. `，`0******** Component type 9O on card 1100000 is illegal.`  ，`0******** Data for component 110 cannot be processed.`  ，水力部件名不得超过8 个字符。
 - 无法识别Tab键：`0******** Unable to determine processing type on card 100, no further processing possible.`，RELAP输入卡中的tab符号无法被识别，使用空格替代。
 - 环路高度不闭合：`******** Closure by junction 100030000 shown below is incorrect, position from loop is 0.00000 0.00000 0.00000 .`，如果闭合环路中的同一个控制体计算的高度相差大于0.0001m，则程序会提示环路高度不闭合。
@@ -724,41 +790,48 @@ Trips动作信号卡分为两类：变量Trips卡401-599，逻辑Trip卡601-799�
 
 需要注意的点（从新到旧，从难到易）：
 
-1. 
-2. 动量方程的控制体
+1.  
+2. relap3d再淹没写法不一样。3.3默认Henry-Fauske临界流模型，加卡1`1  50`才能
+3.   3d如果遇到问题。（终端停住：在某时刻不输出信息也不闪退，此时outdta和rstplt文件不更新程序计算结果，也不报错；终端空转：显示在继续计算，但outdta和rstplt文件不再更新程序计算结果；）
+     考虑一下解决方案：
+    * 100卡的问题类型可以从new改为newath，用的是新物性包。（或许可以解决某些问题）
+    *  写再启动卡，进行再启动计算。
+    * 可以改小时间步长和输出频率等
+    *  把小编辑的输出频率改小，例如100
+    *  把时间步长改小！
+4.  动量方程的控制体
    - relap5的动量方程的控制体是相邻控制体各占一半，与质量、能量方程不同。
    - 所以可以看到大编辑中速度、阻力系数等出现在接管变量部分，而空泡份额、压力、内能等则在控制体变量部分。
-3. 一般边界条件是流量入口和压力出口：
+5.  一般边界条件是流量入口和压力出口：
    - 入口一般设置为tmdpvol+tmdpjun。其中，tdv提供由压力和温度计算的密度，tdj提供速度，相乘得到流量入口条件。两相tdv还提供空泡份额。
    - 出口设置为sngljun+tmdpvol 。sj没用，tdv提供
    - 入口tmdpvol+sngljun应该是压力入口。
-4. 时间步控制卡201中的输出频率，是指每隔多少时间步输出一次。
-5. 参考控制体：
+6.  时间步控制卡201中的输出频率，是指每隔多少时间步输出一次。
+7.  参考控制体：
    - 用于程序中高度计算的基准，在 120 -129卡指定将其控制体中心设置为某一高度。
    - 如`120 280010000 0.0 h2o `，指定28001控制体为参考控制体，其中心高度为0，系统工质为轻水。
    - 没有指定则默认控制体编号最小的为参考控制体。
-6. 接管连接控制体的两种写法：
+8.  接管连接控制体的两种写法：
    - （输入手册A9，P51第二段）传统是偷懒只写出待连接组件的01出口/00进口（注意面的区别）。
    - 建议写法是详细给出待连接组件的控制体的面，更好理解。
    - 如接管要连接110010000  125000000，建议写成 110400002  125010001。即，传统的写法：连接110组件和125组件的出口面01入口面00; 建议写法：连接110组件第40控制体的出口面2和125组件01控制体的入口面1。
-7. 控制体和接管的位置坐标：
+9.  控制体和接管的位置坐标：
    - 控制体是RELAP5的基本计算单元，是用于搭建具体装置的基本单元。控制体的坐标设置在控制体的几何中心。
    - 接管用于连接控制体。而接管的坐标设置在两个控制体的连接处，实际上无实体。
-8. 控制体的方向与面：
+10.  控制体的方向与面：
 
    - x方向始终是流动方向，面1、2始终是流体的进、出口
 
    - 水平控制体：x、y、z方向分别对应笛卡尔坐标系的x、-y、z方向。face 1左2右（3前4后5下6上）。
    - 竖直控制体：x、y、z方向分别对应笛卡尔坐标系的z、-x、-y方向。face 1下2上（3前4后5右6左）。
-9. 热构件的左右边界：
-   - 左/右边界表示”内/外侧“。例如常用的圆柱/圆环柱，可以分别模拟加热棒和管壁，其左边界就是加热棒的中轴线、管子的内壁面。
-10. 0和0.0代表默认值。
-11. 注释用`*`或者`$`，终止符为点号`.`。
-12. 输入卡每行不得超过80字符。但是在下一行的行首使用加号 `+` 就可以继续写。
-13. 数据类型要对应。
+11.  热构件的左右边界：左/右边界表示”内/外侧“。例如常用的圆柱/圆环柱，可以分别模拟加热棒和管壁，其左边界就是加热棒的中轴线、管子的内壁面。
+11. 0和0.0代表默认值。
+12. 注释用`*`或者`$`，终止符为点号`.`。
+13. 输入卡每行不得超过80字符。但是在下一行的行首使用加号 `+` 就可以继续写。
+14. 数据类型要对应。
     - 特别是要求输入real浮点数类型的时候不要输入整数（`50.`正确，`50`错误）。
     - 输入卡的数据类型分三种：整数integer，浮点数real和含有字母数字的alphanumeric。
-14. 连续扩充格式简化输入。
+15. 连续扩充格式简化输入。
     - 例如，125的pipe部件有40个控制体，`1250101  0.1  20`，`1250102  0.2  40`中的参数分别代指`卡号、控制体面积、控制体编号`，可以表示前20个控制体的面积都是0.1，21~40的控制体面积都是0.2。
 
 
@@ -983,7 +1056,7 @@ Trips动作信号卡分为两类：变量Trips卡401-599，逻辑Trip卡601-799�
 | emass                        | 质量误差                                 | Estimate of mass error in all the systems (kg, lb).          |
 |                              |                                          |                                                              |
 | fij                          | 相间摩擦的系数                           | (N-s2/m5)                                                    |
-| floreg<br />flow regi        | 流型1                                    | Flow regime number; the parameter is the volume number. A chart showing the meaning of each number is shown in Volume II, page 14<br /><br />High mixing bubbly,  CTB,  1<br/>High mixing bubbly/mist transition CTT 2<br/>High mixing mist CTM 3<br/>**Bubbly BBY 4<br/>Slug SLG 5<br/>Annular mist ANM 6<br/>Mist pre-CHF MPR 7<br/>**Inverted annular IAN 8<br/>Inverted slug ISL 9<br/>**Mist MST 10<br/>**Mist post-CHF MPO 11<br/>Horizontal stratified HST 12<br/>Vertical stratified VST 13<br/>Level tracking LEV 14<br/>Jet junction JET 15<br/><br />ECC mixer wavy MWY 16<br/>ECC mixer wavy/annular mist MWA 17<br/>ECC mixer annular mist MAM 18<br/>ECC mixer mist MMS 19<br/>ECC mixer wavy/slug transition MWS 20<br/>ECC mixer wavy-plug-slug transition MWP 21<br/>ECC mixer plug MPL 22<br/>ECC mixer plug-slug transition MPS 23<br/>ECC mixer slug MSL 24<br/>ECC mixer plug-bubbly transition MPB 25<br/>ECC mixer bubbly MBB 26<br /> |
+| floreg<br />flow regi        | 流型1                                    | Flow regime number; the parameter is the volume number. A chart showing the meaning of each number is shown in Volume II, page 14<br /><br />High mixing bubbly,  CTB,  1<br/>High mixing bubbly/mist transition CTT 2<br/>High mixing mist CTM 3<br/>**Bubbly BBY 4<br/>Slug SLG 5<br/>Annular mist ANM 6<br/>Mist pre-CHF MPR 7<br/>**Inverted annular IAN 8<br/>Inverted slug ISL 9<br/>**Mist MST 10<br/>Mist post-CHF MPO 11<br/>Horizontal stratified HST 12<br/>Vertical stratified VST 13**<br/>Level tracking LEV 14<br/>Jet junction JET 15<br/><br />ECC mixer wavy MWY 16<br/>ECC mixer wavy/annular mist MWA 17<br/>ECC mixer annular mist MAM 18<br/>ECC mixer mist MMS 19<br/>ECC mixer wavy/slug transition MWS 20<br/>ECC mixer wavy-plug-slug transition MWP 21<br/>ECC mixer plug MPL 22<br/>ECC mixer plug-slug transition MPS 23<br/>ECC mixer slug MSL 24<br/>ECC mixer plug-bubbly transition MPB 25<br/>ECC mixer bubbly MBB 26<br /> |
 | fjunft                       | 顺流不可逆的总形状损失系数               | Total form loss coefficient for irreversible losses, forward |
 | fjunrt                       | 逆流不可逆的总形状损失系数               | Total form loss coefficient for irreversible losses, reverse |
 | formfj                       | 液相形状损失系数                         |                                                              |
@@ -1098,7 +1171,14 @@ del /f /q rstplt
 
 ```
 
+## CVF 调试工具安装
 
+- 安装包文件夹为``Compaq.Visual.Fortran.v6.6.win10-已测试`，**找到`X86文件夹`内的`SETUPX86.EXE`**，右键，属性，设置以兼容模式运行这个程序（如win7,winxp），并勾选以管理员身份运行。右键管理员运行，选择右上角第一项install visual fortran。
+- 名字公司随便填，序列号从`crack文件夹`内的生成复制（无法全部复制，手敲）（全屏安装程序会遮挡视线，轻微左移即可，因为下一步弹窗会出现在该窗口中心，过度移动会导致看不见安装窗口）
+- 安装方式typical，（设置第一个文件夹路径，如`f: \pro\cvf\common`，则其他路径也随之变为cvf文件夹下。）
+- 继续安装，96%时弹出环境变量更新，选择yes。安装完成，**弹窗填否不注册**，二次确定，不安装array visualizer。（卡在96%的话反思一下是不是没有管理员运行 ：）
+- 安装完毕，在安装目录下找到`DFDEV.EXE`（默认`C:\Program Files\Microsoft Visual Studio\Common\MSDEV98\BIN\DFDEV.EXE`，自定义的则为`F: \pro\cvf\common\MSDEV98\BIN\DFDEV.EXE`），右键属性，设置兼容模式为win7+管理员身份运行。
+- 从此可以正常打开`Relap33\Relap33.dsw`项目文件，测试build菜单rebuild all，无报错则成功（中文路径会报错）。
 
 ## AptPlot快速绘图rstplt
 
@@ -1120,22 +1200,62 @@ del /f /q rstplt
 7. 调整图例框位置Legends Box：双击图例框或点击Plot菜单弹出Graph Appearance——编辑Leg. Box Location中的X Y（分别是左、上边的位置）
 8. 选择数据操作麻烦，如果关闭select relap channels窗口后还想继续选择数据，只能重新去file目录——read——relap5 data。
 
-## UltraEdit / Notepad++ 列编辑outdta
+## UltraEdit / Notepad++ 列编辑
 
-Notepad++ 列编辑时只需按住`alt`键选择。
+Notepad++ 开源、更轻量级，列编辑时按住`alt`键选择。
 
 
 
-1. 双击 ue_chinese_64.exe 64位版官方安装程序。
-2. 安装完成后关闭程序，复制 IDM_Universal_Patch_v6.0.exe 到安装目录，以管理员身份运行。
-3. 选择 ultra edit v27.x -(x64) , 点击patch。
-4. 若提示未找到安装路径，点击是，手动选择安装目录下的 ProtectionPlusDLL.dll 打开，再次patch。
+UltraEdit更强大。
 
-使用：
+1. 安装：
+   - 下载安装包，双击 ue_chinese_64.exe 64位版官方安装程序。
+   - 安装完成后关闭程序，复制 IDM_Universal_Patch_v6.0.exe 到安装目录（默认为`C:\Program Files\IDM Computer Solutions`），以管理员身份运行。
+   - 选择 ultra edit v27.x -(x64) , 点击patch。
+   - 若提示未找到安装路径，点击是，手动选择安装目录下的 ProtectionPlusDLL.dll 打开，再次patch。
 
-1. 列编辑：主菜单——编辑菜单——列模式，打开即可对某一列数据进行操作，对outdta很实用。
-2. 空格处理：格式菜单，制表符/空格，转换制表符为空格（全部）。删除行首空格。删除行尾空格。
-3. 
+2. 使用：
+   - 列编辑：主菜单——编辑菜单——列模式，打开即可对某一列数据进行操作，对outdta很实用。
+   - 列顺序填充编号：编辑——列模式——鼠标控制操作范围——插入号码。对于编写indta的卡号、控制体号很实用。例如，需要rstplt画出某控制体各个时刻的换热模式曲线，可批量修改`20800001   htmode     100100100`一直到`20800040   htmode     100104000`
+   - 空格处理：格式菜单，制表符/空格，转换制表符为空格（全部）。删除行首空格。删除行尾空格。
+
+
+
+## UltraCompare对比文件夹和文件
+
+配合备份脚本对比各个程序版本，非常好用。
+
+1. 设置，忽略选项（默认），
+
+   1. 文本，勾选忽略空行、空格、换行符
+   2. 文件夹/文件夹同步操作，忽略时间戳差异
+
+   
+
+```basic
+set sourcePath=C:\PRODUCT_CACHE_DIR_NAME\fj\Relap5-3.3-20230105-3R-SA\Source\
+
+set targetPath=C:\PRODUCT_CACHE_DIR_NAME\fj\000backup\
+
+set folderName=%date:~0,4%-%date:~5,2%-%date:~8,2%-%time:~0,2%-%time:~3,2%-%time:~6,2%
+
+XCOPY /e /c /y "%sourcePath%*" "%targetPath%%folderName%\"
+
+
+
+set sourcePath=C:\PRODUCT_CACHE_DIR_NAME\fj\Relap5-3.3-20230105-3R-SA\Source\
+
+set targetPath=\\Client\C$\desktop\000\000backup\
+
+set folderName=%date:~0,4%-%date:~5,2%-%date:~8,2%-%time:~0,2%-%time:~3,2%-%time:~6,2%
+
+XCOPY /e /c /y "%sourcePath%*" "%targetPath%%folderName%\"
+
+```
+
+
+
+
 
 ## Origin严肃画图outdta
 
@@ -1150,5 +1270,15 @@ AptPlot功能少、操作繁琐，只能绘制某个控制体的某个变量随�
 
 
 
+数据图曲线抠图
 
+1. 工具，图像数字化工具。
+2. 文件，导入（图片）
+3. 调整四条轴线位置，点中长按拖动，使其仅包含绘图区域。
+4. 修改轴线坐标值为真实值（X1X2是左右两条竖线）
+5. 点击手动取点小图标开始。
+6. （取点时经常发现坐标有些小错位，尽量通过取点时的坐标值调整准确。点击编辑轴小图标即可二次编辑轴线位置。）
+7. 从左往右依次取点。左键调整取点位置，回车确认该点。然后继续取其他点，全部完成后点击完成。（ESC键重新取所有点）
+8. 点击完成后会出现取点表格和曲线图，分别为DigiData和sourceimage，可以复制图表数据进行其他操作。
+9. 利用同一张图取第二条线：底部菜单，图像数字化，新线条。重复以上步骤。
 

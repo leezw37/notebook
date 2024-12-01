@@ -1,3 +1,5 @@
+
+
 # 目录
 
 [TOC]
@@ -5,6 +7,50 @@
 
 
 #  文章
+
+
+
+
+
+## 新年祝愿：多犯错，别无聊，做些事
+
+（放学以后播客）
+
+另一个祝愿则和“错误”有关，我在第38期播客《真有我的！勇敢地认识自己，真诚地喜欢自己》中提到:没有犯错的人生恰恰才是最错误的人生。
+
+在这个下行崩塌的时代，求稳求不变求不出错成为了最主流选择，最正确的追逐，最安全的港湾。但是个体生命就在这种群体性求稳和自我压抑中枯萎。
+
+李安在今年的金马奖和吴慷仁说:**宁愿犯错，不要boring.**
+
+犯错的权利，恰恰是生命的可能性所在。而它不应该成为有钱有权人的特权，不应该是那些有人兜底的幸运儿的专属。穷人更应该去游荡走四方，因为在当地并不拥有既得资源和利益。一无所有身无所长的人，更应该拥有并使用犯错的权利，因为这才是两手空空的我们，打破僵局挣脱枷锁的利器。
+
+因此想把作家尼尔.盖曼在2011年的新年祝福翻译出来，送给即将迎接2024的我们:
+
+**希望在新的一年里，你可以多多犯错。**
+
+**因为当你犯错时，意味着你正在创造崭新的事物，尝试崭新的可能，你在汲取，跃动，让自己前行，也让自己改变，甚至也把自己所生活的世界撬动。你在尝试一些此前从未做过的事情，更重要的是，你在做一些事情。**
+
+**所以这是我对你的新年祝福，也是对我们所有人的祝福:犯一些崭新的错误，犯一些灼目耀眼的错误，一些令人瞠目结舌的错误，一些别人还未曾犯过的错误。不要望而却步，不要就此打住，不要担心它不够好，不够完美无缺，无论这错误是什么:艺术，爱，工作，家庭还是生活。**
+
+**无论它是你恐惧的任何事，迎头直上。**
+
+**祝福你在新的一年，勇于犯错，接下来每一年也是如此。**
+
+英文原文如下:
+
+I hope that in this year to come, you make mistakes.
+
+Because if you are making mistakes, then you are making new things, trying new things, learning, living, pushing yourself, changing yourself, changing your world. You're doing things you've never done before, and more importantly, you're Doing Something.
+
+So that's my wish for you, and all of us, and my wish for myself. Make New Mistakes. Make glorious, amazing mistakes. Make mistakes nobody's ever made before. Don't freeze, don't stop, don't worry that it isn't good enough, or it isn't perfect, whatever it is: art, or love, or work or family or life.
+
+Whatever it is you're scared of doing, Do it.
+
+Make your mistakes, next year and forever.
+
+
+
+我在这世界的辽阔远方为你祝愿，更为自己祝愿。祝我们的新年都有所创造，无所畏惧。
 
 
 
@@ -51,7 +97,7 @@ https://zhuanlan.zhihu.com/p/378379161
 
 
 
-新采访——[專訪：高考制度並非中國「內卷」的根源](https://today.line.me/tw/v2/article/ZaeQ1kL)
+人类学家项飙新采访——[專訪：高考制度並非中國「內卷」的根源](https://today.line.me/tw/v2/article/ZaeQ1kL)
 
 
 
@@ -60,7 +106,6 @@ https://zhuanlan.zhihu.com/p/378379161
 >"内卷"的对立面不是"躺平"，至少不应该是放弃式的"躺平"，因为努力还是必要的。放弃式"躺平"就是什么都不干，这个其实很难，只有那些在一线城市拥有多套房产收租的人方才能做到。而另一种"躺平"是退出式的，我称之为积极"躺平"，也就是说不参与这个"内卷"游戏，不削尖脑袋去争当"人上人"。虽然不放弃努力，但却有着别的思考，在解决生计的基础上寻找有尊严的生活方式，做那些自己觉得很有意思、别人也觉得很有意思的事情。所谓"退出"，就是要找到自己真正愿意做的事，想清楚以后扎实地去做。也许这会让人生活得相对清贫，但不会有意义方面的空虚感和焦虑感。
 >
 >总而言之，中国需要从物质生产转变为以人为本的生产，这里包括关怀、娱乐、艺术、教育、休闲等多方面，有关"意义"的问题也会越来越重要。
->
 >
 >
 >

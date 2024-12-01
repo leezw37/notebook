@@ -68,6 +68,7 @@
 | lower plenum              | 下腔室                                             |                                                              |
 | lower support plate       | 堆芯支撑板                                         | 吊篮组件的底板                                               |
 |                           |                                                    |                                                              |
+| MFWS                      | 主给水（系统）                                     | main feed water system                                       |
 | moderator                 | 慢化剂                                             |                                                              |
 | MSIV                      | 主蒸汽隔离阀                                       | main steam isolation valve                                   |
 | MSLB                      | 主蒸汽管道破裂事故                                 | main steam large break accident                              |
@@ -100,6 +101,7 @@
 | SBLOCA                    | 小破口失水事故                                     | small break loss of coolant accident                         |
 | scram                     | 反应堆紧急停堆                                     | 据说是safety control rod ax man，配备斧头的人砍断控制棒的绳索 |
 | SG                        | 蒸汽发生器                                         | steam generator tube 蒸汽发生器传热管                        |
+| SI                        | 安注                                               | safety injection                                             |
 | SMR                       | 小型模块化反应堆                                   | Small modular reactor                                        |
 | spacer grid               | 定位格架                                           |                                                              |
 | spent fuel                | 乏燃料                                             |                                                              |
@@ -573,7 +575,7 @@
 | PCA                          | primary coolant activity                                     |
 | PCCV                         | prestressed concrete containment vessel                      |
 | PCP                          | Process Control Program                                      |
-| PCS                          | plant control system                                         |
+| PCS                          | 非能动安全壳冷却*系统*（Passive Containment Cooling System，PCS）；<br />plant control system |
 | PCT                          | peak cladding temperature                                    |
 | PCUS                         | pool cleanup system                                          |
 | PDC                          | power distribution center                                    |

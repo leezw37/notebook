@@ -388,5 +388,5 @@ javascript: (function() {
     var t6 = document.createTextNode("倍");
     d2.appendChild(t6);
 })();
-​
+
 ```

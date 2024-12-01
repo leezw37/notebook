@@ -1,13 +1,75 @@
-# 问题
-
-1. 前后加上修改标记ccclzw230728
-2. 改了vexplt沉降，0.018应该是0.18，且恢复了被注释的沉降结果，好像没有影响？
-4. 相间摩擦：注释掉了dispdrag、amistdrag和drydrag的液滴直径rddrp造成结果为0的重复计算。
-5. 相间传热传质：disp, amist
-
 # 目录
 
 [TOC]
+
+# 修改记录
+
+1. 前后加上修改标记ccclzw230728
+2. 相间传热传质：disp, amist（最初改过？？？）
+
+
+
+1. **amisthif**：修改液滴直径rddrp
+2. **dispdryhif**：修改液滴直径rddrp。`velgj(i)`改成`max(1.0d-5,abs(velgj(i)))`，防止速度=0。velfj(i)同理。（是否换R5本构？scrchh用公式算较大，很难达到700K，应该是相对速度需要加个绝对值？alpdrp应该是voidf）。**液相换热系数有各分支过小导致液相内能过大报错。**
+3. **drydrag **：注释计算液滴直径的第二个本构
+
+
+
+
+
+4. amistdrag：修改液滴直径rddrp和相对速度scrach；fiu, ga, fac的速度都加上最小值（`max(1.0d-5,abs(velgj(i)))`，否则domain error报错exp 函数就是下面的fiu 函数）
+5. **amisthif**：修改液滴直径rddrp
+6. dispdrag：修改液滴直径rddrp
+7. **dispdryhif**：修改液滴直径rddrp。`velgj(i)`改成`max(1.0d-5,abs(velgj(i)))`，防止速度=0。velfj(i)同理。（是否换R5本构？scrchh用公式算较大，很难达到700K，应该是相对速度需要加个绝对值？alpdrp应该是voidf）。**液相换热系数有各分支过小导致液相内能过大报错。**
+8. dispwethif ：液滴份额最小1e-4改1e-3；（理应使用系数misthidg和misthigd，但是导致178工况258秒报错，暂时不加。其他版本系数在本构中）**换回3R模型**
+9. **drydrag **：注释计算液滴直径的第二个本构
+10. 
+11. fidis2计算接管中气泡和液滴的相间摩擦：计算液滴雷诺数`abs(vfg2*voidx)`应为`sqrt(vfg2*voidx)`。（见107行rey计算）
+12. horizhif水平分层流相间传热传质：verhig和verhif改名cohorizhig和cohorizhif。
+13. hstratdrag水平分层流相间摩擦：verfi改名cohorizfi。
+14. htrc1计算传热系数:dtsat>600时去2000，是否注释无影响，因为还有>100的判断。
+15. ijprop计算接管物性用于初始化：voidfj(i)应为1.0d0- voidla(ivbot)和1.0d0- voidlb(ivtop)。（Void above/below the level.）
+16. invslughif：师兄为流型=9反弹状流但注释了，改为源程序的10雾状流。
+17. **jprop从相邻控制体贡献接管物性：640行左右的液相份额不应为voidg，改为voidf。（也可改为1-voide-voidg）**
+18. majout：完善outdta大编辑输出格式。
+19. pstdnb计算dnb后强制对流换热系数：hv乘数0.8。+ 直接注释掉过渡沸腾的判断，直接判定为模态沸腾，从而使becker实验足够高壁温。= 传热恶化壁温升高。（ 在backer277干涸后实验发现qfb因此乘数恰好小于qtb，使得换热模式始终为6过渡沸腾而非8膜态沸腾。）
+20. rmflds读取选项卡：水平分层流相间传热传质的系数，水平分层流相间摩擦本构的系数verfi改名cohorizfi。
+21. vexplt计算速度和隐式压力求解中的压降系数：液滴沉降计算kq的0.018应该是0.18（见phantv）。（[113] Hewitt G F, Govan A H. Phenomenological modelling of non-equilibrium flows with phase change[J]. International Journal of Heat and Mass Transfer, 1990,33(2):229-242.）
+22. 输入卡添加192卡，数值1.0，此前被遗漏。dtsattt是临界后传热的壁面过热度的系数，用于再淹没换热，定义在rmfld.f(255)中，影响htrc1。
+23. 
+24. 
+25. 相间摩擦：注释掉了dispdrag、amistdrag和drydrag的液滴直径rddrp造成结果为0的重复计算。
+26. 
+27. 气相相间换热系数，anm、mpr始终为10（1e2-1e5）
+28. 液相相间换热系数，mpr=1.0（1e5-1e10）
+
+# 对比待验证
+
+|                                          | 23-3R-SA                      | 22-3R       | 23-3R   | RELAP5             |                                                              |
+| ---------------------------------------- | ----------------------------- | ----------- | ------- | ------------------ | ------------------------------------------------------------ |
+| vexplt                                   | 0.18（注释，不用计算）        | 0.018（错） |         |                    |                                                              |
+|                                          |                               |             |         |                    |                                                              |
+| amistdrag                                | 新本构                        |             |         |                    | 1. 液滴直径试试不同的，becker相对略差: 3e-4。<br />2. 设置速度的最小值 |
+| amisthif                                 | 新本构                        |             |         | 调用fidisv         |                                                              |
+|                                          |                               |             |         |                    |                                                              |
+| chftab                                   | 新本构                        |             |         |                    | becker无差别                                                 |
+|                                          |                               |             |         |                    |                                                              |
+| **dispdrag**<br />（MPR，chf前雾状流）   | 新本构，摩擦系数模型          |             |         | 调用fidis2         |                                                              |
+| dispdryhif<br />（MPO，chf后雾状流）     | 新本构                        |             |         | 调用fidisv         |                                                              |
+| **dispwethif**<br />（MPR，chf前雾状流） | 1.0d-4，lzw接手时fj改为R5本构 | 新本构      | 新本构  | 调用fidisv，1.0d-3 | 换成23-3R版本会报错                                          |
+| drydrag<br />（）                        | 新本构                        |             |         | 调用fidis2         | 液滴直径试试不同的，becker相对略差: 3e-4                     |
+| dryhif                                   | 新变量                        |             |         |                    |                                                              |
+| eqfinl                                   | 改                            |             |         |                    |                                                              |
+|                                          |                               |             |         |                    |                                                              |
+|                                          |                               |             |         |                    |                                                              |
+| fidis2                                   | 163行rey*abs                  | rey*abs     | rey*abs | rey*sqrt           |                                                              |
+|                                          |                               |             |         |                    |                                                              |
+|                                          |                               |             |         |                    |                                                              |
+|                                          |                               |             |         |                    |                                                              |
+|                                          |                               |             |         |                    |                                                              |
+|                                          |                               |             |         |                    |                                                              |
+
+
 
 
 
@@ -18,29 +80,43 @@
 1. 输入: inputd
    1. 输入卡: rnewp
    2. 初始化: rnewp
-2. 瞬态计算: trnctl调用tran
+2. 瞬态计算: trnctl 调用 tran
    1. 时间步长控制体及输出: dtstep
    2. TDV和TDJ计算: tstate
-   3. 壁面传热传质计算: htadv	(Qwg;Qwf、壁面蒸汽蒸发量)
-      1. 再淹没导热计算: qfmove	
-      2. 非再淹没一维导热计算: ht1tdp
-         1. 对流换热计算: htrc1
-            1. 壁面蒸汽产生率: suboil
-            2. 单相对流换热: dittus
-            3. 核态沸腾: prednb
-            4. CHF:  chfcal	
-            5. 过渡及膜态沸腾: pstdnb	
-            6. 冷凝: conden
+   3. 壁面传热传质计算: htadv	(Qwg ; Qwf、壁面蒸汽蒸发量)
+      1. 再淹没传热计算: qfmove
+         1. 计算骤冷前沿位置，将热构件网格再划分为二维网格：qfsrch
+         2. 计算再淹没模型中非再淹没边界的换热系数 (基于 htcond ) : htrc2
+            1. 判断壁面对流换热模式，并调用相关子程序计算换热系数和热流密度: htrc1
+         3. 计算再淹没边界区域的换热系数: qfhtrc
+            1. 计算各种维度、排列等情况的各相质量流速
+            2. 再淹没工况下的换热模式判断和换热系数：htrc1
+         4. 完成热构件的二维导热计算: ht2tdp
+      2. 一维导热计算热构件温度 : ht1tdp
+         1. 热构件边界条件 htcond 
+            1. 判断壁面对流换热模式，并调用相关子程序计算换热系数和热流密度: htrc1
+               1. 单相对流换热0/1/2/9/12: dittus
+               2. 非水平通道的核态沸腾3/4: prednb
+               3. 水平通道的核态沸腾3/4: prebun
+               4. CHF临界热流密度:  chfcal	
+               5. 过渡及膜态沸腾5/6/7/8: pstdnb	
+               6. 冷凝10/11: conden
+               7. 计算蒸汽产生率: suboil
+      3. 划分计算热构件与控制体之间的传热量
    4. 水力学计算: hydro	
       1. 相间传热传质: phantv ( 得到hig`*`A，hif`*`A)
          1. 流型判断：horizhifreg，verthifreg，得到flomap(1,ix)赋值给floreg。
-         2. 判断postdry：无干涸后则湿壁面相间换热wethif，干涸则dryhif。对应流型的换热。
-            1. wethif：
+         2. 判断postdry是否干涸：
+            1. wethif，无干涸后则湿壁面相间换热：
                1. bubhif，floreg=4
                2. slughif, floreg=5
                3. amisthif, floreg=6，三流场在此加入了液滴夹带massen。
-               4. dispwethif, floreg=7
+               4. dispwethif, floreg=7（Mist pre-CHF，MPR，7）
                5. horizhif, floreg=12
+            2. dryhif，干涸，干壁面：
+               1. invannhif，floreg=8，反环状流
+               2. invslughif，floreg,9，反弹状流
+               3. dispdryhif，floreg=10、11（Mist MST 10；Mist post-CHF MPO 11）
          3. 三流场在此加入了液滴沉降massden。
       2. 相间摩擦: phantj ( 得到 fi)	
          1. horizdragreg，vertdragreg
@@ -51,6 +127,11 @@
                3. amistdrag
                4. dispdrag
                5. hstratdrag
+            
+            2. drydrag（干涸后，）
+               1. invanndrag
+               2. invslugdrag
+               3. 弥散流：调用 fidis2
          3. 为垂直分层流调整相间传热adjusthif
          4. 修正: filterdrag，finaldrag
       3. 壁面摩擦: fwdrag ( 得到 fwalf，fwalg)	
@@ -108,6 +189,7 @@ sourcf(ix) = qwf(i)*dt + aaa2 - (vafrf + vaerf)*ufo(i)
             write(230725,*)sourcg(ix),sourcf(ix)
             write(230725,*)qwg(i),qwf(i)
         end if
+        
   1.814919466547800E-002   125390000
    286041.753864857        2542510.33842387        554209.829969752     
   0.999930291654598       6.970834540231952E-005  0.000000000000000E+000
@@ -149,7 +231,7 @@ sourcf(ix) = qwf(i)*dt + aaa2 - (vafrf + vaerf)*ufo(i)
 | emass                       | 质量误差                           | Estimate of mass error in all the systems (kg, lb).          |
 |                             |                                    |                                                              |
 | fij                         | 相间摩擦的系数                     | (N-s2/m5)                                                    |
-| floreg<br />flow regi       | 流型1                              | Flow regime number; the parameter is the volume number. A chart showing the meaning of each number is shown in Volume II, page 14<br /><br />High mixing bubbly,  CTB,  1<br/>High mixing bubbly/mist transition CTT 2<br/>High mixing mist CTM 3<br/>**Bubbly BBY 4<br/>Slug SLG 5<br/>Annular mist ANM 6<br/>Mist pre-CHF MPR 7<br/>**Inverted annular IAN 8<br/>Inverted slug ISL 9<br/>**Mist MST 10<br/>**Mist post-CHF MPO 11<br/>Horizontal stratified HST 12<br/>Vertical stratified VST 13<br/>Level tracking LEV 14<br/>Jet junction JET 15<br/><br />ECC mixer wavy MWY 16<br/>ECC mixer wavy/annular mist MWA 17<br/>ECC mixer annular mist MAM 18<br/>ECC mixer mist MMS 19<br/>ECC mixer wavy/slug transition MWS 20<br/>ECC mixer wavy-plug-slug transition MWP 21<br/>ECC mixer plug MPL 22<br/>ECC mixer plug-slug transition MPS 23<br/>ECC mixer slug MSL 24<br/>ECC mixer plug-bubbly transition MPB 25<br/>ECC mixer bubbly MBB 26<br /> |
+| floreg<br />flow regi       | 流型1                              | Flow regime number; the parameter is the volume number. A chart showing the meaning of each number is shown in Volume II, page 14<br /><br />High mixing bubbly,  CTB,  1<br/>High mixing bubbly/mist transition CTT 2<br/>High mixing mist CTM 3<br/>**Bubbly BBY 4<br/>Slug SLG 5<br/>Annular mist ANM 6<br/>Mist pre-CHF MPR 7<br/>**Inverted annular IAN 8<br/>Inverted slug ISL 9<br/>**Mist MST 10<br/>Mist post-CHF MPO 11<br/>Horizontal stratified HST 12<br/>Vertical stratified VST 13**<br/>Level tracking LEV 14<br/>Jet junction JET 15<br/><br />ECC mixer wavy MWY 16<br/>ECC mixer wavy/annular mist MWA 17<br/>ECC mixer annular mist MAM 18<br/>ECC mixer mist MMS 19<br/>ECC mixer wavy/slug transition MWS 20<br/>ECC mixer wavy-plug-slug transition MWP 21<br/>ECC mixer plug MPL 22<br/>ECC mixer plug-slug transition MPS 23<br/>ECC mixer slug MSL 24<br/>ECC mixer plug-bubbly transition MPB 25<br/>ECC mixer bubbly MBB 26<br /> |
 | fjunft                      | 顺流不可逆的总形状损失系数         | Total form loss coefficient for irreversible losses, forward |
 | fjunrt                      | 逆流不可逆的总形状损失系数         | Total form loss coefficient for irreversible losses, reverse |
 | formfj                      | 液相形状损失系数                   |                                                              |
@@ -240,262 +322,265 @@ sourcf(ix) = qwf(i)*dt + aaa2 - (vafrf + vaerf)*ufo(i)
 
 # 子程序速查表
 
-| 子程序    | 功能                                                         |
-| --------- | ------------------------------------------------------------ |
-| accum     | 模拟安注箱水力、壁面和水表面的换热、蒸汽圆顶冷凝及水面蒸发的过程。 |
-| alg63     | alg63子程序使用高斯消去法求解一个5×5矩阵方程组               |
-| alg63n    | 子程序主要使用了高斯消去法求解两个5×5矩阵方程组，然后依据方程的解计算中间变量 |
-| amux      | 将矩阵A以点积的形式乘以一个向量，矩阵A以压缩稀疏行的形式存储 |
-| bishop    | 计算超临界条件下的bishop换热系数和次临界状态下的D-B换热系数，当换热包选项htopta=161时，被dittus调用 |
-| blkdta    | 定义一些不应改变的数据                                       |
-| borbnd    | 利用BPLU算法计算压力系数矩阵，包括LU分解和回代求解压力系数矩阵 |
-| bparam    | 被tsetsl子程序调用，用于瞬态计算前BPLU结构初始化，将系统矩阵重排为border-profile的形式，是BPLU法矩阵重排的主要子程序。 |
-| bpcnst    | bpcnst子程序被bpord子程序调用，主要用于BPLU求解器的重排技术之一——constant removal。 |
-| bpform    | 被bpord子程序调用，主要用于BPLU求解器的重排技术之一——constant removal |
-| bplu      | 被borbnd子程序调用，对系数矩阵进行LU分解。bplu子程序是主要的系数矩阵分解进程 |
-| bpmap22   | 被tsetsl子程序调用，用于瞬态计算开始前BPLU结构初始化，将系统矩阵重排为border-profile的形式，是BPLU法矩阵重排的主要子程序。Bpmap22与bpmap的区别是，bpmap22只用作控制体变量个数不超过8或a22子矩阵的分解。 |
-| bpmul     | 被setrhs子程序调用，setrhs只有在出现错误时被调用。bpmul子程序辅助setrhs，对解子矩阵行求和 |
-| bpord     | 被bparam子程序调用，主要用于BPLU求解器的重排运算             |
-| bppart    | 是BPLU矩阵求解器中重排处理的重要部分，主要作用是在重排后建立分区索引数组indblk，实现矩阵数值分解时的并行效果 |
-| bprcm     | 是BPLU矩阵求解器中重排处理的重要部分，主要作用是利用Reverse Cuthill-Mckee算法对系数矩阵进行重排，使得系数矩阵形成border-banded的形式 |
-| bpsqlu    | 被borbnd和bplu子程序调用，利用部分选主元的高斯消去法处理a（borbnd）或a22（bplu）子矩阵 |
-| bpsqsl    | 被borbnd子程序调用，在bpsqlu和bplu子程序之后。主要作用是在bpsqlu子程或bplu的LU分解之后进行回代，得到Ax=b方程中的解x |
-| bpsub     | 被borbnd子程序调用，在bplu子程序之后。主要作用是在LU分解后进行回代，得到Ax=b方程中的解x |
-| brntrn    | 使用二阶 Godunov方法计算硼的输运                             |
-| bwlim     | BPLU矩阵求解器中重排处理的重要部分，主要作用是利用带宽限制算法对系数矩阵进行重排，使得系数矩阵形成border-banded的形式。 |
-| ccfl      | 先判断接管是否发生逆流流动限制(Countercurrent Flow Limitation,CCFL)，若在接管处存在ccfl，则利用Wallis-Kutateladze的淹没限制方程对ccfl进行计算。子程序最后根据半隐和近隐处理格式不同，分别计算其所需的中间变量；若为半隐格式，计算接管汽液两相速度velfj、velgj，计算半隐格式所需的中间变量vfdpk、vgdpk、vfdpl、vgdpl；若为近隐格式，程序计算近隐格式计算所需的中间变量coefv、sourcv、difdpk、difdpl。 |
-| celmdr    | 计算包壳的杨氏模量和泊松比                                   |
-| chfcal    | 根据选项采用不同的方法进行CHF的预测                          |
-| chfitr    | 使用INTER CHF 模型计算临界热流密度                           |
-| chfkut    | 使用Kutateladze CHF关系式和Folkin-Goldberg空泡因子以及Ivey Morris冷却因子计算临界热流密度 |
-| chforn    | 针对窄缝板状燃料组件进行CHF的预测                            |
-| chfosm    | 使用Osmachkin关系式计算石墨堆功率通道的临界热流密度CHF       |
-| chfpgf    | 使用PGF关系式计算临界热流密度比通量形式                      |
-| chfpgg    | 使用PGG关系式计算临界热流密度比几何形式                      |
-| chfpgp    | 使用PGP关系式计算临界热流密度比的动力形式                    |
-| chfpg     | 计算临界热流密度比                                           |
-| chfsrl    | 根据SRL关系式计算临界热流密度                                |
-| chftab    | 根据1986 AECL-UO CHF查询表进行CHF的预测                      |
-| chklev    | 控制控制体之间两相液位的移动                                 |
-| chngva    | 计算由于包壳变形引起的控制体面积变化                         |
-| coev3d    | 计算速度矩阵系数coefv项，并计算相关动量通量项convf、convg    |
-| conden    | 计算冷凝换热的各相换热系数和热流密度                         |
-| condn2    | 采用了新的模型计算冷凝换热，只有当输入卡1的第45个选项开启时，才会调用这个子程序进行计算 |
-| convar    | 用来模拟水力系统中的控制系统的子程序                         |
-| courn1    | 计算最小基于接管速度的courant限值（时间步长限值）            |
-| cournt    | 计算最小基于体平均速度的courant限值（时间步长限值）          |
-| cov3dl    | 计算三维部件的动量通量项的速度矩阵方程的边界条件             |
-| cov3dy    | 计算速度矩阵系数coefv项，并计算相关动量通量项convf、convg，针对三维控制体y方向速度。 |
-| cov3dz    | 计算速度矩阵系数coefv项，并计算相关动量通量项convf、convg，针对三维控制体y方向速度。 |
-| cplexp    | 使用NUREG-0630的数据计算塑性应变。该子程序假设应用了间隙导热模型，当环向应力为负的时候跳过该子程序的计算过程 |
-| cprssr    | 计算压缩机的压差、转矩和转速，以及异步电动机的转矩           |
-| cramer2   | 通过克莱默法则解一系列方程                                   |
-| cthxpr    | 计算锆合金包壳的径向热膨胀                                   |
-| daxpy     | 一个向量乘以一个常数再加上另一个向量                         |
-| ddot      | 计算两个向量的点积(数量积)，采用开式循环使增量等于一         |
-| detector  |                                                              |
-| detmnt    | 采用高斯消去法用于计算行列式的值的子程序                     |
-| dittus    | 计算Dittus-Boelter强迫对流换热关系式。                       |
-| dmpcom1   | 指向seldmp1或selpdmp2的单元1或2写入重启记录                  |
-| dmplst    | 计算common /ftb/ 中的参数,如数据标识、数组大小、文件数量、上次描述的文件位置等，对所有链接表循环，对每个链接表内的参数设立相关的指针参数，并通过指针参数ix、iy输出各个参数相关的指针位置 |
-| dnrm2     | 求n维向量dx的范数                                            |
-| dyer      | 通过GE干燥器模型计算干燥器出口的汽液空间份额                 |
-| dtstep    | 瞬态计算过程中选择时间步长以及控制输出和画图的频率           |
-| eccmxj    |                                                              |
-| eccmxv    |                                                              |
-| eprij     |                                                              |
-| eqfinal   |                                                              |
-| errorn    |                                                              |
-| fidis2    |                                                              |
-| fidisj    |                                                              |
-| fidisv    |                                                              |
-| fildmp    |                                                              |
-| flux3d    |                                                              |
-| fmvlwr    |                                                              |
-| fricid    |                                                              |
-| fwdrag    |                                                              |
-| gapcon    |                                                              |
-| gasthc    |                                                              |
-| gcsub     |                                                              |
-| gctp,     |                                                              |
-| genchn    |                                                              |
-| gesep     |                                                              |
-| gesub     |                                                              |
-| gniel     |                                                              |
-| gninit    | gninit performs once only calculations and general initializations  including setting common block lengths and clearing them. |
-| grdnrj    |                                                              |
-| griftj    |                                                              |
-| helphd    |                                                              |
-| hifbub    |                                                              |
-| hloss     |                                                              |
-| hseflw    |                                                              |
-| ht1tdp    |                                                              |
-| ht2tdp    |                                                              |
-| htadv     |                                                              |
-| htcond    |                                                              |
-| htfilm    |                                                              |
-| htfinl    |                                                              |
-| htheta    |                                                              |
-| htlev     |                                                              |
-| htrc1     |                                                              |
-| htrc2     |                                                              |
-| hydro     | 控制水力学计算过程                                           |
-| hzflow    |                                                              |
-| idfind    |                                                              |
-| inputd    | Controls all input data processing.  If an error is found, editing for the case is completed, but all following cases only have their input listed |
-| jacksn    |                                                              |
-| jchoke    |                                                              |
-| jprop     | Donors junction properties from adjacent volume quantities   |
-| katokj    |                                                              |
-| helm      |                                                              |
-| htadv     | Controls advancement of heat structures and computes heat added to   hydrodynamic volumes. |
-| khoo      |                                                              |
-| kloss     |                                                              |
-| koshi     |                                                              |
-| level     | c  level tracks two-phase level in 1-D vertical components.<br/>c<br/>c  Cognizant engineer: kuo,wlw<br/>c<br/>c  Purpose --<br/>c  Perform calculations to detect a two-phase level within a<br/>c  hydrodynamic cell.<br/>c  Compute level propagation velocity, above-level void fraction,<br/>c  below-level void fraction, and level position related to<br/>c  the bottom of the cell.<br/>c  Set level flags.<br/>c  This subroutine consists of three main blocks.<br/>c    1) the first block determines the level position, either by<br/>c       examination on the level criteria (icheck = 0), or by<br/>c       extrapolation of the level position (icheck = 1).<br/>c    2) the second block detemines the pressure gradient correction<br/>c       term for each volume containing a level after propagating<br/>c       the level to the adjacent volume if the level position<br/>c       determined in the first block lies outside of the volume. The<br/>c       junctions effected by either level movement or by level<br/>c       appearance are marked for processing by the next block.<br/>c    3) the velocities in the junctions marked by the second block<br/>c       are recomputed to be consistent with the level positions.<br/>c  The first two blocks are contained in a loop over all volumes<br/>c  while the second loop is over a list containing the indices<br/>c  of the junctions marked by the loop over volumes. |
-| lint1     |                                                              |
-| lusol0    |                                                              |
-| madata1   |                                                              |
-| majout    |                                                              |
-| mapmat    |                                                              |
-| mcheck    |                                                              |
-| mdata2    |                                                              |
-| mhdfwf    |                                                              |
-| mirec1    |                                                              |
-| mixcon    |                                                              |
-| modmem    |                                                              |
-| mover     |                                                              |
-| mprop     |                                                              |
-| ncfilm    |                                                              |
-| ncprop    |                                                              |
-| ncwall    |                                                              |
-| newtseg1  |                                                              |
-| nnkmout   |                                                              |
-| noncnd    |                                                              |
-| nwithair  | nwithair (numnormvol, numairvol, matrl)<br />Compute equation of state and derivatives for volumes with air<br/>c  Specifically for fluid 15 = new steam tables 9-16-00 |
-| outpoint  |                                                              |
-| outputtr  |                                                              |
-| packer    |                                                              |
-| petukv    |                                                              |
-| pgmres    |                                                              |
-| phantj    |                                                              |
-| phantv    | 相间传热<br />Subroutine computes interphase heat transfer and also calculates   some information for vexplt.  This replaces the volume loop in   earlier subroutine phaint, which replaced earlier subroutines   fidrag and mdot. |
-| pimplt    |                                                              |
-| pintfc    |                                                              |
-| plstrn    |                                                              |
-| pltwda    |                                                              |
-| pltwrt    |                                                              |
-| pminv1    |                                                              |
-| pminv4    |                                                              |
-| pminvd    | pminvd子程序是压力矩阵求解器旧版本MA18中的一个子程序，被三个子程序调用，分别是子程序tsetsl、pminvf和syssol。其中在tsetsl子程序中调用，用于直接解法的预处理，包含矩阵系数的存储、选主元排序及消元。pminvd中求解方式属于最基本的选主元消去法。形式为：subroutine pminvd (a,ind,iw,n,np,g,ux,ia)。<br />a	压力矩阵系数<br/>ind	系数位置<br/>iw	压力矩阵特性参数<br/>n	变量个数<br/>np	变量个数+1<br/>ux	指数<br/>ia	矩阵允许最大个数<br/> |
-| pminvf    |                                                              |
-| pminvr    |                                                              |
-| pminvx    |                                                              |
-| pol2s     |                                                              |
-| pol8      |                                                              |
-| polat     |                                                              |
-| polatr    |                                                              |
-| prebun    |                                                              |
-| precr     |                                                              |
-| prednb    |                                                              |
-| presej    |                                                              |
-| preseq    | 加载压力矩阵，计算系数矩阵和源向量中的元素。形式为subroutine preseq。<br />preseq uses the phasic equations for mass and energy to eliminate<br/>c  liquid specific internal energy, vapor specific internal energy, void<br/>c  fraction, and noncondensible quality.The preseq subroutine fills the coefficient matrix and row reduces this matrix prior to the call to<br/>syssol. The row reduction reduces the block 5x5 matrix that has one block for each volume in the loop that<br/>is being solved to a block 1x1 matrix. The block 1x1 matrix is the pressure matrix and is sent to syssol to<br/>solve for the increment in pressure in each volume for this time step. |
-| psatpd    |                                                              |
-| pset      |                                                              |
-| pstdnb    |                                                              |
-| pstpd2    |                                                              |
-| pump      |                                                              |
-| pump2     |                                                              |
-| pzrlev    | Added subroutine for calculate water level in PRIZER component        Much similar to icompn.f file. Since pzr volume component index,        is reset in 'trnset' before tansient calculation, use kk = przvn  This routine is called every time advancement during transient |
-| qfhtrc    |                                                              |
-| qfmove    |                                                              |
-| qfsrch    |                                                              |
-| qmwr      |                                                              |
-| qsplit    |                                                              |
-| radht     |                                                              |
-| rcards    | Subroutine reads input data for the next case, writes data on disk if not last case. |
-| rkin      |                                                              |
-| rmblnk1   |                                                              |
-| rstimg    |                                                              |
-| rstrda    |                                                              |
-| rstrec    |                                                              |
-| ruplas    |                                                              |
-| seta      |                                                              |
-| setreason | Routine that sets all the reasons for the setting of the success flag |
-| setrhs    |                                                              |
-| sieder    |                                                              |
-| simplt    | simplt computes the new time liquid specific internal energy,<br/>c  vapor specific internal energy, void fraction, noncondensible<br/>c  quality, and boron density using implicit convective terms in<br/>c  the mass and energy equations. |
-| solr      |                                                              |
-| sol       |                                                              |
-| sortup    |                                                              |
-| splin3    |                                                              |
-| sstchk    |                                                              |
-| stacc     | stacc advances the energy equation, evaluates the equation of state<br/>c  for an accumulator, and performs a backup of the accumulator<br/>c  variables on a time step failure. |
-| statep    | Compute equation of state and derivitives for time advanced volumes. |
-| state     |                                                              |
-| stcset    |                                                              |
-| stdsp     |                                                              |
-| stgodu    |                                                              |
-| sth2x1    |                                                              |
-| sth2x2    |                                                              |
-| sth2x3    |                                                              |
-| sth2x5    |                                                              |
-| sth2x6    |                                                              |
-| stnpu     |                                                              |
-| stnsat    |                                                              |
-| stntp     |                                                              |
-| stntx     |                                                              |
-| stnx      |                                                              |
-| stpu00    |                                                              |
-| stpu0p    |                                                              |
-| stpu2p    |                                                              |
-| stpu2t    |                                                              |
-| stpupu    |                                                              |
-| stputp    |                                                              |
-| strip     |                                                              |
-| strpu     |                                                              |
-| strpx     |                                                              |
-| strsat    |                                                              |
-| strtp1    |                                                              |
-| strtx     |                                                              |
-| strx      |                                                              |
-| stvnpx    |                                                              |
-| stvrpx    |                                                              |
-| suboil    |                                                              |
-| surftn    |                                                              |
-| svpu2p    |                                                              |
-| svpupu    |                                                              |
-| syssol    | 加载压力矩阵，计算系数矩阵和源向量中的元素。形式为：SUBROUTINE SYSSOL (isol,ilsw,offst)。有三种方式求解压力矩阵：旧版本方式、BPLU法和广义最小残差迭代法。用户可在输入卡中选择性激活chngno34和35选择求解压力矩阵的方式。 |
-| tcnvsl    |                                                              |
-| tempi     |                                                              |
-| tempifc   |                                                              |
-| thront    |                                                              |
-| tideal    |                                                              |
-| timinit   | Initializes the timing routines                              |
-| timset    | Timing subroutine.  Maintains two nested timing measures.    |
-| tran      | 控制瞬态计算过程                                             |
-| trilu     |                                                              |
-| trip      |                                                              |
-| trisub    |                                                              |
-| trnctl    | calls set up, advancement, and finish subroutines for  transient problem. |
-| trnset    |                                                              |
-| tsetsl    |                                                              |
-| tstate    | processes time dependent volumes and junctions.              |
-| turbst    |                                                              |
-| valve     |                                                              |
-| varvol    |                                                              |
-| vexplt    | Subroutine computes the explicit liquid and vapor velocities and<br/>c  the pressure gradient coefficients needed for the implicit pressure<br/>c  solution.  It also computes the old time source terms for the mass<br/>c  and energy equations. |
-| vfinl     |                                                              |
-| vimdbt    |                                                              |
-| vimplt    |                                                              |
-| vlvela    |                                                              |
-| voidangle |                                                              |
-| volvel    |                                                              |
-| volvol    |                                                              |
-| vtfrnt    |                                                              |
-| wethif    | Subroutine computes wetted wall interphase heat transfer.    |
-| zbrent    |                                                              |
-| zfslgj    |                                                              |
+| 子程序     | 功能                                                         |
+| ---------- | ------------------------------------------------------------ |
+| accum      | 模拟安注箱水力、壁面和水表面的换热、蒸汽圆顶冷凝及水面蒸发的过程。 |
+| alg63      | alg63子程序使用高斯消去法求解一个5×5矩阵方程组               |
+| alg63n     | 子程序主要使用了高斯消去法求解两个5×5矩阵方程组，然后依据方程的解计算中间变量 |
+| amux       | 将矩阵A以点积的形式乘以一个向量，矩阵A以压缩稀疏行的形式存储 |
+| bishop     | 计算超临界条件下的bishop换热系数和次临界状态下的D-B换热系数，当换热包选项htopta=161时，被dittus调用 |
+| blkdta     | 定义一些不应改变的数据                                       |
+| borbnd     | 利用BPLU算法计算压力系数矩阵，包括LU分解和回代求解压力系数矩阵 |
+| bparam     | 被tsetsl子程序调用，用于瞬态计算前BPLU结构初始化，将系统矩阵重排为border-profile的形式，是BPLU法矩阵重排的主要子程序。 |
+| bpcnst     | bpcnst子程序被bpord子程序调用，主要用于BPLU求解器的重排技术之一——constant removal。 |
+| bpform     | 被bpord子程序调用，主要用于BPLU求解器的重排技术之一——constant removal |
+| bplu       | 被borbnd子程序调用，对系数矩阵进行LU分解。bplu子程序是主要的系数矩阵分解进程 |
+| bpmap22    | 被tsetsl子程序调用，用于瞬态计算开始前BPLU结构初始化，将系统矩阵重排为border-profile的形式，是BPLU法矩阵重排的主要子程序。Bpmap22与bpmap的区别是，bpmap22只用作控制体变量个数不超过8或a22子矩阵的分解。 |
+| bpmul      | 被setrhs子程序调用，setrhs只有在出现错误时被调用。bpmul子程序辅助setrhs，对解子矩阵行求和 |
+| bpord      | 被bparam子程序调用，主要用于BPLU求解器的重排运算             |
+| bppart     | 是BPLU矩阵求解器中重排处理的重要部分，主要作用是在重排后建立分区索引数组indblk，实现矩阵数值分解时的并行效果 |
+| bprcm      | 是BPLU矩阵求解器中重排处理的重要部分，主要作用是利用Reverse Cuthill-Mckee算法对系数矩阵进行重排，使得系数矩阵形成border-banded的形式 |
+| bpsqlu     | 被borbnd和bplu子程序调用，利用部分选主元的高斯消去法处理a（borbnd）或a22（bplu）子矩阵 |
+| bpsqsl     | 被borbnd子程序调用，在bpsqlu和bplu子程序之后。主要作用是在bpsqlu子程或bplu的LU分解之后进行回代，得到Ax=b方程中的解x |
+| bpsub      | 被borbnd子程序调用，在bplu子程序之后。主要作用是在LU分解后进行回代，得到Ax=b方程中的解x |
+| brntrn     | 使用二阶 Godunov方法计算硼的输运                             |
+| bwlim      | BPLU矩阵求解器中重排处理的重要部分，主要作用是利用带宽限制算法对系数矩阵进行重排，使得系数矩阵形成border-banded的形式。 |
+| ccfl       | 先判断接管是否发生逆流流动限制(Countercurrent Flow Limitation,CCFL)，若在接管处存在ccfl，则利用Wallis-Kutateladze的淹没限制方程对ccfl进行计算。子程序最后根据半隐和近隐处理格式不同，分别计算其所需的中间变量；若为半隐格式，计算接管汽液两相速度velfj、velgj，计算半隐格式所需的中间变量vfdpk、vgdpk、vfdpl、vgdpl；若为近隐格式，程序计算近隐格式计算所需的中间变量coefv、sourcv、difdpk、difdpl。 |
+| celmdr     | 计算包壳的杨氏模量和泊松比                                   |
+| chfcal     | 根据选项采用不同的方法进行CHF的预测                          |
+| chfitr     | 使用INTER CHF 模型计算临界热流密度                           |
+| chfkut     | 使用Kutateladze CHF关系式和Folkin-Goldberg空泡因子以及Ivey Morris冷却因子计算临界热流密度 |
+| chforn     | 针对窄缝板状燃料组件进行CHF的预测                            |
+| chfosm     | 使用Osmachkin关系式计算石墨堆功率通道的临界热流密度CHF       |
+| chfpgf     | 使用PGF关系式计算临界热流密度比通量形式                      |
+| chfpgg     | 使用PGG关系式计算临界热流密度比几何形式                      |
+| chfpgp     | 使用PGP关系式计算临界热流密度比的动力形式                    |
+| chfpg      | 计算临界热流密度比                                           |
+| chfsrl     | 根据SRL关系式计算临界热流密度                                |
+| chftab     | 根据1986 AECL-UO CHF查询表进行CHF的预测                      |
+| chklev     | 控制控制体之间两相液位的移动                                 |
+| chngva     | 计算由于包壳变形引起的控制体面积变化                         |
+| coev3d     | 计算速度矩阵系数coefv项，并计算相关动量通量项convf、convg    |
+| conden     | 计算冷凝换热的各相换热系数和热流密度                         |
+| condn2     | 采用了新的模型计算冷凝换热，只有当输入卡1的第45个选项开启时，才会调用这个子程序进行计算 |
+| convar     | 用来模拟水力系统中的控制系统的子程序                         |
+| courn1     | 计算最小基于接管速度的courant限值（时间步长限值）            |
+| cournt     | 计算最小基于体平均速度的courant限值（时间步长限值）          |
+| cov3dl     | 计算三维部件的动量通量项的速度矩阵方程的边界条件             |
+| cov3dy     | 计算速度矩阵系数coefv项，并计算相关动量通量项convf、convg，针对三维控制体y方向速度。 |
+| cov3dz     | 计算速度矩阵系数coefv项，并计算相关动量通量项convf、convg，针对三维控制体y方向速度。 |
+| cplexp     | 使用NUREG-0630的数据计算塑性应变。该子程序假设应用了间隙导热模型，当环向应力为负的时候跳过该子程序的计算过程 |
+| cprssr     | 计算压缩机的压差、转矩和转速，以及异步电动机的转矩           |
+| cramer2    | 通过克莱默法则解一系列方程                                   |
+| cthxpr     | 计算锆合金包壳的径向热膨胀                                   |
+| daxpy      | 一个向量乘以一个常数再加上另一个向量                         |
+| ddot       | 计算两个向量的点积(数量积)，采用开式循环使增量等于一         |
+| detector   |                                                              |
+| detmnt     | 采用高斯消去法用于计算行列式的值的子程序                     |
+| dispdryhif | 计算干壁面相间传热                                           |
+| dittus     | 计算Dittus-Boelter强迫对流换热关系式。                       |
+| dmpcom1    | 指向seldmp1或selpdmp2的单元1或2写入重启记录                  |
+| dmplst     | 计算common /ftb/ 中的参数,如数据标识、数组大小、文件数量、上次描述的文件位置等，对所有链接表循环，对每个链接表内的参数设立相关的指针参数，并通过指针参数ix、iy输出各个参数相关的指针位置 |
+| dnrm2      | 求n维向量dx的范数                                            |
+| dyer       | 通过GE干燥器模型计算干燥器出口的汽液空间份额                 |
+| dtstep     | 瞬态计算过程中选择时间步长以及控制输出和画图的频率           |
+| eccmxj     |                                                              |
+| eccmxv     |                                                              |
+| eprij      |                                                              |
+| eqfinal    |                                                              |
+| errorn     |                                                              |
+| fidis2     |                                                              |
+| fidisj     |                                                              |
+| fidisv     |                                                              |
+| fildmp     |                                                              |
+| flux3d     |                                                              |
+| fmvlwr     |                                                              |
+| fricid     |                                                              |
+| fwdrag     |                                                              |
+| gapcon     |                                                              |
+| gasthc     |                                                              |
+| gcsub      |                                                              |
+| gctp,      |                                                              |
+| genchn     |                                                              |
+| gesep      |                                                              |
+| gesub      |                                                              |
+| gniel      |                                                              |
+| gninit     | gninit performs once only calculations and general initializations  including setting common block lengths and clearing them. |
+| grdnrj     |                                                              |
+| griftj     |                                                              |
+| helphd     |                                                              |
+| hifbub     |                                                              |
+| hloss      |                                                              |
+| hseflw     |                                                              |
+| ht1tdp     |                                                              |
+| ht2tdp     |                                                              |
+| htadv      |                                                              |
+| htcond     |                                                              |
+| htfilm     |                                                              |
+| htfinl     |                                                              |
+| htheta     |                                                              |
+| htlev      |                                                              |
+| htrc1      |                                                              |
+| htrc2      |                                                              |
+| hydro      | 控制水力学计算过程                                           |
+| hzflow     |                                                              |
+| idfind     |                                                              |
+| iedit      | 初始条件编辑<br />Writes summary of the hydrodynamic volume and junction conditions after completion of input processing. |
+| inputd     | Controls all input data processing.  If an error is found, editing for the case is completed, but all following cases only have their input listed |
+| jacksn     |                                                              |
+| jchoke     |                                                              |
+| jprop      | Donors junction properties from adjacent volume quantities   |
+| katokj     |                                                              |
+| helm       |                                                              |
+| htadv      | Controls advancement of heat structures and computes heat added to   hydrodynamic volumes. |
+| khoo       |                                                              |
+| kloss      |                                                              |
+| koshi      |                                                              |
+| level      | c  level tracks two-phase level in 1-D vertical components.<br/>c<br/>c  Cognizant engineer: kuo,wlw<br/>c<br/>c  Purpose --<br/>c  Perform calculations to detect a two-phase level within a<br/>c  hydrodynamic cell.<br/>c  Compute level propagation velocity, above-level void fraction,<br/>c  below-level void fraction, and level position related to<br/>c  the bottom of the cell.<br/>c  Set level flags.<br/>c  This subroutine consists of three main blocks.<br/>c    1) the first block determines the level position, either by<br/>c       examination on the level criteria (icheck = 0), or by<br/>c       extrapolation of the level position (icheck = 1).<br/>c    2) the second block detemines the pressure gradient correction<br/>c       term for each volume containing a level after propagating<br/>c       the level to the adjacent volume if the level position<br/>c       determined in the first block lies outside of the volume. The<br/>c       junctions effected by either level movement or by level<br/>c       appearance are marked for processing by the next block.<br/>c    3) the velocities in the junctions marked by the second block<br/>c       are recomputed to be consistent with the level positions.<br/>c  The first two blocks are contained in a loop over all volumes<br/>c  while the second loop is over a list containing the indices<br/>c  of the junctions marked by the loop over volumes. |
+| lint1      |                                                              |
+| lusol0     |                                                              |
+| madata1    |                                                              |
+| majout     | 大编辑输出<br />This subroutine prints the major edit of the transient and steady state results. |
+| mapmat     |                                                              |
+| mcheck     |                                                              |
+| mdata2     |                                                              |
+| mhdfwf     |                                                              |
+| mirec1     |                                                              |
+| mixcon     |                                                              |
+| modmem     |                                                              |
+| mover      |                                                              |
+| mprop      |                                                              |
+| ncfilm     |                                                              |
+| ncprop     |                                                              |
+| ncwall     |                                                              |
+| newtseg1   |                                                              |
+| nnkmout    |                                                              |
+| noncnd     |                                                              |
+| nwithair   | nwithair (numnormvol, numairvol, matrl)<br />Compute equation of state and derivatives for volumes with air<br/>c  Specifically for fluid 15 = new steam tables 9-16-00 |
+| outpoint   |                                                              |
+| outputtr   |                                                              |
+| packer     |                                                              |
+| petukv     |                                                              |
+| pgmres     |                                                              |
+| phantj     |                                                              |
+| phantv     | 相间传热<br />Subroutine computes interphase heat transfer and also calculates   some information for vexplt.  This replaces the volume loop in   earlier subroutine phaint, which replaced earlier subroutines   fidrag and mdot. |
+| pimplt     |                                                              |
+| pintfc     |                                                              |
+| plstrn     |                                                              |
+| pltwda     |                                                              |
+| pltwrt     |                                                              |
+| pminv1     |                                                              |
+| pminv4     |                                                              |
+| pminvd     | pminvd子程序是压力矩阵求解器旧版本MA18中的一个子程序，被三个子程序调用，分别是子程序tsetsl、pminvf和syssol。其中在tsetsl子程序中调用，用于直接解法的预处理，包含矩阵系数的存储、选主元排序及消元。pminvd中求解方式属于最基本的选主元消去法。形式为：subroutine pminvd (a,ind,iw,n,np,g,ux,ia)。<br />a	压力矩阵系数<br/>ind	系数位置<br/>iw	压力矩阵特性参数<br/>n	变量个数<br/>np	变量个数+1<br/>ux	指数<br/>ia	矩阵允许最大个数<br/> |
+| pminvf     |                                                              |
+| pminvr     |                                                              |
+| pminvx     |                                                              |
+| pol2s      |                                                              |
+| pol8       |                                                              |
+| polat      |                                                              |
+| polatr     |                                                              |
+| prebun     |                                                              |
+| precr      |                                                              |
+| prednb     |                                                              |
+| presej     |                                                              |
+| preseq     | 加载压力矩阵，计算系数矩阵和源向量中的元素。形式为subroutine preseq。<br />preseq uses the phasic equations for mass and energy to eliminate<br/>c  liquid specific internal energy, vapor specific internal energy, void<br/>c  fraction, and noncondensible quality.The preseq subroutine fills the coefficient matrix and row reduces this matrix prior to the call to<br/>syssol. The row reduction reduces the block 5x5 matrix that has one block for each volume in the loop that<br/>is being solved to a block 1x1 matrix. The block 1x1 matrix is the pressure matrix and is sent to syssol to<br/>solve for the increment in pressure in each volume for this time step. |
+| psatpd     |                                                              |
+| pset       |                                                              |
+| pstdnb     |                                                              |
+| pstpd2     |                                                              |
+| pump       |                                                              |
+| pump2      |                                                              |
+| pzrlev     | Added subroutine for calculate water level in PRIZER component        Much similar to icompn.f file. Since pzr volume component index,        is reset in 'trnset' before tansient calculation, use kk = przvn  This routine is called every time advancement during transient |
+| qfhtrc     |                                                              |
+| qfmove     |                                                              |
+| qfsrch     |                                                              |
+| qmwr       |                                                              |
+| qsplit     |                                                              |
+| radht      |                                                              |
+| rcards     | Subroutine reads input data for the next case, writes data on disk if not last case. |
+| rkin       |                                                              |
+| rmblnk1    |                                                              |
+| rmflds     | rmflds reads optional hydrodynamic system cards that specify a  reference volume, its position coordinates, fluid type in the system,  the system name, system information flags, and system thermodynamic  property file name. |
+| rstimg     |                                                              |
+| rstrda     |                                                              |
+| rstrec     |                                                              |
+| ruplas     |                                                              |
+| seta       |                                                              |
+| setreason  | Routine that sets all the reasons for the setting of the success flag |
+| setrhs     |                                                              |
+| sieder     |                                                              |
+| simplt     | simplt computes the new time liquid specific internal energy,<br/>c  vapor specific internal energy, void fraction, noncondensible<br/>c  quality, and boron density using implicit convective terms in<br/>c  the mass and energy equations. |
+| solr       |                                                              |
+| sol        |                                                              |
+| sortup     |                                                              |
+| splin3     |                                                              |
+| sstchk     |                                                              |
+| stacc      | stacc advances the energy equation, evaluates the equation of state<br/>c  for an accumulator, and performs a backup of the accumulator<br/>c  variables on a time step failure. |
+| statep     | Compute equation of state and derivitives for time advanced volumes. |
+| state      |                                                              |
+| stcset     |                                                              |
+| stdsp      |                                                              |
+| stgodu     |                                                              |
+| sth2x1     |                                                              |
+| sth2x2     |                                                              |
+| sth2x3     |                                                              |
+| sth2x5     |                                                              |
+| sth2x6     |                                                              |
+| stnpu      |                                                              |
+| stnsat     |                                                              |
+| stntp      |                                                              |
+| stntx      |                                                              |
+| stnx       |                                                              |
+| stpu00     |                                                              |
+| stpu0p     |                                                              |
+| stpu2p     |                                                              |
+| stpu2t     |                                                              |
+| stpupu     |                                                              |
+| stputp     |                                                              |
+| strip      |                                                              |
+| strpu      |                                                              |
+| strpx      |                                                              |
+| strsat     |                                                              |
+| strtp1     |                                                              |
+| strtx      |                                                              |
+| strx       |                                                              |
+| stvnpx     |                                                              |
+| stvrpx     |                                                              |
+| suboil     |                                                              |
+| surftn     |                                                              |
+| svpu2p     |                                                              |
+| svpupu     |                                                              |
+| syssol     | 加载压力矩阵，计算系数矩阵和源向量中的元素。形式为：SUBROUTINE SYSSOL (isol,ilsw,offst)。有三种方式求解压力矩阵：旧版本方式、BPLU法和广义最小残差迭代法。用户可在输入卡中选择性激活chngno34和35选择求解压力矩阵的方式。 |
+| tcnvsl     |                                                              |
+| tempi      |                                                              |
+| tempifc    |                                                              |
+| thront     |                                                              |
+| tideal     |                                                              |
+| timinit    | Initializes the timing routines                              |
+| timset     | Timing subroutine.  Maintains two nested timing measures.    |
+| tran       | 控制瞬态计算过程                                             |
+| trilu      |                                                              |
+| trip       |                                                              |
+| trisub     |                                                              |
+| trnctl     | calls set up, advancement, and finish subroutines for  transient problem. |
+| trnset     |                                                              |
+| tsetsl     |                                                              |
+| tstate     | processes time dependent volumes and junctions.              |
+| turbst     |                                                              |
+| valve      |                                                              |
+| varvol     |                                                              |
+| vexplt     | Subroutine computes the explicit liquid and vapor velocities and<br/>c  the pressure gradient coefficients needed for the implicit pressure<br/>c  solution.  It also computes the old time source terms for the mass<br/>c  and energy equations. |
+| vfinl      |                                                              |
+| vimdbt     |                                                              |
+| vimplt     |                                                              |
+| vlvela     |                                                              |
+| voidangle  |                                                              |
+| volvel     |                                                              |
+| volvol     |                                                              |
+| vtfrnt     |                                                              |
+| wethif     | Subroutine computes wetted wall interphase heat transfer.    |
+| zbrent     |                                                              |
+| zfslgj     |                                                              |
 
 
 
@@ -505,27 +590,36 @@ sourcf(ix) = qwf(i)*dt + aaa2 - (vafrf + vaerf)*ufo(i)
 
 ### 安装
 
-- 安装包文件夹为``Compaq.Visual.Fortran.v6.6.win10-已测试`，找到`X86文件夹`内的`SETUPX86.EXE`，右键，属性，设置以兼容模式运行这个程序（如win7,winxp），并勾选以管理员身份运行。选择右上角第一项install visual fortran。
-- 名字公司随便填，序列号从`crack文件夹`内生成复制（无法全部复制，其他手敲）
+- 安装包文件夹为``Compaq.Visual.Fortran.v6.6.win10-已测试`，**找到`X86文件夹`内的`SETUPX86.EXE`**，右键，属性，设置以兼容模式运行这个程序（如win7,winxp），并勾选以管理员身份运行。右键管理员运行，选择右上角第一项install visual fortran。
+- 名字公司随便填，序列号从`crack文件夹`内生成复制（无法全部复制，手敲）
 - 安装方式typical，设置第一个文件夹路径，如`f: \pro\cvf\common`，则其他路径也随之变为cvf文件夹下。
-- 继续安装，96%时弹出环境变量更新，选择yes。安装完成，不注册，确定，不安装array visualizer。
+- 继续安装，96%时弹出环境变量更新，选择yes。安装完成，不注册，确定，不安装array visualizer。（卡在96%的话反思一下是不是没有管理员运行 ：）
 - 安装完毕，在安装目录下找到`DFDEV.EXE`（`F: \pro\cvf\common\MSDEV98\BIN\DFDEV.EXE`），右键属性，设置兼容模式为win7+管理员身份运行。
 - 从此可以正常打开`Relap33\Relap33.dsw`项目文件，测试build菜单rebuild all，无报错则成功（中文路径会报错）。
 
-
-
 ### 使用调试
 
+1. **先删除outdta和rstplt文件！！！**
+2. 调试前`F7`build，可以避免调试卡顿。：）玄学但有用
+3. 单击某行，`Ctrl + F10` debug 执行完前一行
+4. `F10`下一行，
+5. 查看变量值——鼠标直接悬停或选中后悬停；在watch表中定义；
+6. `F11`下一步——遇到子过程则进入子过程程序段继续单步执行
+7. `shift + F11`跳出子程序
+8. 单击某行，`Ctrl + F10` debug 执行完光标前一行
+9. `shift + F5`结束调试
+
+- 
 - `Relap33\Relap\`文件夹内存放有indta、outdta、rstplt和`Debug`文件夹，内含Relap.exe，可以单独拿到indta同级目录下运行。
 - 设定debug模式：
   点击菜单Build/Set Active Project Configuration，选 *- Win32 Debug，OK，即设定为debug模式。
 - 以debug模式执行到报错处：
   点击“Go (F5)”按钮，或直接按F5键，则执行程序，并在第一个出错语句处停止，在该语句前有一个小黄色箭头。
   若程序没错，则一直执行完毕，自动关闭dos窗口。此时，宜用“！”按钮或“Ctrl+F5”键，执行完成后，dos窗口等待用户关闭。
-- `Ctrl + F10` debug 执行完光标行前一行
+- 
 - `F9`设置断点：
   若希望执行时在某一语句处暂停，可将光标置于该语句，点击“手”形状的按钮，或按F9键，则程序执行到该语句时停在该语句处。
-- `F10`下一行，`F11`下一步，`shift + F11`跳出子程序：区别是F10下一行（不进入子过程程序段）或者F11（遇到子过程进入子过程程序段继续单步执行）
+- 
 - 查看变量值：
   小黄箭头停在某语句时，按下Variable按钮，显示当前程序段的变量值；对于简单变量，将光标放在该变量上，则即时显示该变量值。
 - 运行调试时改动了源代码，如果直接链接生成Relap.exe会报错`cannot open file "Debug/Relap.exe"  Error executing link.exe.`（relap.exe还在运行没有解除占用）。退出compaq，删除outdta和rstplt，重新打开项目，ctrl+F7仅编译当前修改文件，再 F7 链接主程序relap.exe（或者rebuild all）发现无报错成功编译。
@@ -535,14 +629,26 @@ sourcf(ix) = qwf(i)*dt + aaa2 - (vafrf + vaerf)*ufo(i)
 
 ！调试插入类似语句制造某个时刻和某个控制体的断点
 
-if ((timehy .gt. 2.70e0) .and. (volno(1,i) .eq. 110010000)) then 
-	write(*,*) timehy,volno(1,i)
+if (timehy .gt. 2.70e0) then 
+	write(231106,*) timehy
+end if
+
+if (timehy .gt. 1.8e5 .and. volno(1,i) .gt. 125380000) then
+	write(230725,*)timehy,volno(1,i)
+	write(230725,*)p(i),ug(i),uf(i)
+	write(230725,*)voidg(i),voide(i),voidf(i)
+	write(230725,*)velg(i),velf(i),vele(i)
+	write(230725,*)qwg(i),qwf(i)
+end if
+
+if (timehy .gt. 502.11 .and. id .gt. 1250038) then
+	write(231017,*)timehy,id
 end if
 ```
 
 ## 问题
 
-### 只能build relaplib不能relap.exe
+### 只能build relaplib不能build relap.exe
 
 有时报错已存在outdta，但是实际已删除，或者只能build relaplib不能build relap.exe。
 

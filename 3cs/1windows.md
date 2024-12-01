@@ -3,7 +3,10 @@
 
 # 使用技巧
 
+## 批量删除子文件夹内某种类型的文件
 
+1. 例如毕设用fluent模拟时保存了数千个模拟快照，文件格式为`ppm`。
+2. 在文件的上一层目录打开cmd，输入`del /s /q files/*.ppm`即可全删。（中文路径会乱码）
 
 ## 查看电脑已保存wifi的密码
 
@@ -13,7 +16,19 @@
 
 ## win定时任务自动备份重要文件
 
-1. 新建`backup.bat`备份脚本。（rem是注释命令，注意文件夹路径尾部的`\`）
+1. 新建`backup.bat`备份脚本。
+
+   1. rem是注释命令；
+   2. 注意文件夹路径尾部的`\`
+   3. %date% 表示当前日期，格式为 "周几 MM/DD/YYYY"，例如 "Wed 02/17/2023"。
+      * %date:~0,4% 表示从日期字符串中提取第 0 到第 4 个字符，也就是年份。
+      * %date:~5,2% 表示从日期字符串中提取第 5 到第 6 个字符，也就是月份。
+      * %date:~8,2% 表示从日期字符串中提取第 8 到第 9 个字符，也就是日。
+   4. %time% 表示当前时间，格式为 "HH:mm:ss.00"，例如 "10:30:45.99"。
+      * %time:~0,2% 表示从时间字符串中提取第 0 到第 2 个字符，也就是小时。
+      * %time:~3,2% 表示从时间字符串中提取第 3 到第 4 个字符，也就是分钟。
+      * %time:~6,2% 表示从时间字符串中提取第 6 到第 7 个字符，也就是秒。
+   5. 可以用短横线连接，但是冒号不行。。。
 
    ```basic
    @echo off
@@ -22,8 +37,8 @@
    set sourcePath=C:\0r720\sourcePath\
    rem 要备份到的文件夹
    set targetPath=D:\BackupHistory\
-   rem 自动备份生成的文件名
-   set folderName=%date:~0,4%-%date:~5,2%-%date:~8,2%
+   rem 自动备份生成的文件名，形如2023-11-13-14-21-43
+   set folderName=%date:~0,4%-%date:~5,2%-%date:~8,2%-%time:~0,2%-%time:~3,2%-%time:~6,2%
    
    XCOPY /e /c /y "%sourcePath%*" "%targetPath%%folderName%\"
    
@@ -106,7 +121,7 @@ del /f /s /q rstplt
 
 ## windows设置
 
-- DWS移除win10跟踪及系统应用：[DWS下载后打开](https://github.com/Nummer/Destroy-Windows-10-Spying/releases)，设置菜单，专业模式选择所有（metro是预装应用）。工具菜单，删除所有metro应用（包括应用商店），删除One Drive，禁用UAC，禁用Windows update。主界面菜单，点击Destroy-Windows-10-Spying，重启。
+- **DWS移除win10跟踪及系统应用**：[DWS下载后打开](https://github.com/Nummer/Destroy-Windows-10-Spying/releases)，设置菜单，（慎用！专业模式选择所有（metro是预装应用））。工具菜单，删除所有metro应用（包括应用商店），删除One Drive，禁用UAC，禁用Windows update。主界面菜单，点击Destroy-Windows-10-Spying，重启。
 
 - 任务栏：右键底部任务栏。搜索，显示桌面图标。显示桌面图标，关闭。显示任务视图，关闭。
 
@@ -241,21 +256,6 @@ del /f /s /q rstplt
 
 左下角开始（或右击我的电脑，属性）——设置——系统——关于——高级系统设置——高级——环境变量——（系统变量）新建——3次确定
 
-## 固态/机械/移动硬盘速度对比
-
-读/写（顺序/随机 + 8/1队列）
-
-|                 | 固态 | 机械 | 固态硬盘盒USB3.0 | 机械移动 |
-| --------------- | ---- | ---- | ---------------- | -------- |
-| 顺序，读，8队列 | 2500 | 140  | 440              | 110      |
-| 顺序，读，1     | 1500 | 130  | 340              | 110      |
-| 随机，读，8     | 400  | 2    | 180              | 1        |
-| 随机，读，1     | 40   | 1    | 23               | 1        |
-| 顺序，写，8     | 1000 | 135  | 460              | 100      |
-| 顺序，写，1     | 550  | 130  | 390              | 100      |
-| 随机，写，8     | 300  | 1.5  | 190              | 9        |
-| 随机，写，1     | 130  | 1..5 | 40               | 9        |
-
 ## windows永不更新
 
 - 设置，时间与语言，关闭自动设置时间， 手动设置日期为30年后
@@ -264,6 +264,38 @@ del /f /s /q rstplt
 
 
 # 软件
+
+
+
+
+
+## 重装系统
+
+老毛桃预装360等毒瘤？下次换[微PE](https://www.wepe.com.cn/download.html)或[windows官方](https://www.microsoft.com/zh-cn/software-download/windows10)安装（可能功能会简陋一些？）
+
+如果已经安装了可以重置系统：设置，更新与安全，恢复，重置此电脑。
+
+1. 准备：备份U盘，另一台windows电脑[下载老毛桃工具箱完整版](https://www.laomaotao.net)和[win10系统ios镜像官方版](https://www.microsoft.com/zh-cn/software-download/windows10ISO)。
+2. [制作u盘启动盘](https://www.laomaotao.net/doc/udiskwinpe.html)：打开老毛桃，U盘启动，普通模式，USB-HDD，NTFS，一键制作成USB启动盘。复制ISO系统镜像文件到u盘启动盘的LMT文件夹，笔记本电脑插入U盘。
+3. BIOS设置U盘启动：重启，同时狂按F2（Lenovo-R720，常见F12/F8/F9/ESC/F11/F10）进入BIOS设置。BOOT菜单，上下箭头移动到EFI和Legacy中的U盘USB Device (hp  v206w)，F6将两者都移动到最顶部。Exit菜单，exit saving changes，确认进入老毛桃系统。
+4. 重建分区：双击桌面图标“分区工具”，右键左侧菜单所有硬盘（HD0、HD1等），删除所有分区，保存更改。固态系统C盘128G，新建分区，全选建立ESP和MSR分区，格式化为NTFS，保存更改，确定格式化。机械数据D盘1T，新建分区，不选ESP、MSR，保存更改，确定格式化。
+5. 重装Win10：双击桌面图标“老毛桃一键装机”，打开选择镜像文件，版本选最好的专业工作站版，盘符选C盘固态，执行，选中格式化分区、网卡驱动、USB驱动、SATA驱动，勾选完成后重启，等到重启时拔掉U盘以免进入老毛桃系统。
+6. 20230625成功，卸载老毛桃预装软件。（还有360这种毒瘤？下次换微PE安装）
+
+
+
+
+
+[微PE（WePE）制作系统启动U盘](https://www.wepe.com.cn/ubook/)
+
+1. [微PE安装包](https://www.wepe.com.cn/download.html)下载，部分[教程](https://www.wepe.com.cn/ubook/)
+2. 双击WePE64_V2.2.exe安装，选择其他安装方式，安装到U盘，方案一UEFI/Legacy全能三分区，选择U盘，格式化exFAT，USB-HDD，安装。
+3. 复制win10系统ISO到WePE的U盘（非EFI盘）。
+4. 同上BIOS设置，进入PE，安装系统iso，进入系统
+
+
+
+
 
 ## BBDown下载B站视频
 
@@ -286,6 +318,64 @@ del /f /s /q rstplt
 * 筛选该列数据
 
 ## Word
+
+### 论文mathtype公式编号
+
+问题：编号从1-1开始了，但是想改成2-1。
+
+1. mathtype菜单，公式编号，章节，插入分隔符，新的章，确定。
+2. 也可以修改章，节等编号。
+
+
+
+### word菜单栏没有mathtype
+
+1. 先看自己word版本：文件，账户，关于word，最顶上说明32位（影响下面操作文件夹位置）
+
+2. 看mathtype安装位置`D:\Program Files (x86)\MathType`
+
+3. word安装位置`C:\Program Files (x86)\Microsoft Office\root\Office16`
+
+4. 打开word，单击 文件---->选项—>信任中心---->信任中心设置—>受信任位置—>添加新位置，将``C:\Program Files\Microsoft Office\root\Office16\STARTUP\ `添加入受信任路径。
+
+5. 找到MythType安装目录，将mathtype中的
+   `D:\Program Files (x86)\MathType\MathPage\32`的”MathPage.wll“；
+   `D:\Program Files (x86)\MathType\Office Support\32`的”WordCmds.dot“ 和 ”MathType Commands 2013.dotm“ 这三个文件。复制到Office 安装路径中的：
+   `C:\Program Files\Microsoft Office\root\Office16\STARTUP` 中。
+
+   【注意】：如果想在PPT里显示Mathtype选项卡，可以加上文件MathType AddIn (PowerPoint 2013).ppam
+
+   4.重启Word即可正常使用mathtype加载栏。
+
+
+
+
+
+### 论文引用图、表
+
+1. 选中图片，菜单栏，引用，题注，插入题注
+2. （首次）**新建标签 ！**取名为图。点击编号，勾选包含章节号 ，章节起始样式设为标题一，分隔符用短横，确定。可以看到题注栏名为类似`图 1-1`样式。
+3. （首次）选项，标签确认为`图`，位置选所选项目下方（表选上方)。确定
+4. 在出现的图1-1后填写图片名。
+5. 引用：在所需插入位置处，到菜单栏中点击【引用】>【题注】里的交叉引用，引用类型选择图。引用内容选择仅标签和编号。选中图名，插入。完成后关闭。
+6. 修改：如果有增删改，需要快捷更新——文章全选，右键->更新域。
+
+
+
+
+
+### 论文引用参考文献
+
+1. 准备好文献名条目：在参考文献部分准备好需要的参考文献条目
+2. 设置排序格式：菜单栏中【开始】>【段落】，选择一级数字编号内的【定义新编号格式】，在灰色固定数字格式前后加上中括号 `[ ` 和 `]` 。（ctrl + 空格 切换中英文中括号）
+3. 给文献自动排序：选中全部文献，选择上述文献格式`[1]`。
+4. 插入文献引用：在所需插入位置处，到菜单栏中点击【引用】>【题注】里的交叉引用，保持`引用类型：编号项。引用内容：段落编号。`不变，【引用哪一个编号项】下拉到参考文献处选择正确的文献条目`[1] xxxxx`，插入。完成后关闭。
+5. 调整引用编号为上标：选择编号，开始，字体，上标。此时，按住【ctrl】用鼠标点击参考文献编号，可直接跳转到参考文献所在位置。
+6. 修改：如果有增删改，需要快捷更新——文章全选，右键->更新域。
+
+ 
+
+
 
 ### 解决尾注默认在文档最后
 
@@ -458,17 +548,68 @@ parsers: # array
 **从哪找书**
 
 1. [zlibrary](https://lib-c463qd25h2ypw2am7wpqmfy6.1lib.ph)，公网仅有私密域名，与本人账号唯一绑定
+
 2. [读书](https://doosho.com/)，可能是电子书爱好者自制的，少量古籍和现代作品，甚至还有马督工睡前消息的[文字稿](https://doosho.com/cn/44)，[飞书文档](https://bedtime.news/)
-3. [安娜书库存档](https://annas-archive.org/)，含zlibrary，libgen等，速度慢？
+
+3. [安娜书库存档](https://annas-archive.org/)，含zlibrary，libgen等，速度慢？但资源很多！
+
 4. [全国图书馆参考咨询联盟](http://www.ucdrs.superlib.net/)，国家数据库，可查信息，可试看
+
 5. [图书联盟](https://dazzling-bacon-763.notion.site/eecbb4284b434f76a85d99f240349ddb)，付费，网上找书商家应该用的这个
+
 6. [电子书独秀库百度网盘妙传下载](https://freembook.com/)（好像失效了，存不到网盘内）
+
+
+
+
+### Calibre看书转换格式
+
+1. [软件下载](https://calibre-ebook.com/download)
+2. [不改成拼音路径插件](https://github.com/Cirn09/calibre-do-not-translate-my-path)
+3. [翻译电子书插件](https://www.mobileread.com/forums/showthread.php?t=353052)
+
+
+
+
+
+# 硬件
+
+[装机教程——硬件茶谈](https://www.bilibili.com/video/BV1BG4y137mG)
+
+[装机教程笔记——硬件茶谈](https://www.bilibili.com/opus/855559413820293137)
+
+[桌面CPU天梯图——驱动之家快科技](https://www.mydrivers.com/zhuanti/tianti/cpu/index.html)
+
+## 固态/机械/移动硬盘速度对比
+
+读/写（顺序/随机 + 8/1队列）——CrystalDiskMark测试
+
+|                 | 固态pcie4.0 | 固态pcie3.0 | 机械 | 固态硬盘盒USB3.0 | 机械移动 |
+| --------------- | ----------- | ----------- | ---- | ---------------- | -------- |
+| 顺序，读，8队列 | 7000        | 2500        | 140  | 440              | 110      |
+| 顺序，读，1     | 7000        | 1500        | 130  | 340              | 110      |
+| 随机，读，8     | 700~4000？  | 400         | 2    | 180              | 1        |
+| 随机，读，1     | 70          | 40          | 1    | 23               | 1        |
+| 顺序，写，8     | 6600        | 1000        | 135  | 460              | 100      |
+| 顺序，写，1     | 6600        | 550         | 130  | 390              | 100      |
+| 随机，写，8     | 600~4000？  | 300         | 1.5  | 190              | 9        |
+| 随机，写，1     | 200         | 130         | 1.5  | 40               |          |
+
+
 
 
 
 # 问题
 
 
+
+## 移动后vmware报错配置文件与此版不兼容
+
+1. 报错——配置文件 .vmx 与此版 VMware workstation 不兼容，因此无法使用
+2. 查看vm版本——在帮助 > 关于中查找vm版本，如VMware® Workstation 16 Pro。
+3. 查看.vmx虚拟机配置文件版本——`Ubuntu20230703-4C8G.vmx`第四行`virtualHW.version = "20"`，vm中打开后底部详细信息中显示16.x。可能配置文件版本比当前vm版本高。
+4. 配置文件版本降级——降2或者4吧。（如果当时用16pro创建虚拟机的时候，选择了最新16.x版本号，且现在移动之后20报错，则配置文件可填18；同理，以前的15.x版本可尝试填16）
+5. 以上已解决（玄学方法，试试降低内存和cpu？没试过）
 
 
 
@@ -480,9 +621,14 @@ parsers: # array
 
 ## 笔记本无法联网
 
-可能是之前一直是通过虚拟机内弹出的网页验证。
+1. 关闭clash主界面的系统代理（system proxy）；
 
-打开虚拟机验证网络。
+2. 可能是之前一直是通过虚拟机内弹出的网页验证。
+
+   1. 打开虚拟机验证网络。（真的很烦）
+   2. 高级网络设置，更改适配器，禁用再启用再禁用vmnet1 和vmnet8、以太网、WLAN等。
+
+   
 
 ## VMware的win10蓝屏pfn share count
 

@@ -297,6 +297,28 @@ xxx.github.io.	5	IN	A	185.199.108.153
 
 # 其他
 
+
+
+## windows版本上使用
+
+1. 下载安装nodejs及附加组件
+   * 下载安装v12.x版本的[nodejs](https://registry.npmmirror.com/-/binary/node/latest-v12.x/node-v12.22.10-x64.msi)，其中msi版本可以自动配置npm环境变量，
+   * 安装时允许下载python等附加依赖组件，
+   * cmd输入`node -v`查看自己安装是否成功。
+2. 安装gitbook
+   * cmd输入`npm install gitbook-cli -g`；
+   * 该命令安装后gitbook包会默认放在nodejs安装路径下的node_global文件夹下，**所以要想全局使用gitbook命令，还需要将该文件夹设置为环境变量**。
+   * 设置完环境变量后，可以在控制台使用`gitbook -V`查看是否安装成功(这里V是大写)。
+     * 报错`TypeError: cb.apply is not a function`，根据报错信息`C:\Users\MyPC\AppData\Roaming\npm\node_modules\gitbook-cli\node_modules\npm\node_modules\graceful-fs\polyfills.js:287 `，可知需要更新依赖项。
+     * 进入node模块依赖库——`cd C:\Users\MyPC\AppData\Roaming\npm\node_modules\gitbook-cli\node_modules\npm\node_modules\`
+     * 安装最新版`graceful-fs`依赖模块——`npm install graceful-fs@latest --save`
+     * 输入`gitbook -V`查看是否解决。
+     * 还是报错`Error: read ECONNRESET`。
+     * `npm install -g cnpm --registry=https://registry.npm.taobao.org`
+   * `npm install @gitbook-ng/gitbook`
+
+
+
 ## 请求加入谷歌索引
 
 [知乎参考](https://zhuanlan.zhihu.com/p/129022264)
