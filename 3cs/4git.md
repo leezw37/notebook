@@ -1,4 +1,5 @@
 # 目录
+
 [TOC]
 
 
@@ -70,8 +71,8 @@ git clone [url]
 ## .gitignore 文件
 有时一些文件最好不要用 Git 跟踪。这通常在名为 .gitignore 的特殊文件中完成。你可以在 github.com/github/gitignore 找到有用的 .gitignore 文件模板。
 
-
 ## 同步更改
+
 将你本地仓库与 GitHub.com 上的远端仓库同步
 
 ```bash
@@ -87,6 +88,7 @@ git pull
 ```
 
 ## 进行更改
+
 浏览并检查项目文件的发展
 
 ```bash
