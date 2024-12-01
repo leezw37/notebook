@@ -1,3 +1,75 @@
+<<<<<<< HEAD
+=======
+# 修改记录
+
+1. 前后加上修改标记ccclzw230728
+2. 相间传热传质：disp, amist（最初改过？？？）
+
+
+
+1. **amisthif**：修改液滴直径rddrp
+2. **dispdryhif**：修改液滴直径rddrp。`velgj(i)`改成`max(1.0d-5,abs(velgj(i)))`，防止速度=0。velfj(i)同理。（是否换R5本构？scrchh用公式算较大，很难达到700K，应该是相对速度需要加个绝对值？alpdrp应该是voidf）。**液相换热系数有各分支过小导致液相内能过大报错。**
+3. **drydrag **：注释计算液滴直径的第二个本构
+
+
+
+
+
+4. amistdrag：修改液滴直径rddrp和相对速度scrach；fiu, ga, fac的速度都加上最小值（`max(1.0d-5,abs(velgj(i)))`，否则domain error报错exp 函数就是下面的fiu 函数）
+5. **amisthif**：修改液滴直径rddrp
+6. dispdrag：修改液滴直径rddrp
+7. **dispdryhif**：修改液滴直径rddrp。`velgj(i)`改成`max(1.0d-5,abs(velgj(i)))`，防止速度=0。velfj(i)同理。（是否换R5本构？scrchh用公式算较大，很难达到700K，应该是相对速度需要加个绝对值？alpdrp应该是voidf）。**液相换热系数有各分支过小导致液相内能过大报错。**
+8. dispwethif ：液滴份额最小1e-4改1e-3；（理应使用系数misthidg和misthigd，但是导致178工况258秒报错，暂时不加。其他版本系数在本构中）**换回3R模型**
+9. **drydrag **：注释计算液滴直径的第二个本构
+10. 
+11. fidis2计算接管中气泡和液滴的相间摩擦：计算液滴雷诺数`abs(vfg2*voidx)`应为`sqrt(vfg2*voidx)`。（见107行rey计算）
+12. horizhif水平分层流相间传热传质：verhig和verhif改名cohorizhig和cohorizhif。
+13. hstratdrag水平分层流相间摩擦：verfi改名cohorizfi。
+14. htrc1计算传热系数:dtsat>600时去2000，是否注释无影响，因为还有>100的判断。
+15. ijprop计算接管物性用于初始化：voidfj(i)应为1.0d0- voidla(ivbot)和1.0d0- voidlb(ivtop)。（Void above/below the level.）
+16. invslughif：师兄为流型=9反弹状流但注释了，改为源程序的10雾状流。
+17. **jprop从相邻控制体贡献接管物性：640行左右的液相份额不应为voidg，改为voidf。（也可改为1-voide-voidg）**
+18. majout：完善outdta大编辑输出格式。
+19. pstdnb计算dnb后强制对流换热系数：hv乘数0.8。+ 直接注释掉过渡沸腾的判断，直接判定为模态沸腾，从而使becker实验足够高壁温。= 传热恶化壁温升高。（ 在backer277干涸后实验发现qfb因此乘数恰好小于qtb，使得换热模式始终为6过渡沸腾而非8膜态沸腾。）
+20. rmflds读取选项卡：水平分层流相间传热传质的系数，水平分层流相间摩擦本构的系数verfi改名cohorizfi。
+21. vexplt计算速度和隐式压力求解中的压降系数：液滴沉降计算kq的0.018应该是0.18（见phantv）。（[113] Hewitt G F, Govan A H. Phenomenological modelling of non-equilibrium flows with phase change[J]. International Journal of Heat and Mass Transfer, 1990,33(2):229-242.）
+22. 输入卡添加192卡，数值1.0，此前被遗漏。dtsattt是临界后传热的壁面过热度的系数，用于再淹没换热，定义在rmfld.f(255)中，影响htrc1。
+23. 
+24. 
+25. 相间摩擦：注释掉了dispdrag、amistdrag和drydrag的液滴直径rddrp造成结果为0的重复计算。
+26. 
+27. 气相相间换热系数，anm、mpr始终为10（1e2-1e5）
+28. 液相相间换热系数，mpr=1.0（1e5-1e10）
+
+# 对比待验证
+
+|                                          | 23-3R-SA                      | 22-3R       | 23-3R   | RELAP5     |                                                              |
+| ---------------------------------------- | ----------------------------- | ----------- | ------- | ---------- | ------------------------------------------------------------ |
+| vexplt                                   | 0.18（注释，不用计算）        | 0.018（错） |         |            |                                                              |
+|                                          |                               |             |         |            |                                                              |
+| amistdrag                                | 新本构                        |             |         |            | 1. 液滴直径试试不同的，becker相对略差: 3e-4。<br />2. 设置速度的最小值 |
+| amisthif                                 | 新本构                        |             |         |            |                                                              |
+|                                          |                               |             |         |            |                                                              |
+| chftab                                   | 新本构                        |             |         |            | becker无差别                                                 |
+|                                          |                               |             |         |            |                                                              |
+| **dispdrag**                             | 新本构，摩擦系数模型          |             |         | 调用fidis2 |                                                              |
+| dispdryhif<br />（MPO，chf后雾状流）     | 新本构                        |             |         | 调用fidisv |                                                              |
+| **dispwethif**<br />（MPR，chf前雾状流） | 1.0d-4，lzw接手时fj改为R5本构 | 新本构      | 新本构  | 1.0d-3     | 换成23-3R版本会报错                                          |
+| drydrag<br />（）                        | 新本构                        |             |         | 调用fidis2 | 液滴直径试试不同的，becker相对略差: 3e-4                     |
+| dryhif                                   | 新变量                        |             |         |            |                                                              |
+| eqfinl                                   | 改                            |             |         |            |                                                              |
+|                                          |                               |             |         |            |                                                              |
+|                                          |                               |             |         |            |                                                              |
+| fidis2                                   | 163行rey*abs                  | rey*abs     | rey*abs | rey*sqrt   |                                                              |
+|                                          |                               |             |         |            |                                                              |
+|                                          |                               |             |         |            |                                                              |
+|                                          |                               |             |         |            |                                                              |
+|                                          |                               |             |         |            |                                                              |
+|                                          |                               |             |         |            |                                                              |
+
+
+
+>>>>>>> df231b133925e617e0fe065649259896190ba5cd
 # 目录
 
 [TOC]
@@ -83,6 +155,7 @@
 2. 瞬态计算: trnctl 调用 tran
    1. 时间步长控制体及输出: dtstep
    2. TDV和TDJ计算: tstate
+<<<<<<< HEAD
    3. 壁面传热传质计算: htadv	(Qwg ; Qwf、壁面蒸汽蒸发量)
       1. 再淹没传热计算: qfmove
          1. 计算骤冷前沿位置，将热构件网格再划分为二维网格：qfsrch
@@ -103,6 +176,18 @@
                6. 冷凝10/11: conden
                7. 计算蒸汽产生率: suboil
       3. 划分计算热构件与控制体之间的传热量
+=======
+   3. 壁面传热传质计算: htadv	(Qwg;Qwf、壁面蒸汽蒸发量)
+      1. 再淹没导热计算: qfmove	
+      2. 非再淹没一维导热计算: ht1tdp
+         1. 壁面对流换热模式计算: htrc1
+            1. 壁面蒸汽产生率: suboil
+            2. 单相对流换热: dittus
+            3. 核态沸腾: prednb
+            4. CHF:  chfcal	
+            5. 过渡及膜态沸腾: pstdnb	
+            6. 冷凝: conden
+>>>>>>> df231b133925e617e0fe065649259896190ba5cd
    4. 水力学计算: hydro	
       1. 相间传热传质: phantv ( 得到hig`*`A，hif`*`A)
          1. 流型判断：horizhifreg，verthifreg，得到flomap(1,ix)赋值给floreg。
@@ -131,7 +216,11 @@
             2. drydrag（干涸后，）
                1. invanndrag
                2. invslugdrag
+<<<<<<< HEAD
                3. 弥散流：调用 fidis2
+=======
+               3. fidis2
+>>>>>>> df231b133925e617e0fe065649259896190ba5cd
          3. 为垂直分层流调整相间传热adjusthif
          4. 修正: filterdrag，finaldrag
       3. 壁面摩擦: fwdrag ( 得到 fwalf，fwalg)	
@@ -639,10 +728,13 @@ if (timehy .gt. 1.8e5 .and. volno(1,i) .gt. 125380000) then
 	write(230725,*)voidg(i),voide(i),voidf(i)
 	write(230725,*)velg(i),velf(i),vele(i)
 	write(230725,*)qwg(i),qwf(i)
+<<<<<<< HEAD
 end if
 
 if (timehy .gt. 502.11 .and. id .gt. 1250038) then
 	write(231017,*)timehy,id
+=======
+>>>>>>> df231b133925e617e0fe065649259896190ba5cd
 end if
 ```
 

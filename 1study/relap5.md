@@ -717,8 +717,11 @@ Expanded plot variables ()
 
 常见报错如，（一些报错减小最大时间步长即可解决，如改为0.001s）
 
+<<<<<<< HEAD
 - 
 - CVF build程序链接错误，需要重新打开dsw文件后build。（复现：调试时 `shift + F5`强行终止程序，然后修改后build。）（采取操作可避免：如果离报错不久，可以F5让他正常运行至报错退出）——`LINK : fatal error LNK1104: cannot open file "Debug/Relap.exe" Error executing link.exe.`
+=======
+>>>>>>> df231b133925e617e0fe065649259896190ba5cd
 - 直接运行exe时闪退且无报错信息，CVF软件调试运行时才出现报错——`run-time error M6201: MATH - exp: DOMAIN error`  ：程序某处`exp(x)`函数的参数`x`超出定义域 。
   - 思路是：首先定位时间，再定位本构，最后定位位置和错误的代码行。
     1. 调试时监视时间，记录出错时的时间，在例如`hydro`之类的主干程序上设置`if`语句，从而定位到该时刻。
