@@ -299,7 +299,7 @@ xxx.github.io.	5	IN	A	185.199.108.153
 
 
 
-## windows版本上使用
+## windows版本上使用（失败。。。）
 
 1. 下载安装nodejs及附加组件
    * 下载安装v12.x版本的[nodejs](https://registry.npmmirror.com/-/binary/node/latest-v12.x/node-v12.22.10-x64.msi)，其中msi版本可以自动配置npm环境变量，
