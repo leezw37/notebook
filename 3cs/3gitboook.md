@@ -177,7 +177,7 @@ npm install staticrypt -g --registry=https://registry.npm.taobao.org/
 * [自动生成目录](https://github.com/imfly/gitbook-summary)`gitbook-summary` , 根目录执行 book sm
 * 网页目录可折叠`"expandable-chapters"`
 * [复制代码按钮](https://github.com/WebEngage/gitbook-plugin-copy-code-button)`"copy-code-button"`
-* [标题导航](https://github.com/zq99299/gitbook-plugin-anchor-navigation-ex)`"anchor-navigation-ex"`
+* [标题导航](https://github.com/zq99299/gitbook-plugin-anchor-navigation-ex)`"anchor-navigation-ex"`，2025mac安装报错，则在配置中删除，然后手动安装，再build：`npm install gitbook-plugin-anchor-navigation-ex --save`
 * 侧边栏宽度可调节 `"splitter"`
 * 页面顶部显示目录 `"page-treeview"`
 * 在线编辑文件 `"edit-link"`
@@ -335,6 +335,8 @@ xxx.github.io.	5	IN	A	185.199.108.153
 ## 加密文档
 
 工具——[技术实现](https://github.com/robinmoisson/staticrypt)，[类似的许多工具](https://mprimi.github.io/portable-secret/#prior-art)
+
+安装：`npm install staticrypt`
 
 **此方法存在重大漏洞！！！（已解决~）**
 
