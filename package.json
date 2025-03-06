@@ -13,6 +13,6 @@
     "gitbook-plugin-search-pro": "^2.0.2",
     "gitbook-plugin-splitter": "^0.0.8",
     "mathjax": "^2.7.6",
-    "staticrypt": "^2.4.0"
+    "staticrypt": "^2.6.2"
   }
 }
